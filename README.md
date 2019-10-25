@@ -1,16 +1,16 @@
 # Applesauce
+Applesauce is a simple and lightweight Discord `python3` bot aimed at providing a highly customizable and modular architecture. Each feature for Applesauce is an independent cog (plugin). This makes writing plugins for Applesauce easy and effortless.
+
 ## WARNING
 I suck at coding. I try my best but please don't get mad if you come across some crap code 😕. Applesauce is also currently in the very early stages of development. Lots of things are missing.
 
-### Goal
-The goal of Applesauce is to provide a modular approach to how a Discord bot is created and customized for each server. Applesauce uses a central `config.ini` along with individual modules for each special command/feature. Each module is fully independent from one another and is loaded automatically through `initialize.py`. This allows Applesauce to quickly be customized to only include modules you want.
-
-This is a personal project. I am creating this with myself and my usages in mind. That being said I am more then open to any feedback or help you may have.
-
 ### Configuration
-Still being worked on....
+Applesauce is configured by copying your desired plugins into the `cogs` folder and then configuring those plugins through `config.ini`. **More information will be added once Applesauce is further developed.**
 
-### Modules
+# Installation
+Since Applesauce is coded fully in `python3`, installation is as simple as installing python3 and the requires libraries for each module. **More information will be added once Applesauce is further developed.**
+
+### Modules/Plugins/Cogs
 * **admin** (required): commands to reload and manage modules
 * **api**: Wikipedia and Wolfram Alpha lookup commands
 * **basic**: random number, coin flip, and other simple commands
