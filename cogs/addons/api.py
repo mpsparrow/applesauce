@@ -1,10 +1,9 @@
 import discord
 from discord.ext import commands
-from . import configloader
+from cogs.utils import configloader
 import random
 import wolframalpha
 import wikipedia
-import json
 
 class API(commands.Cog):
     def __init__(self, bot):
@@ -43,7 +42,7 @@ class API(commands.Cog):
         loading = await ctx.send('loading....') # loading message
         questionLink = 'https://www.wolframalpha.com/input/?i=' + question.strip().lower().replace(' ', '+') # builds wolfram URL (used just for link in results)
 
-        wolframKeys = json.loads(configloader.config.get("api","keys")) # gets key list from config
+        wolframKeys = configloader.config['api']['wolframKeys'] # gets key list from config
         clientWolfram = wolframalpha.Client(wolframKeys[random.randint(0,len(wolframKeys)-1)]) # initialize API and choose key from wolframKeys list
         res = clientWolfram.query(question) # sends a query with the question
 

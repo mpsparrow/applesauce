@@ -1,0 +1,16 @@
+{
+  "main": {
+    "botName": "Applesauce",
+    "token": "bot-token-here",
+    "prefix": ".",
+    "excludedModules": [
+      ""
+    ]
+  },
+  "api": {
+    "wolframKeys": [
+      "api-key",
+      "another-api-key"
+    ]
+  }
+}

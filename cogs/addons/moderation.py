@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from .utils import logger
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
