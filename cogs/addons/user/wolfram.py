@@ -3,37 +3,10 @@ from discord.ext import commands
 from cogs.utils import configloader
 import random
 import wolframalpha
-import wikipedia
 
-class API(commands.Cog):
+class Wolfram(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    # wikipedia command
-    @commands.command(aliases=['wikipedia'])
-    @commands.cooldown(1, 10, commands.BucketType.default)
-    async def wiki(self, ctx, *, lookup):
-        loading = await ctx.send('loading....') # loading message
-
-        try:
-            page = wikipedia.summary(lookup, sentences=1) # gets pages first sentence
-            wikiPage = wikipedia.page(lookup)
-            pageURL = wikiPage.url # gets pages URL
-            pageTitle = wikiPage.title
-        except:
-            # if nothing is found
-            page = 'No results found.'
-            pageURL = '....'
-            pageTitle = '....'
-
-        # embed for results
-        embed=discord.Embed(title='Wikipedia', description=f'{pageURL}', color=0xc1c100)
-        embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Wikipedia-logo-v2.svg/1200px-Wikipedia-logo-v2.svg.png")
-        # embed.add_field(name='Lookup', value=f'{lookup}', inline=False)
-        embed.add_field(name=f'{pageTitle}', value=f'{page}', inline=False)
-        await ctx.send(embed=embed)
-
-        await loading.delete() # deletes loading message
 
     # wolfram command
     @commands.command(aliases=['wolf'])
@@ -42,7 +15,7 @@ class API(commands.Cog):
         loading = await ctx.send('loading....') # loading message
         questionLink = 'https://www.wolframalpha.com/input/?i=' + question.strip().lower().replace(' ', '+') # builds wolfram URL (used just for link in results)
 
-        wolframKeys = configloader.config['api']['wolframKeys'] # gets key list from config
+        wolframKeys = configloader.config['wolfram']['wolframKeys'] # gets key list from config
         clientWolfram = wolframalpha.Client(wolframKeys[random.randint(0,len(wolframKeys)-1)]) # initialize API and choose key from wolframKeys list
         res = clientWolfram.query(question) # sends a query with the question
 
@@ -80,4 +53,4 @@ class API(commands.Cog):
             await ctx.send(embed=e) # sends embed
 
 def setup(bot):
-    bot.add_cog(API(bot))
+    bot.add_cog(Wolfram(bot))
