@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from cogs.utils import checks
 import wikipedia
 
 class Wiki(commands.Cog):
@@ -7,9 +8,10 @@ class Wiki(commands.Cog):
         self.bot = bot
 
     # wikipedia command
-    @commands.command(aliases=['wikipedia'])
+    @commands.check(checks.allowedGuild)
+    @commands.command(name="wikipedia", description="queries wikipedia and returns summary", usage="wiki query", aliases=['wiki'])
     @commands.cooldown(1, 10, commands.BucketType.default)
-    async def wiki(self, ctx, *, lookup):
+    async def wikipedia(self, ctx, *, lookup):
         loading = await ctx.send('loading....') # loading message
 
         try:

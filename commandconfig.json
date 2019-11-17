@@ -1,0 +1,38 @@
+{
+  "568265828856889374": {
+    "Basic": {
+      "chance": false,
+      "coin": false,
+      "rate": false
+    },
+    "Wiki": {
+      "wikipedia": true
+    },
+    "Wolfram": {
+      "wolfram": false
+    },
+    "Moderation": {
+      "kick": false,
+      "ban": false,
+      "clear": true
+    }
+  },
+  "645561435455356941": {
+    "Basic": {
+      "coin": true,
+      "chance": false,
+      "rate": false
+    },
+    "Wiki": {
+      "wikipedia": false
+    },
+    "Moderation": {
+      "kick": false,
+      "ban": false,
+      "clear": false
+    },
+    "Wolfram": {
+      "wolfram": false
+    }
+  }
+}

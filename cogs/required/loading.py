@@ -12,7 +12,7 @@ class Loading(commands.Cog):
     # commands
     # restart extension
     @commands.command()
-    @commands.has_permissions(manage_guild=True)
+    @commands.is_owner()
     async def reload(self, ctx, folder, extension):
         try:
             self.bot.reload_extension(f'cogs.addons.{folder}.{extension}')
@@ -24,7 +24,7 @@ class Loading(commands.Cog):
 
     # unload extension
     @commands.command()
-    @commands.has_permissions(manage_guild=True)
+    @commands.is_owner()
     async def unload(self, ctx, folder, extension):
         try:
             self.bot.unload_extension(f'cogs.addons.{folder}.{extension}')
@@ -36,7 +36,7 @@ class Loading(commands.Cog):
 
     # unload extension
     @commands.command()
-    @commands.has_permissions(manage_guild=True)
+    @commands.is_owner()
     async def load(self, ctx, folder, extension):
         try:
             self.bot.load_extension(f'cogs.addons.{folder}.{extension}')
@@ -48,7 +48,7 @@ class Loading(commands.Cog):
 
     # enable extension
     @commands.command()
-    @commands.has_permissions(manage_guild=True)
+    @commands.is_owner()
     async def enable(self, ctx, extension):
         try:
             with open(r'config.json', 'r') as file:
@@ -65,7 +65,7 @@ class Loading(commands.Cog):
 
     # disable extension
     @commands.command()
-    @commands.has_permissions(manage_guild=True)
+    @commands.is_owner()
     async def disable(self, ctx, extension):
         try:
             with open(r'config.json', 'r') as file:

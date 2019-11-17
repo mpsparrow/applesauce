@@ -1,0 +1,26 @@
+Starting Applesauce
+Debug:
+ date/time: 2019-11-17 04:42:03.554424
+ discord.py version: 1.2.4
+ python version: 3.7.2 (tags/v3.7.2:9a3ffc0492, Dec 23 2018, 23:09:28) [MSC v.1916 64 bit (AMD64)]
+
+Passed Checks
+
+Initializing Required Extensions
+ Successfully loaded debug.py
+ Successfully loaded error.py
+ Successfully loaded help.py
+ Successfully loaded loading.py
+
+Initializing Addons
+ Successfully loaded mod/moderation.py
+ Successfully loaded user/ball8.py
+ Successfully loaded user/one-liners.py
+ Successfully loaded user/reactions.py
+ Successfully loaded user/wiki.py
+ Successfully loaded user/wolfram.py
+ Addons Loaded: Success: 6  Failed: 0  Skipped: 0
+
+Applesauce is ready to rumble!
+Successfully reloaded moderation
+Successfully reloaded moderation

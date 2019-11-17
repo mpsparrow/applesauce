@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from cogs.utils import checks
 import random
 
 class Basic(commands.Cog):
@@ -8,31 +9,25 @@ class Basic(commands.Cog):
 
     # commands
     # chance command
-    @commands.command()
+    @commands.check(checks.allowedGuild)
+    @commands.command(name="chance", description="random percent integer between 0 and 100", usage="chance")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def chance(self, ctx):
         await ctx.send(f'{random.randint(0, 100)}% chance')
 
     # coin command
-    @commands.command()
+    @commands.check(checks.allowedGuild)
+    @commands.command(name="coin", description="flips a coin and returns heads or tails", usage="coin")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def coin(self, ctx):
-        if random.randint(0,1) == 1:
-            await ctx.send('heads')
-            return
-        await ctx.send('tails')
+        await ctx.send(random.choice(['heads', 'tails']))
 
     # rate command
-    @commands.command(aliases=['rating'])
+    @commands.check(checks.allowedGuild)
+    @commands.command(name="rate", description="random rating out of 10", usage="rate", aliases=['rating'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def rate(self, ctx):
         await ctx.send(f'{random.randint(0,10)}/10')
-
-    # table command
-    @commands.command()
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def table(self, ctx):
-        await ctx.send('(╯°□°)╯︵ ┻━┻')
 
 def setup(bot):
     bot.add_cog(Basic(bot))
