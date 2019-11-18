@@ -20,6 +20,10 @@ class Error(commands.Cog):
     async def on_command(self, ctx):
         logger.commandWrite(f'{ctx.message.author} used {ctx.message.content}')
 
+    @commands.Cog.listener()
+    async def on_message(self, ctx):
+        if ctx.author == self.bot.user:
+            return
 
 def setup(bot):
     bot.add_cog(Error(bot))

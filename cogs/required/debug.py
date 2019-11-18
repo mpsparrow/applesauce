@@ -23,5 +23,11 @@ class Debug(commands.Cog):
     async def guildid(self, ctx):
         await ctx.send(f'Guild id: {ctx.guild.id}')
 
+    # latency
+    @commands.command(name="latency", description="gets latency to server", usage="latency")
+    @commands.is_owner()
+    async def latency(self, ctx):
+        await ctx.send(str(round(self.bot.latency * 1000)) + 'ms')
+
 def setup(bot):
     bot.add_cog(Debug(bot))

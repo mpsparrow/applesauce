@@ -22,6 +22,13 @@ class Basic(commands.Cog):
     async def coin(self, ctx):
         await ctx.send(random.choice(['heads', 'tails']))
 
+    # ping command
+    @commands.check(checks.allowedGuild)
+    @commands.command(name="ping", description="pong", usage="ping")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def ping(self, ctx):
+        await ctx.send('pong!')
+
     # rate command
     @commands.check(checks.allowedGuild)
     @commands.command(name="rate", description="random rating out of 10", usage="rate", aliases=['rating'])

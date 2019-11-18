@@ -1,38 +1,27 @@
 {
-  "568265828856889374": {
+  "guild-ID": {
     "Basic": {
-      "chance": false,
-      "coin": false,
-      "rate": false
+      "chance": true,
+      "coin": true,
+      "rate": true,
+      "ping": true
     },
     "Wiki": {
       "wikipedia": true
     },
     "Wolfram": {
-      "wolfram": false
+      "wolfram": true
     },
     "Moderation": {
-      "kick": false,
-      "ban": false,
+      "kick": true,
+      "ban": true,
       "clear": true
-    }
-  },
-  "645561435455356941": {
-    "Basic": {
-      "coin": true,
-      "chance": false,
-      "rate": false
     },
-    "Wiki": {
-      "wikipedia": false
+    "ball8": {
+      "8ball": true
     },
-    "Moderation": {
-      "kick": false,
-      "ban": false,
-      "clear": false
-    },
-    "Wolfram": {
-      "wolfram": false
+    "UserInfo": {
+      "userinfo": true
     }
   }
 }

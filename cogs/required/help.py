@@ -35,7 +35,6 @@ class Help(commands.MinimalHelpCommand):
 
         # add all commands to embed and message it
         embed.add_field(name='Commands', value=f'{commandStr}', inline=False)
-        embed.set_footer(text='All non-admin commands have cooldowns.')
         await self.context.send(embed=embed)
 
 def setup(bot):
