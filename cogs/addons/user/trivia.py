@@ -7,7 +7,7 @@ from discord.ext.commands import has_permissions
 from cogs.utils import checks
 
 class Quiz():
-    def __init__(self, ctx, amount=5, delay=8):
+    def __init__(self, ctx, amount, delay):
         self.ctx = ctx
         self.questions = []
         self.question = ""
@@ -54,9 +54,9 @@ class Trivia(commands.Cog):
 
     # userinfo command
     @commands.check(checks.allowedGuild)
-    @commands.command(name="trivia", description="select and play some trivia", usage="trivia type")
+    @commands.command(name="trivia", description="Select a category and play some trivia. Default values: amountofquestions = 10, delay = 8", usage="trivia category amountofquestions timeforquestion")
     @commands.cooldown(1, 4, commands.BucketType.user)
-    async def trivia(self, ctx, *, trivia=""):
+    async def trivia(self, ctx, trivia="", amount=10, delay=8):
 
         # reads all trivia txt files in trivia folder
         triviaList = []
@@ -67,7 +67,7 @@ class Trivia(commands.Cog):
         if len(triviaList) == 0:
             await ctx.send("no trivia loaded")
         elif trivia.lower() in triviaList:
-            triv = Quiz(ctx)
+            triv = Quiz(ctx, amount, delay)
             triv.load_questions(trivia)
             await ctx.send(triv.ask_question())
             await asyncio.sleep(triv.delay)
