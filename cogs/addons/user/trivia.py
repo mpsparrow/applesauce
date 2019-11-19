@@ -11,8 +11,16 @@ class Quiz():
         self.ctx = ctx
         self.questions = []
         self.question = ""
-        self.amount = amount
-        self.delay = delay
+        
+        if round(abs(amount)) > 50:
+            self.amount = 50
+        else:
+            self.amount = round(abs(amount))
+            
+        if round(abs(delay)) > 30:
+            self.delay = 30
+        else:
+            self.delay = round(abs(delay))
 
     def load_questions(self, file):
         path = os.path.abspath(f"./cogs/addons/user/trivia/{file}.txt")
@@ -55,7 +63,7 @@ class Trivia(commands.Cog):
     # userinfo command
     @commands.check(checks.allowedGuild)
     @commands.command(name="trivia", description="Select a category and play some trivia. Default values: amountofquestions = 10, delay = 8", usage="trivia category amountofquestions timeforquestion")
-    @commands.cooldown(1, 4, commands.BucketType.user)
+    @commands.cooldown(1, 2, commands.BucketType.user)
     async def trivia(self, ctx, trivia="", amount=10, delay=8):
 
         # reads all trivia txt files in trivia folder
