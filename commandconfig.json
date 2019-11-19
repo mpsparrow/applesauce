@@ -22,6 +22,9 @@
     },
     "UserInfo": {
       "userinfo": true
+    },
+    "Trivia": {
+      "trivia": true
     }
   }
 }

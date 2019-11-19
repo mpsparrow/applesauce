@@ -1,0 +1,198 @@
+What country is represented by this flag? :flag_af:	Afghanistan	
+What country is represented by this flag? :flag_al:	Albania	
+What country is represented by this flag? :flag_dz:	Algeria	
+What country is represented by this flag? :flag_ad:	Andorra	
+What country is represented by this flag? :flag_ao:	Angola	
+What country is represented by this flag? :flag_ag:	Antigua and Barbuda	
+What country is represented by this flag? :flag_ar:	Argentina	
+What country is represented by this flag? :flag_am:	Armenia	
+What country is represented by this flag? :flag_au:	Australia	
+What country is represented by this flag? :flag_at:	Austria	
+What country is represented by this flag? :flag_az:	Azerbaijan	
+What country is represented by this flag? :flag_bs:	Bahamas	
+What country is represented by this flag? :flag_bh:	Bahrain	
+What country is represented by this flag? :flag_bd:	Bangladesh	
+What country is represented by this flag? :flag_bb:	Barbados	
+What country is represented by this flag? :flag_by:	Belarus	
+What country is represented by this flag? :flag_be:	Belgium	
+What country is represented by this flag? :flag_bz:	Belize	
+What country is represented by this flag? :flag_bj:	Benin	
+What country is represented by this flag? :flag_bt:	Bhutan	
+What country is represented by this flag? :flag_bo:	Bolivia	
+What country is represented by this flag? :flag_ba:	Bosnia and Herzegovina	bosnia
+What country is represented by this flag? :flag_bw:	Botswana	
+What country is represented by this flag? :flag_br:	Brazil	
+What country is represented by this flag? :flag_bn:	Brunei	
+What country is represented by this flag? :flag_bg:	Bulgaria	
+What country is represented by this flag? :flag_bf:	Burkina Faso	
+What country is represented by this flag? :flag_bi:	Burundi	
+What country is represented by this flag? :flag_kh:	Cambodia	
+What country is represented by this flag? :flag_cm:	Cameroon	
+What country is represented by this flag? :flag_ca:	Canada	
+What country is represented by this flag? :flag_cv:	Cape Verde	cabo verde
+What country is represented by this flag? :flag_cf:	Central African Republic	
+What country is represented by this flag? :flag_td:	Chad	
+What country is represented by this flag? :flag_cl:	Chile	
+What country is represented by this flag? :flag_cn:	China	
+What country is represented by this flag? :flag_co:	Colombia	
+What country is represented by this flag? :flag_km:	Comoros	
+What country is represented by this flag? :flag_cg:	Congo	
+What country is represented by this flag? :flag_cr:	Costa Rica	
+What country is represented by this flag? :flag_ci:	Cote D'Ivoire	ivory coast
+What country is represented by this flag? :flag_hr:	Croatia	
+What country is represented by this flag? :flag_cu:	Cuba	
+What country is represented by this flag? :flag_cy:	Cyprus	
+What country is represented by this flag? :flag_cz:	Czech Republic	
+What country is represented by this flag? :flag_cd:	Democratic Republic of the Congo	drc
+What country is represented by this flag? :flag_dk:	Denmark	
+What country is represented by this flag? :flag_dj:	Djibouti	
+What country is represented by this flag? :flag_dm:	Dominica	
+What country is represented by this flag? :flag_do:	Dominican Republic	
+What country is represented by this flag? :flag_ec:	Ecuador	
+What country is represented by this flag? :flag_eg:	Egypt	
+What country is represented by this flag? :flag_sv:	El Salvador	
+What country is represented by this flag? :flag_gq:	Equatorial Guinea	
+What country is represented by this flag? :flag_er:	Eritrea	
+What country is represented by this flag? :flag_ee:	Estonia	
+What country is represented by this flag? :flag_et:	Ethiopia	
+What country is represented by this flag? :flag_fj:	Fiji	
+What country is represented by this flag? :flag_fi:	Finland	
+What country is represented by this flag? :flag_fr:	France	
+What country is represented by this flag? :flag_ga:	Gabon	
+What country is represented by this flag? :flag_gm:	Gambia	
+What country is represented by this flag? :flag_ge:	Georgia	
+What country is represented by this flag? :flag_de:	Germany	
+What country is represented by this flag? :flag_gh:	Ghana	
+What country is represented by this flag? :flag_gr:	Greece	
+What country is represented by this flag? :flag_gd:	Grenada	
+What country is represented by this flag? :flag_gt:	Guatemala	
+What country is represented by this flag? :flag_gn:	Guinea	
+What country is represented by this flag? :flag_gw:	Guinea-Bissau	Guinea Bissau
+What country is represented by this flag? :flag_gy:	Guyana	
+What country is represented by this flag? :flag_ht:	Haiti	
+What country is represented by this flag? :flag_hn:	Honduras	
+What country is represented by this flag? :flag_hu:	Hungary	
+What country is represented by this flag? :flag_is:	Iceland	
+What country is represented by this flag? :flag_in:	India	
+What country is represented by this flag? :flag_id:	Indonesia	
+What country is represented by this flag? :flag_ir:	Iran	
+What country is represented by this flag? :flag_iq:	Iraq	
+What country is represented by this flag? :flag_ie:	Ireland	
+What country is represented by this flag? :flag_il:	Israel	
+What country is represented by this flag? :flag_it:	Italy	
+What country is represented by this flag? :flag_jm:	Jamaica	
+What country is represented by this flag? :flag_jp:	Japan	
+What country is represented by this flag? :flag_jo:	Jordan	
+What country is represented by this flag? :flag_kz:	Kazakhstan	
+What country is represented by this flag? :flag_ke:	Kenya	
+What country is represented by this flag? :flag_ki:	Kiribati	
+What country is represented by this flag? :flag_xk:	Kosovo	
+What country is represented by this flag? :flag_kw:	Kuwait	
+What country is represented by this flag? :flag_kg:	Kyrgyzstan	
+What country is represented by this flag? :flag_la:	Laos	
+What country is represented by this flag? :flag_lv:	Latvia	
+What country is represented by this flag? :flag_lb:	Lebanon	
+What country is represented by this flag? :flag_ls:	Lesotho	
+What country is represented by this flag? :flag_lr:	Liberia	
+What country is represented by this flag? :flag_ly:	Libya	
+What country is represented by this flag? :flag_li:	Liechtenstein	
+What country is represented by this flag? :flag_lt:	Lithuania	
+What country is represented by this flag? :flag_lu:	Luxembourg	
+What country is represented by this flag? :flag_mk:	Macedonia	
+What country is represented by this flag? :flag_mg:	Madagascar	
+What country is represented by this flag? :flag_mw:	Malawi	
+What country is represented by this flag? :flag_my:	Malaysia	
+What country is represented by this flag? :flag_mv:	Maldives	
+What country is represented by this flag? :flag_ml:	Mali	
+What country is represented by this flag? :flag_mt:	Malta	
+What country is represented by this flag? :flag_mh:	Marshall Islands	
+What country is represented by this flag? :flag_mr:	Mauritania	
+What country is represented by this flag? :flag_mu:	Mauritius	
+What country is represented by this flag? :flag_mx:	Mexico	
+What country is represented by this flag? :flag_fm:	Micronesia	
+What country is represented by this flag? :flag_md:	Moldova	
+What country is represented by this flag? :flag_mc:	Monaco	
+What country is represented by this flag? :flag_mn:	Mongolia	
+What country is represented by this flag? :flag_me:	Montenegro	
+What country is represented by this flag? :flag_ma:	Morocco	
+What country is represented by this flag? :flag_mz:	Mozambique	
+What country is represented by this flag? :flag_mm:	Myanmar	
+What country is represented by this flag? :flag_na:	Namibia	
+What country is represented by this flag? :flag_nr:	Nauru	
+What country is represented by this flag? :flag_np:	Nepal	
+What country is represented by this flag? :flag_nl:	Netherlands	
+What country is represented by this flag? :flag_nz:	New Zealand	
+What country is represented by this flag? :flag_ni:	Nicaragua	
+What country is represented by this flag? :flag_ne:	Niger	
+What country is represented by this flag? :flag_ng:	Nigeria	
+What country is represented by this flag? :flag_kp:	North Korea	
+What country is represented by this flag? :flag_no:	Norway	
+What country is represented by this flag? :flag_om:	Oman	
+What country is represented by this flag? :flag_pk:	Pakistan	
+What country is represented by this flag? :flag_pw:	Palau	
+What country is represented by this flag? :flag_ps:	Palestine	
+What country is represented by this flag? :flag_pa:	Panama	
+What country is represented by this flag? :flag_pg:	Papua New Guinea	
+What country is represented by this flag? :flag_py:	Paraguay	
+What country is represented by this flag? :flag_pe:	Peru	
+What country is represented by this flag? :flag_ph:	Philippines	
+What country is represented by this flag? :flag_pl:	Poland	
+What country is represented by this flag? :flag_pt:	Portugal	
+What country is represented by this flag? :flag_qa:	Qatar	
+What country is represented by this flag? :flag_ro:	Romania	
+What country is represented by this flag? :flag_ru:	Russia	
+What country is represented by this flag? :flag_rw:	Rwanda	
+What country is represented by this flag? :flag_kn:	Saint Kitts and Nevis	St Kitts and Nevis
+What country is represented by this flag? :flag_lc:	Saint Lucia	
+What country is represented by this flag? :flag_vc:	Saint Vincent and The Grenadines	St Vincent and The Grenadines
+What country is represented by this flag? :flag_ws:	Samoa	
+What country is represented by this flag? :flag_sm:	San Marino	
+What country is represented by this flag? :flag_st:	Sao Tome and Principe	
+What country is represented by this flag? :flag_sa:	Saudi Arabia	
+What country is represented by this flag? :flag_sn:	Senegal	
+What country is represented by this flag? :flag_rs:	Serbia	
+What country is represented by this flag? :flag_sc:	Seychelles	
+What country is represented by this flag? :flag_sl:	Sierra Leone	
+What country is represented by this flag? :flag_sg:	Singapore	
+What country is represented by this flag? :flag_sk:	Slovakia	
+What country is represented by this flag? :flag_si:	Slovenia	
+What country is represented by this flag? :flag_sb:	Solomon Islands	
+What country is represented by this flag? :flag_so:	Somalia	
+What country is represented by this flag? :flag_za:	South Africa	
+What country is represented by this flag? :flag_kr:	South Korea	
+What country is represented by this flag? :flag_ss:	South Sudan	
+What country is represented by this flag? :flag_es:	Spain	
+What country is represented by this flag? :flag_lk:	Sri Lanka	
+What country is represented by this flag? :flag_sd:	Sudan	
+What country is represented by this flag? :flag_sr:	Suriname	
+What country is represented by this flag? :flag_sz:	Swaziland	eswatini
+What country is represented by this flag? :flag_se:	Sweden	
+What country is represented by this flag? :flag_ch:	Switzerland	
+What country is represented by this flag? :flag_sy:	Syria	
+What country is represented by this flag? :flag_tw:	Taiwan	
+What country is represented by this flag? :flag_tj:	Tajikistan	
+What country is represented by this flag? :flag_tz:	Tanzania	
+What country is represented by this flag? :flag_th:	Thailand	
+What country is represented by this flag? :flag_tl:	Timor-Leste	east timor
+What country is represented by this flag? :flag_tg:	Togo	
+What country is represented by this flag? :flag_to:	Tonga	
+What country is represented by this flag? :flag_tt:	Trinidad and Tobago	
+What country is represented by this flag? :flag_tn:	Tunisia	
+What country is represented by this flag? :flag_tr:	Turkey	
+What country is represented by this flag? :flag_tm:	Turkmenistan	
+What country is represented by this flag? :flag_tv:	Tuvalu	
+What country is represented by this flag? :flag_ug:	Uganda	
+What country is represented by this flag? :flag_ua:	Ukraine	
+What country is represented by this flag? :flag_ae:	United Arab Emirates	uae
+What country is represented by this flag? :flag_gb:	United Kingdom	uk
+What country is represented by this flag? :flag_us:	United States	usa
+What country is represented by this flag? :flag_uy:	Uruguay	
+What country is represented by this flag? :flag_uz:	Uzbekistan	
+What country is represented by this flag? :flag_vu:	Vanuatu	
+What country is represented by this flag? :flag_va:	Vatican City	
+What country is represented by this flag? :flag_ve:	Venezuela	
+What country is represented by this flag? :flag_vn:	Vietnam	viet nam
+What country is represented by this flag? :flag_ye:	Yemen	
+What country is represented by this flag? :flag_zm:	Zambia	
+What country is represented by this flag? :flag_zw:	Zimbabwe	
+
