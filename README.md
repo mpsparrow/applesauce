@@ -2,7 +2,7 @@
 Applesauce is a simple and lightweight Discord python bot aimed at providing a highly customizable and modular architecture. Each feature for Applesauce is an independent addon (cog). This makes adding to and modifying Applesauce super easy.
 
 ### Development
-- `master` is the most recent stable release (which isn't a think at this time)
+- `master` is the most recent stable current beta release
 - `dev` is for development and testing
 
 ### WARNING
