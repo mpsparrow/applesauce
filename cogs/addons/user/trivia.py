@@ -1,10 +1,10 @@
 import discord
-from discord.ext import commands
-from discord.ext.commands import has_permissions
-from cogs.utils import checks
 import asyncio
 import os
 import random
+from discord.ext import commands
+from discord.ext.commands import has_permissions
+from cogs.utils import checks
 
 class Quiz():
     def __init__(self, ctx, amount=5, delay=8):
@@ -19,6 +19,13 @@ class Quiz():
         lines = open(path, encoding='utf-8').read().splitlines()
         for items in lines:
             self.questions.append(items.split('\t'))
+            
+        # # check if blank items are about to be appended
+        # # should probably change this all to use ` as a separator instead
+        # for items in lines:
+        #     item = items.split('\t')
+        #     if item != "":
+        #         self.questions.append(items.split('\t'))
 
     def ask_question(self):
         self.question = random.choice(self.questions)
@@ -28,11 +35,16 @@ class Quiz():
     def answer_question(self):
         return self.question[1]
 
-    def quiz_amount(self):
+    def amount_questions(self):
         self.amount -= 1
 
-    def is_quiz_over(self):
+    def is_over(self):
         if self.amount <= 0:
+            return True
+        return False
+
+    def is_correct(self, answer):
+        if any(self.question[1:] in answer.split() for answer in list_):
             return True
         return False
 
