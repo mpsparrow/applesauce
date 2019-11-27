@@ -20,7 +20,7 @@ import json
 
 
 botName = configloader.config['main']['botName'] # gets bots name from config.json
-bot = commands.Bot(command_prefix = configloader.config['main']['prefix']) # gets bots prefix from config.json
+bot = commands.Bot(command_prefix = configloader.config['main']['prefix'], case_insensitive = True) # gets bots prefix from config.json
 
 @bot.event
 async def on_ready():
