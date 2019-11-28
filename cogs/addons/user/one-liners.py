@@ -21,6 +21,13 @@ class Basic(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def coin(self, ctx):
         await ctx.send(random.choice(['heads', 'tails']))
+        
+    # DDOS command
+    @commands.check(checks.allowedGuild)
+    @commands.command(name="ddos", description="you ever wanted to DDOS something?", usage="ddos <what-to-DDOS>")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def ddos(self, ctx, *, name):
+        await ctx.send(f'{name} is being DDoSed')
 
     # ping command
     @commands.check(checks.allowedGuild)
