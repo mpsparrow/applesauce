@@ -1,0 +1,34 @@
+{
+  "guildID": {
+    "ignored": [],
+    "Commands": {
+      "Basic": {
+        "coin": true,
+        "rate": true,
+        "ping": true,
+        "hank": true,
+        "chance": true
+      },
+      "Wiki": {
+        "wikipedia": true
+      },
+      "Wolfram": {
+        "wolfram": true
+      },
+      "Moderation": {
+        "kick": false,
+        "ban": false,
+        "clear": false
+      },
+      "ball8": {
+        "8ball": true
+      },
+      "UserInfo": {
+        "userinfo": true
+      },
+      "Trivia": {
+        "trivia": true
+      }
+    }
+  }
+}
