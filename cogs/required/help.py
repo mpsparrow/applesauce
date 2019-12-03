@@ -17,11 +17,11 @@ class Help(commands.MinimalHelpCommand):
         else:
             alias = f'\n**Aliases:**  {command.aliases}'
             
-        embed=discord.Embed(title=f'{command.name}', description=f'**Description:**  {command.description}\n**Usage:**  `{command.usage}`{alias}', color=0xc1c100)
+        embed=discord.Embed(title=f'Help - {command.name}', description=f'**Description:** {command.description}\n**Usage:**  `{command.usage}`{alias}', color=0xc1c100)
         await self.context.send(embed=embed)
 
     async def send_bot_help(self, mapping):
-        embed=discord.Embed(title='Help', description=f'All commands. Use `help command` for more info.', color=0xc1c100)
+        embed=discord.Embed(title='Help', description=f'Specify a command to see more information. (i.e. `help 8ball`) ', color=0xc1c100)
 
         # get list of commands
         cmds = []
@@ -37,7 +37,7 @@ class Help(commands.MinimalHelpCommand):
         # combine commands into string for output
         commandStr = ''
         for cmd in newCmds:
-            commandStr += '``' + str(cmd) + '`` '
+            commandStr += '``' + str(cmd) + '``, '
 
         # add all commands to embed and message it
         embed.add_field(name='Commands', value=f'{commandStr}', inline=False)
