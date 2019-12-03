@@ -11,7 +11,13 @@ class SetupHelp(commands.Cog):
 
 class Help(commands.MinimalHelpCommand):
     async def send_command_help(self, command):
-        embed=discord.Embed(title=f'{command.name}', description=f'**Description:**  {command.description}\n**Usage:**  `{command.usage}`\n**Aliases:**  {command.aliases}', color=0xc1c100)
+        # removes aliases if there are none
+        if command.aliases == []:
+            alias = ""
+        else:
+            alias = f'\n**Aliases:**  {command.aliases}'
+            
+        embed=discord.Embed(title=f'{command.name}', description=f'**Description:**  {command.description}\n**Usage:**  `{command.usage}`{alias}', color=0xc1c100)
         await self.context.send(embed=embed)
 
     async def send_bot_help(self, mapping):
