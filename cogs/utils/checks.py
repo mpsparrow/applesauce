@@ -31,5 +31,5 @@ def allowedGuild(ctx):
             json.dump(commandconfig, json_data_file, indent=2)
         return False
     except:
-        logger.outputWrite(f'Command Check Failure {guildID} {cog} {name}')
+        logger.outputWrite(f'Command Check Failure')
         return False
