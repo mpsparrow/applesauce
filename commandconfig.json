@@ -3,6 +3,8 @@
     "Basic": {
       "chance": true,
       "coin": true,
+	  "ddos": true,
+	  "hank": true,
       "rate": true,
       "ping": true
     },

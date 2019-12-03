@@ -29,6 +29,13 @@ class Basic(commands.Cog):
     async def ddos(self, ctx, *, name):
         await ctx.send(f'{name} is being DDoSed')
 
+    # hank command
+    @commands.check(checks.allowedGuild)
+    @commands.command(name="hank", description="<:hank:651284638958092301>", usage="hank")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def hank(self, ctx):
+        await ctx.send('<:hank:651284638958092301>')
+
     # ping command
     @commands.check(checks.allowedGuild)
     @commands.command(name="ping", description="pong", usage="ping")
