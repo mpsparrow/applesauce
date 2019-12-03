@@ -53,7 +53,7 @@ class Loading(commands.Cog):
         try:
             with open(r'config.json', 'r') as file:
                 json_data = json.load(file)
-                json_data['addons'][extension] = True
+                json_data['cogs'][extension] = True
             with open(r'config.json', 'w') as file:
                 json.dump(json_data, file, indent=2)
             logger.outputWrite(f'Successfully enabled {extension}')
@@ -70,7 +70,7 @@ class Loading(commands.Cog):
         try:
             with open(r'config.json', 'r') as file:
                 json_data = json.load(file)
-                json_data['addons'][extension] = False
+                json_data['cogs'][extension] = False
             with open(r'config.json', 'w') as file:
                 json.dump(json_data, file, indent=2)
             logger.outputWrite(f'Successfully disabled {extension}')

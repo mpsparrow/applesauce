@@ -7,7 +7,7 @@ def startUpChecks():
         name = configloader.config['main']['botName']
         prefix = configloader.config['main']['prefix']
         token = configloader.config['main']['token']
-        addons = configloader.config['addons']
+        addons = configloader.config['cogs']
         return True
     except:
         return False

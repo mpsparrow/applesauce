@@ -26,7 +26,7 @@ class Quiz():
 
     # loads trivia file
     def load_questions(self, file):
-        path = os.path.abspath(f"./cogs/addons/user/trivia/{file}.txt")
+        path = os.path.abspath(f"./cogs/main/assets/trivia/{file}.txt")
         lines = open(path, encoding='utf-8').read().splitlines()
         for items in lines:
             tmp = items.split('\t')
@@ -73,7 +73,7 @@ class Trivia(commands.Cog):
 
         # reads all trivia txt files in trivia folder
         triviaList = []
-        for required in os.listdir('./cogs/addons/user/trivia'):
+        for required in os.listdir('./cogs/main/assets/trivia'):
             if required.endswith('.txt'): # if a .txt file is found
                 triviaList.append(required[:-4])
 

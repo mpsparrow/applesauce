@@ -5,13 +5,9 @@
     "prefix": "-",
     "excludedRequired": [
       ""
-    ],
-    "subfolders": [
-      "mod",
-      "user"
     ]
   },
-  "addons": {
+  "cogs": {
   },
   "wolfram": {
     "wolframKeys": [
