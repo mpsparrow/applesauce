@@ -13,9 +13,9 @@ class Loading(commands.Cog):
     # restart extension
     @commands.command()
     @commands.is_owner()
-    async def reload(self, ctx, folder, extension):
+    async def reload(self, ctx, extension):
         try:
-            self.bot.reload_extension(f'cogs.addons.{folder}.{extension}')
+            self.bot.reload_extension(f'cogs.main.{extension}')
             logger.outputWrite(f'Successfully reloaded {extension}')
             await ctx.send(f'Successfully reloaded {extension}')
         except:
@@ -25,9 +25,9 @@ class Loading(commands.Cog):
     # unload extension
     @commands.command()
     @commands.is_owner()
-    async def unload(self, ctx, folder, extension):
+    async def unload(self, ctx, extension):
         try:
-            self.bot.unload_extension(f'cogs.addons.{folder}.{extension}')
+            self.bot.unload_extension(f'cogs.main.{extension}')
             logger.outputWrite(f'Successfully unloaded {extension}')
             await ctx.send(f'Successfully unloaded {extension}')
         except:
@@ -37,9 +37,9 @@ class Loading(commands.Cog):
     # unload extension
     @commands.command()
     @commands.is_owner()
-    async def load(self, ctx, folder, extension):
+    async def load(self, ctx, extension):
         try:
-            self.bot.load_extension(f'cogs.addons.{folder}.{extension}')
+            self.bot.load_extension(f'cogs.main.{extension}')
             logger.outputWrite(f'Successfully loaded {extension}')
             await ctx.send(f'Successfully loaded {extension}')
         except:
