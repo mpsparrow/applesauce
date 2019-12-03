@@ -3,8 +3,19 @@ from discord.ext import commands
 from logs import logger
 import json
 
-# command check
-def allowedGuild(ctx):
+# command check function
+def allowedUser(ctx):
+    ### checks if user is in ignored list
+    try:
+        with open(r'config.json', 'r') as file:
+            user_data = json.load(file)
+            ignoredUsers = user_data['ignored']['users']
+        if str(ctx.author) in ignoredUsers:
+            return False
+    except:
+        logger.outputWrite(f'Command Check Failure')
+
+    ### checks if command is enabled in guild
     try:
         with open('commandconfig.json', 'r') as json_data_file:
             commandconfig = json.load(json_data_file)

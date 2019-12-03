@@ -5,7 +5,7 @@ import random
 import time
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from cogs.utils import checks
+from cogs.utils import commandchecks
 
 # main class for trivia
 class Quiz():
@@ -66,7 +66,7 @@ class Trivia(commands.Cog):
         self.bot = bot
 
     # main trivia command
-    @commands.check(checks.allowedGuild)
+    @commands.check(commandchecks.allowedUser)
     @commands.command(name="trivia", description="Select a category and play some trivia. Default values: amountofquestions = 10, delay = 10", usage="trivia category amountofquestions timeforquestion")
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def trivia(self, ctx, trivia="", amount=10, delay=10):

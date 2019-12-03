@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.utils import checks
+from cogs.utils import commandchecks
 import wikipedia
 
 class Wiki(commands.Cog):
@@ -8,7 +8,7 @@ class Wiki(commands.Cog):
         self.bot = bot
 
     # wikipedia command
-    @commands.check(checks.allowedGuild)
+    @commands.check(commandchecks.allowedUser)
     @commands.command(name="wikipedia", description="queries wikipedia and returns summary", usage="wikipedia query", aliases=['wiki'])
     @commands.cooldown(1, 10, commands.BucketType.default)
     async def wikipedia(self, ctx, *, lookup):

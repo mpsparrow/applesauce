@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.utils import checks
+from cogs.utils import commandchecks
 
 class Reactions(commands.Cog):
     def __init__(self, bot):

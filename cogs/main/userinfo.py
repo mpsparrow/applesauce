@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.utils import checks
+from cogs.utils import commandchecks
 import random
 import datetime
 
@@ -9,7 +9,7 @@ class UserInfo(commands.Cog):
         self.bot = bot
 
     # userinfo command
-    @commands.check(checks.allowedGuild)
+    @commands.check(commandchecks.allowedUser)
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="userinfo", description="displayed information about user", usage="userinfo user", aliases=["player", "playerinfo", "user"])
     async def userinfo(self, ctx, *, user: discord.Member = None):

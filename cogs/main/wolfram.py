@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from cogs.utils import configloader
-from cogs.utils import checks
+from cogs.utils import commandchecks
 import random
 import wolframalpha
 
@@ -10,7 +10,7 @@ class Wolfram(commands.Cog):
         self.bot = bot
 
     # wolfram command
-    @commands.check(checks.allowedGuild)
+    @commands.check(commandchecks.allowedUser)
     @commands.command(name="wolfram", description="queries Wolfram Alpha and returns result", usage="wolfram query", aliases=['wolf'])
     @commands.cooldown(1, 20, commands.BucketType.default)
     async def wolfram(self, ctx, *, question):

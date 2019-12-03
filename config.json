@@ -14,5 +14,10 @@
       "key",
       "another key"
     ]
+  },
+  "ignored": {
+    "users": [
+      ""
+    ]
   }
 }

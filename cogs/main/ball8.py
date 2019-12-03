@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.utils import checks
+from cogs.utils import commandchecks
 import random
 
 class ball8(commands.Cog):
@@ -18,7 +18,7 @@ class ball8(commands.Cog):
     ]
 
     # 8ball command
-    @commands.check(checks.allowedGuild)
+    @commands.check(commandchecks.allowedUser)
     @commands.command(name="8ball", description="gives a random answer completely not based on what you ask him", usage="8ball", aliases=['magicball'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def _8ball(self, ctx):
