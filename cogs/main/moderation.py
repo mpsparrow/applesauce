@@ -11,7 +11,7 @@ class Moderation(commands.Cog):
     # commands
     # ban command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="ban", description="bans user from guild", usage="ban user")
+    @commands.command(name="ban", description="Bans user from the guild.", usage="ban <user>")
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
         await member.ban(reason=reason)
@@ -19,7 +19,7 @@ class Moderation(commands.Cog):
 
     # clear/purge command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="clear", description="clears x amount of messages from channel (including message containing command)", usage="clear x", aliases=['purge'])
+    @commands.command(name="clear", description="Clears x amount of messages from channel (including the message containing the command call).", usage="clear <#messages>", aliases=['purge'])
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount=1):
         await ctx.channel.purge(limit=amount+1)
@@ -27,7 +27,7 @@ class Moderation(commands.Cog):
 
     # kick command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="kick", description="kicks user from guild", usage="kick user")
+    @commands.command(name="kick", description="Kicks user from the guild.", usage="kick <user>")
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason=None):
         await member.kick(reason=reason)

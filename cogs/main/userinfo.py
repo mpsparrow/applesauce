@@ -11,7 +11,7 @@ class UserInfo(commands.Cog):
     # userinfo command
     @commands.check(commandchecks.allowedUser)
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.command(name="userinfo", description="displayed information about user", usage="userinfo user", aliases=["player", "playerinfo", "user"])
+    @commands.command(name="userinfo", description="Displays random information and stats about the user.", usage="userinfo <user>", aliases=["player", "playerinfo", "user"])
     async def userinfo(self, ctx, *, user: discord.Member = None):
         if not user:
             user = ctx.author

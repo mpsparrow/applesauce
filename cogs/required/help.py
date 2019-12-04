@@ -26,7 +26,11 @@ class Help(commands.MinimalHelpCommand):
         # get list of commands
         cmds = []
         for cog, cog_commands in mapping.items():
-            cmds = cmds + cog_commands
+            cogstr = str(cog)
+            if "required" in cogstr:
+                ownerCmd = cmds + cog_commands # commands in required framework
+            else:
+                cmds = cmds + cog_commands # all cog commands
 
         # put commands in alphabetical order
         newCmds = []

@@ -25,6 +25,5 @@ class ball8(commands.Cog):
         # picks random value from ballAnswers list
         await ctx.send(self.ballAnswers[random.randint(0, len(self.ballAnswers)-1)])
 
-
 def setup(bot):
     bot.add_cog(ball8(bot))

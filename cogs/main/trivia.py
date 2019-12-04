@@ -67,7 +67,7 @@ class Trivia(commands.Cog):
 
     # main trivia command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="trivia", description="Select a category and play some trivia. Default values: amountofquestions = 10, delay = 10", usage="trivia category amountofquestions timeforquestion")
+    @commands.command(name="trivia", description="Select a category and play some trivia. Use `trivia` for a list of categories.", usage="trivia <category> <#questions> <timelimit>")
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def trivia(self, ctx, trivia="", amount=10, delay=10):
 

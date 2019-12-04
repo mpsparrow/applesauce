@@ -10,21 +10,21 @@ class Basic(commands.Cog):
     # commands
     # chance command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="chance", description="random percent integer between 0 and 100", usage="chance")
+    @commands.command(name="chance", description="Random integer between 0 and 100 (displayed as percent)", usage="chance")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def chance(self, ctx):
         await ctx.send(f'{random.randint(0, 100)}% chance')
 
     # coin command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="coin", description="flips a coin and returns heads or tails", usage="coin")
+    @commands.command(name="coin", description="Flips a coin and returns heads or tails.", usage="coin")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def coin(self, ctx):
         await ctx.send(random.choice(['heads', 'tails']))
         
     # DDOS command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="ddos", description="you ever wanted to DDOS something?", usage="ddos <what-to-DDOS>")
+    @commands.command(name="ddos", description="You ever wanted to DDoS something? Well today is your lucky day!", usage="ddos <what-to-DDOS>")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def ddos(self, ctx, *, name):
         await ctx.send(f'{name} is being DDoSed')
@@ -45,7 +45,7 @@ class Basic(commands.Cog):
 
     # rate command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="rate", description="random rating out of 10", usage="rate", aliases=['rating'])
+    @commands.command(name="rate", description="Random integer rating out of 10.", usage="rate", aliases=['rating'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def rate(self, ctx):
         await ctx.send(f'{random.randint(0,10)}/10')

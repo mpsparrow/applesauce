@@ -11,7 +11,7 @@ class Wolfram(commands.Cog):
 
     # wolfram command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="wolfram", description="queries Wolfram Alpha and returns result", usage="wolfram query", aliases=['wolf'])
+    @commands.command(name="wolfram", description="Queries Wolfram Alpha and returns the result and link.", usage="wolfram <query>", aliases=['wolf'])
     @commands.cooldown(1, 20, commands.BucketType.default)
     async def wolfram(self, ctx, *, question):
         loading = await ctx.send('loading....') # loading message

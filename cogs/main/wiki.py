@@ -9,7 +9,7 @@ class Wiki(commands.Cog):
 
     # wikipedia command
     @commands.check(commandchecks.allowedUser)
-    @commands.command(name="wikipedia", description="queries wikipedia and returns summary", usage="wikipedia query", aliases=['wiki'])
+    @commands.command(name="wikipedia", description="Queries Wikipedia and returns summary and link to the page.", usage="wikipedia <query>", aliases=['wiki'])
     @commands.cooldown(1, 10, commands.BucketType.default)
     async def wikipedia(self, ctx, *, lookup):
         loading = await ctx.send('loading....') # loading message
