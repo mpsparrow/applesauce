@@ -5,7 +5,7 @@ from logs import logger
 from cogs.utils import configloader
 import json
 
-class Loading(commands.Cog):
+class cogCmds(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -13,31 +13,31 @@ class Loading(commands.Cog):
     # restart extension
     @commands.command()
     @commands.is_owner()
-    async def reload(self, ctx, extension):
+    async def reloadCog(self, ctx, extension):
         try:
             self.bot.reload_extension(f'cogs.main.{extension}')
             logger.outputWrite(f'Successfully reloaded {extension}')
             await ctx.send(f'Successfully reloaded {extension}')
         except:
             logger.outputWrite(f'Failed to reload {extension}')
-            await ctx.send(f'Failed to reloaded {extension}')
+            await ctx.send(f'Failed to reload {extension}')
 
     # unload extension
     @commands.command()
     @commands.is_owner()
-    async def unload(self, ctx, extension):
+    async def unloadCog(self, ctx, extension):
         try:
             self.bot.unload_extension(f'cogs.main.{extension}')
             logger.outputWrite(f'Successfully unloaded {extension}')
             await ctx.send(f'Successfully unloaded {extension}')
         except:
             logger.outputWrite(f'Failed to unload {extension}')
-            await ctx.send(f'Failed to unloaded {extension}')
+            await ctx.send(f'Failed to unload {extension}')
 
     # unload extension
     @commands.command()
     @commands.is_owner()
-    async def load(self, ctx, extension):
+    async def loadCog(self, ctx, extension):
         try:
             self.bot.load_extension(f'cogs.main.{extension}')
             logger.outputWrite(f'Successfully loaded {extension}')
@@ -49,7 +49,7 @@ class Loading(commands.Cog):
     # enable extension
     @commands.command()
     @commands.is_owner()
-    async def enable(self, ctx, extension):
+    async def enableCog(self, ctx, extension):
         try:
             config = configloader.configLoad('config.json')
             config['cogs'][extension] = True
@@ -64,7 +64,7 @@ class Loading(commands.Cog):
     # disable extension
     @commands.command()
     @commands.is_owner()
-    async def disable(self, ctx, extension):
+    async def disableCog(self, ctx, extension):
         try:
             config = configloader.configLoad('config.json')
             config['cogs'][extension] = False
@@ -76,4 +76,4 @@ class Loading(commands.Cog):
             await ctx.send(f'Failed disabling {extension}')
 
 def setup(bot):
-    bot.add_cog(Loading(bot))
+    bot.add_cog(cogCmds(bot))
