@@ -1,5 +1,6 @@
 {
   "guildID": {
+	"prefix": "-",
     "ignored": [],
     "Commands": {
       "Basic": {

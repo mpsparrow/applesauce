@@ -19,9 +19,17 @@ import os
 import datetime
 import json
 
-config = configloader.configLoad('config.json')
+def get_prefix(bot, message): # gets prefix
+    try:
+        configGuild = configloader.configLoad('guildconfig.json') # loads guildconfig.json
+        return configGuild[str(message.guild.id)]['prefix'] # returns guild specific prefix
+    except:
+        config = configloader.configLoad('config.json') # loads config.json
+        return config['main']['prefix'] # returns default prefix if no guild prefix is found
+
+config = configloader.configLoad('config.json') # loads config.json
 botName = config['main']['botName'] # gets bots name from config.json
-bot = commands.Bot(command_prefix = config['main']['prefix'], case_insensitive = True) # gets bots prefix and case_insensitivity
+bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True) # gets bots prefix and case_insensitivity
 
 @bot.event
 async def on_ready(): # on startup
