@@ -4,10 +4,12 @@ import json
 def startUpChecks():
     # checks config.json for important missing information
     try:
-        name = configloader.config['main']['botName']
-        prefix = configloader.config['main']['prefix']
-        token = configloader.config['main']['token']
-        addons = configloader.config['cogs']
+        config = configloader.configLoad('config.json')
+        config2 = configloader.configLoad('guildconfig.json')
+        name = config['main']['botName']
+        prefix = config['main']['prefix']
+        token = config['main']['token']
+        addons = config['cogs']
         return True
     except:
         return False

@@ -1,5 +1,11 @@
 import json
 
-# loads config.json file
-with open('config.json') as json_data_file:
-    config = json.load(json_data_file)
+# config loader and unloader
+def configLoad(filename):
+    with open(filename, 'r') as jsondata:
+        f = json.load(jsondata)
+    return f
+
+def configDump(filename, data):
+    with open(filename, 'w') as jsondata:
+        json.dump(data, jsondata, indent=4)

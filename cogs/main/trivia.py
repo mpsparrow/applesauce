@@ -14,13 +14,18 @@ class Quiz():
         self.questions = []
         self.question = ""
         self.answers = ""
-        if round(abs(amount)) > 50:
-            self.amount = 50
+
+        if round(abs(amount)) > 15:
+            self.amount = 15
+        elif round(abs(amount)) == 0:
+            self.amount = 1
         else:
             self.amount = round(abs(amount))
 
-        if round(abs(delay)) > 30:
-            self.delay = 30
+        if round(abs(delay)) > 20:
+            self.delay = 20
+        elif round(abs(delay)) < 2:
+            self.delay = 2
         else:
             self.delay = round(abs(delay))
 
@@ -66,7 +71,7 @@ class Trivia(commands.Cog):
         self.bot = bot
 
     # main trivia command
-    @commands.check(commandchecks.allowedUser)
+    @commands.check(commandchecks.isAllowed)
     @commands.command(name="trivia", description="Select a category and play some trivia. Use `trivia` for a list of categories.", usage="trivia <category> <#questions> <timelimit>")
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def trivia(self, ctx, trivia="", amount=10, delay=10):

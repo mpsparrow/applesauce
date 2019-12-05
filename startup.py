@@ -2,29 +2,29 @@
 Applesauce
 Created By: Matthew
 Framework Version: v1.1
-Last Updated: December 2, 2019
+Last Updated: December 4, 2019
 Created On: October 12, 2019
 
 Please read LICENSE.txt for license information.
 '''
 
-# importing files and libraries
 import discord
 from discord.ext import commands
 from cogs.utils import configloader
 from cogs.utils import startupchecks
+from cogs.utils import commandchecks
 from logs import logger
 import sys
 import os
 import datetime
 import json
 
-botName = configloader.config['main']['botName'] # gets bots name from config.json
-bot = commands.Bot(command_prefix = configloader.config['main']['prefix'], case_insensitive = True) # gets bots prefix and case_insensitivity
+config = configloader.configLoad('config.json')
+botName = config['main']['botName'] # gets bots name from config.json
+bot = commands.Bot(command_prefix = config['main']['prefix'], case_insensitive = True) # gets bots prefix and case_insensitivity
 
 @bot.event
 async def on_ready(): # on startup
-
     ### clears logs
     logger.outputWipe() # output-log.txt
     logger.messageWipe() # message-log.txt
@@ -50,7 +50,7 @@ async def on_ready(): # on startup
         logger.outputWrite('\nInitializing Required Extensions') # output-log.txt
         for required in os.listdir('./cogs/required'): # looks in /cogs/required
             if required.endswith('.py'): # if a .py file is found
-                if required[:-3] not in configloader.config['main']['excludedRequired']: # checks if config lists required cog as excluded
+                if required[:-3] not in config['main']['excludedRequired']: # checks if config lists required cog as excluded
                     try:
                         bot.load_extension(f'cogs.required.{required[:-3]}') # load file
                         logger.outputWrite(f' Successfully loaded {required}') # output-log.txt
@@ -70,13 +70,11 @@ async def on_ready(): # on startup
         for cog in os.listdir(f'./cogs/main'): # looks in /cogs/main
             if cog.endswith('.py'): # if a .py file is found
                 try:
-                    value = configloader.config['cogs'][cog[:-3]]
+                    value = config['cogs'][cog[:-3]]
                 except:
-                    with open(r'config.json', 'r') as file:
-                        json_data = json.load(file)
-                        json_data['cogs'][cog[:-3]] = False
-                    with open(r'config.json', 'w') as file:
-                        json.dump(json_data, file, indent=2)
+                    newConfig = configloader.configLoad('config.json')
+                    newConfig['cogs'][cog[:-3]] = False
+                    configloader.configDump('config.json', newConfig)
                     value = False
 
                 if value == True: # if module doesn't exist in excludedModules list (config.json)
@@ -95,4 +93,4 @@ async def on_ready(): # on startup
         logger.outputWrite(f' Addons Loaded: Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n') # output-log.txt
         logger.outputWrite(f'{botName} is ready to rumble!') # output-log.txt
 
-bot.run(configloader.config['main']['token']) # gets Discord token from config.json and starts bot
+bot.run(config['main']['token']) # gets Discord token from config.json and starts bot

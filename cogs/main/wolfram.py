@@ -10,14 +10,15 @@ class Wolfram(commands.Cog):
         self.bot = bot
 
     # wolfram command
-    @commands.check(commandchecks.allowedUser)
+    @commands.check(commandchecks.isAllowed)
     @commands.command(name="wolfram", description="Queries Wolfram Alpha and returns the result and link.", usage="wolfram <query>", aliases=['wolf'])
     @commands.cooldown(1, 20, commands.BucketType.default)
     async def wolfram(self, ctx, *, question):
         loading = await ctx.send('loading....') # loading message
         questionLink = 'https://www.wolframalpha.com/input/?i=' + question.strip().lower().replace(' ', '+') # builds wolfram URL (used just for link in results)
 
-        wolframKeys = configloader.config['wolfram']['wolframKeys'] # gets key list from config
+        config = configloader.configLoad('config.json')
+        wolframKeys = config['wolfram']['wolframKeys'] # gets key list from config
         clientWolfram = wolframalpha.Client(wolframKeys[random.randint(0,len(wolframKeys)-1)]) # initialize API and choose key from wolframKeys list
         res = clientWolfram.query(question) # sends a query with the question
 

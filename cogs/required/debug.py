@@ -30,7 +30,7 @@ class Debug(commands.Cog):
         await ctx.send(str(round(self.bot.latency * 1000)) + 'ms')
 
     # restart
-    @commands.command(name="close", description="Shuts down bot.", usage="close", aliases=['shutdown', 'restart'])
+    @commands.command(name="close", description="Shuts down bot.", usage="close", aliases=['shutdown', 'restart', 'kill'])
     @commands.is_owner()
     async def close(self, ctx):
         await ctx.send("shutting down....")

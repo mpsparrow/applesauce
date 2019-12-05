@@ -9,7 +9,7 @@ class UserInfo(commands.Cog):
         self.bot = bot
 
     # userinfo command
-    @commands.check(commandchecks.allowedUser)
+    @commands.check(commandchecks.isAllowed)
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="userinfo", description="Displays random information and stats about the user.", usage="userinfo <user>", aliases=["player", "playerinfo", "user"])
     async def userinfo(self, ctx, *, user: discord.Member = None):

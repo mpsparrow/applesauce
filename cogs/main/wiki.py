@@ -8,7 +8,7 @@ class Wiki(commands.Cog):
         self.bot = bot
 
     # wikipedia command
-    @commands.check(commandchecks.allowedUser)
+    @commands.check(commandchecks.isAllowed)
     @commands.command(name="wikipedia", description="Queries Wikipedia and returns summary and link to the page.", usage="wikipedia <query>", aliases=['wiki'])
     @commands.cooldown(1, 10, commands.BucketType.default)
     async def wikipedia(self, ctx, *, lookup):

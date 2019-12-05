@@ -51,11 +51,9 @@ class Loading(commands.Cog):
     @commands.is_owner()
     async def enable(self, ctx, extension):
         try:
-            with open(r'config.json', 'r') as file:
-                json_data = json.load(file)
-                json_data['cogs'][extension] = True
-            with open(r'config.json', 'w') as file:
-                json.dump(json_data, file, indent=2)
+            config = configloader.configLoad('config.json')
+            config['cogs'][extension] = True
+            configloader.configDump('config.json', config)
             logger.outputWrite(f'Successfully enabled {extension}')
             await ctx.send(f'Successfully enabled {extension}')
         except Exception as e:
@@ -68,11 +66,9 @@ class Loading(commands.Cog):
     @commands.is_owner()
     async def disable(self, ctx, extension):
         try:
-            with open(r'config.json', 'r') as file:
-                json_data = json.load(file)
-                json_data['cogs'][extension] = False
-            with open(r'config.json', 'w') as file:
-                json.dump(json_data, file, indent=2)
+            config = configloader.configLoad('config.json')
+            config['cogs'][extension] = False
+            configloader.configDump('config.json', config)
             logger.outputWrite(f'Successfully disabled {extension}')
             await ctx.send(f'Successfully disabled {extension}')
         except:

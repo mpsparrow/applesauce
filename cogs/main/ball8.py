@@ -18,7 +18,7 @@ class ball8(commands.Cog):
     ]
 
     # 8ball command
-    @commands.check(commandchecks.allowedUser)
+    @commands.check(commandchecks.isAllowed)
     @commands.command(name="8ball", description="gives a random answer completely not based on what you ask him", usage="8ball", aliases=['magicball'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def _8ball(self, ctx):
