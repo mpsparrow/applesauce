@@ -12,10 +12,10 @@ class cogCmds(commands.Cog):
     # disabled command
     @commands.command()
     @commands.is_owner()
-    async def disableCmd(self, ctx, cog, cmd):
+    async def disableCmd(self, ctx, cmd):
         try:
             config = configloader.configLoad('guildconfig.json')
-            config[str(ctx.guild.id)]["Commands"][cog][cmd] = False
+            config[str(ctx.guild.id)]["Commands"][cmd] = False
             configloader.configDump('guildconfig.json', config)
             logger.outputWrite(f'Successfully disabled {cmd}')
             await ctx.send(f'Successfully disabled {cmd}')
@@ -26,10 +26,10 @@ class cogCmds(commands.Cog):
     # enable command
     @commands.command()
     @commands.is_owner()
-    async def enableCmd(self, ctx, cog, cmd):
+    async def enableCmd(self, ctx, cmd):
         try:
             config = configloader.configLoad('guildconfig.json')
-            config[str(ctx.guild.id)]["Commands"][cog][cmd] = True
+            config[str(ctx.guild.id)]["Commands"][cmd] = True
             configloader.configDump('guildconfig.json', config)
             logger.outputWrite(f'Successfully enabled {cmd}')
             await ctx.send(f'Successfully enabled {cmd}')

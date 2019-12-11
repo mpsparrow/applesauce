@@ -1,35 +1,21 @@
 {
-  "guildID": {
-	"prefix": "-",
-    "ignored": [],
-    "Commands": {
-      "Basic": {
-        "coin": true,
-        "rate": true,
-        "ping": true,
-        "hank": true,
-        "chance": true
-      },
-      "Wiki": {
-        "wikipedia": true
-      },
-      "Wolfram": {
-        "wolfram": true
-      },
-      "Moderation": {
-        "kick": false,
-        "ban": false,
-        "clear": false
-      },
-      "ball8": {
-        "8ball": true
-      },
-      "UserInfo": {
-        "userinfo": true
-      },
-      "Trivia": {
-        "trivia": true
-      }
-    }
-  }
+	"guildID": {
+		"prefix": "-",
+		"ignored": [],
+		"Commands": {
+			"coin": true,
+			"rate": true,
+			"ping": true,
+			"hank": false,
+			"chance": true,
+			"wikipedia": true,
+			"wolfram": true,
+			"kick": false,
+			"ban": false,
+			"clear": true,
+			"8ball": true,
+			"userinfo": true,
+			"trivia": true
+		}
+	}
 }

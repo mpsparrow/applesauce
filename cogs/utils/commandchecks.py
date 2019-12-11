@@ -23,16 +23,16 @@ def ignoredCheck(ctx, guildID):
             return False
 
 # checks if command is disabled in guild
-def guildCheck(ctx, guildID, cog, name):
+def guildCheck(ctx, guildID, name):
     try:
         config = configloader.configLoad('guildconfig.json')
-        return config[guildID]["Commands"][cog][name] # sees if it can access the required data
+        return config[guildID]["Commands"][name] # sees if it can access the required data
     except:
-        guildBuild(ctx, guildID, cog, name)
+        guildBuild(ctx, guildID, name)
         return False
 
 # checks and builds config file if fields are missing
-def guildBuild(ctx, guildID, cog, name):
+def guildBuild(ctx, guildID, name):
     try:
         config = configloader.configLoad('guildconfig.json')
         try:
@@ -50,18 +50,11 @@ def guildBuild(ctx, guildID, cog, name):
             configloader.configDump('guildconfig.json', config2)
         
         try:
-            tmp3 = config[guildID]["Commands"][cog]
+            tmp4 = config[guildID]["Commands"][name]
         except:
             config3 = configloader.configLoad('guildconfig.json')
-            config3[guildID]["Commands"][cog] = {}
+            config3[guildID]["Commands"][name] = False
             configloader.configDump('guildconfig.json', config3)
-
-        try:
-            tmp4 = config[guildID]["Commands"][cog][name]
-        except:
-            config4 = configloader.configLoad('guildconfig.json')
-            config4[guildID]["Commands"][cog][name] = False
-            configloader.configDump('guildconfig.json', config4)
     except:
         logger.outputWrite('Command Check Failure (rebuild)')
 
@@ -71,10 +64,9 @@ def isAllowed(ctx):
         # gets information about command
         config = configloader.configLoad('guildconfig.json')
         guildID = str(ctx.guild.id)
-        cog = str(ctx.command.cog.qualified_name)
         name = str(ctx.command.qualified_name)
     except:
         logger.outputWrite('Command Check Failure (main)')
         return False
 
-    return guildCheck(ctx, guildID, cog, name) and ignoredCheck(ctx, guildID) # if all checks are passed
+    return guildCheck(ctx, guildID, name) and ignoredCheck(ctx, guildID) # if all checks are passed

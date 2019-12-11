@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.utils import configloader
-from cogs.utils import commandchecks
+from cogs.utils import configloader, commandchecks
 import random
 import wolframalpha
 

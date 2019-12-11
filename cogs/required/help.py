@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
+from cogs.utils import configloader
 
 class SetupHelp(commands.Cog):
     def __init__(self, bot):
@@ -10,41 +11,89 @@ class SetupHelp(commands.Cog):
         bot.help_command.cog = self
 
 class Help(commands.MinimalHelpCommand):
+    async def command_not_found(self, string):
+        await self.context.send("command unavailable")
+
+    async def subcommand_not_found(self, command, string):
+        await self.context.send("command unavailable")
+
+    async def send_cog_help(self, cog):
+        await self.context.send("command unavailable")
+
+    async def send_group_help(self, group):
+        await self.context.send("command unavailable")
+
     async def send_command_help(self, command):
-        # removes aliases if there are none
-        if command.aliases == []:
-            alias = ""
-        else:
-            alias = f'\n**Aliases:**  {command.aliases}'
-            
-        embed=discord.Embed(title=f'Help - {command.name}', description=f'**Description:** {command.description}\n**Usage:**  `{command.usage}`{alias}', color=0xc1c100)
-        await self.context.send(embed=embed)
+        config = configloader.configLoad('guildconfig.json') # loads guildconfig.json
+        try:
+            prefix = config[str(self.context.guild.id)]['prefix']
+        except:
+            config2 = configloader.configLoad('config.json')
+            prefix = config2['main']['prefix']
+        try:
+            randomVar = config[str(self.context.guild.id)]["Commands"][str(command.name)] # gets true/false value of command for guild
+            if randomVar == True: # if command is enabled in guild
+
+                # creates list of aliases for command
+                alias = f'\n**Aliases:** '
+                if command.aliases == []:
+                    alias = ""
+                else:
+                    for i in range(len(command.aliases)):
+                        if i == len(command.aliases) - 1:
+                            alias = alias + '`' + command.aliases[i] + '`'
+                        else:
+                            alias = alias + '`' + command.aliases[i] + '`' + ', '
+
+                # builds and sends embed for command help
+                embed=discord.Embed(title=f'Help - {command.name}', description=f'**Description:** {command.description}\n**Usage:**  `{prefix}{command.usage}`{alias}', color=0xc1c100)
+                await self.context.send(embed=embed)
+            else:
+                await self.context.send("command unavailable") # command is disabled
+        except:
+            await self.context.send("command unavailable") # error somehow in getting command
 
     async def send_bot_help(self, mapping):
-        embed=discord.Embed(title='Help', description=f'Specify a command to see more information. (i.e. `help 8ball`) ', color=0xc1c100)
-
         # get list of commands
         cmds = []
-        for cog, cog_commands in mapping.items():
-            cogstr = str(cog)
-            if "required" in cogstr:
-                ownerCmd = cmds + cog_commands # commands in required framework
-            else:
-                cmds = cmds + cog_commands # all cog commands
+        config = configloader.configLoad('guildconfig.json') # loads guildconfig.json
 
-        # put commands in alphabetical order
+        try:
+            prefix = config[str(self.context.guild.id)]['prefix']
+        except:
+            config2 = configloader.configLoad('config.json')
+            prefix = config2['main']['prefix']
+
+        for cog, cog_commands in mapping.items():
+            cmds = cmds + cog_commands
+
         newCmds = []
         for item in cmds:
             newCmds.append(str(item))
         newCmds = sorted(newCmds)
 
-        # combine commands into string for output
-        commandStr = ''
-        for cmd in newCmds:
-            commandStr += '``' + str(cmd) + '``, '
+        finalCmds = []
+        for item in newCmds:
+            try:
+                randomVar = config[str(self.context.guild.id)]["Commands"][item]
+                if randomVar == True:
+                    finalCmds.append(item)
+            except:
+                pass
+
+        cmdString = ""
+        if len(finalCmds) == 0:
+            cmdString = "no commands found"
+        else:
+            for i in range(len(finalCmds)):
+                if i == len(finalCmds)-1:
+                    cmdString = cmdString + '`' + finalCmds[i] + '`'
+                else:
+                    cmdString = cmdString + '`' + finalCmds[i] + '`' + ', '
 
         # add all commands to embed and message it
-        embed.add_field(name='Commands', value=f'{commandStr}', inline=False)
+        embed=discord.Embed(title='Help', description=f'Specify a command to see more information (i.e. `{prefix}help 8ball`). Use prefix `{prefix}` for all commands. ', color=0xc1c100)
+        embed.add_field(name='Commands', value=f'{cmdString}', inline=False)
         await self.context.send(embed=embed)
 
 def setup(bot):

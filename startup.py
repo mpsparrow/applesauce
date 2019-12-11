@@ -1,18 +1,16 @@
 '''
 Applesauce
 Created By: Matthew
-Framework Version: v1.1
-Last Updated: December 4, 2019
+Framework Version: v1.2
+Last Updated: December 10, 2019
 Created On: October 12, 2019
 
-Please read LICENSE.txt for license information.
+Please read license.txt for license information.
 '''
 
 import discord
 from discord.ext import commands
-from cogs.utils import configloader
-from cogs.utils import startupchecks
-from cogs.utils import commandchecks
+from cogs.utils import configloader, startupchecks, commandchecks, databaseconnect
 from logs import logger
 import sys
 import os

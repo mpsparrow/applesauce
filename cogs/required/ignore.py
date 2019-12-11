@@ -8,7 +8,7 @@ class Ignore(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ignore user command
+    # ignore member command
     @commands.command()
     @commands.is_owner()
     async def ignore(self, ctx, member : discord.Member):
@@ -28,8 +28,9 @@ class Ignore(commands.Cog):
             if str(member) not in config[str(ctx.guild.id)]['ignored']:
                 config[str(ctx.guild.id)]['ignored'].append(str(member)) # appends user id to list
             configloader.configDump('guildconfig.json', config)
+            await ctx.send(f'{member} is now ignored')
         except:
-            await ctx.send("error") # error message
+            await ctx.send(f'Error ignoring member {member}') # error message
 
     # unignore user command
     @commands.command()
@@ -46,12 +47,14 @@ class Ignore(commands.Cog):
                         userList.pop(item)
                         break
             except:
-                await ctx.send("User not found") # if user isn't in list
+                await ctx.send(f'User {member} not found') # if user isn't in list
 
             config[str(ctx.guild.id)]['ignored'] = userList # saves new list to json array
             configloader.configDump('guildconfig.json', config)
+            await ctx.send(f'{member} is no longer ignored')
         except:
-            await ctx.send("error") # error message
+            await ctx.send(f'Error unignoring member {member}') # error message
         
 def setup(bot):
+    bot.remove_command("help")
     bot.add_cog(Ignore(bot))
