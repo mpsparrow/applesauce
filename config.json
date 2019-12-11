@@ -7,6 +7,12 @@
       ""
     ]
   },
+    "mysql": {
+        "user": "",
+        "password": "",
+        "host": "",
+        "database": ""
+    },
   "cogs": {
   },
   "wolfram": {
