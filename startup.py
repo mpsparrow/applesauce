@@ -36,19 +36,21 @@ async def on_ready(): # on startup
     logger.messageWipe() # message-log.txt
     logger.commandWipe() # command-log.txt
 
+    logger.outputWrite('Running Checks')
     if startupchecks.startUpChecks() == False: # runs startup checks in startupchecks.py
         ### if startup checks fail
         logger.outputWipe() # create and clear output-log.txt
-        logger.outputWrite(f"Something isn't configured correctly for Applesauce to startup. Please check config.json") # output-log.txt
+        logger.outputWrite(f"Something isn't configured correctly for Applesauce to startup.") # output-log.txt
+        logger.outputWrite(f"Startup aborted")
     else:
         ### startup checks passed
         ### writes startup info to output-log.txt
-        logger.outputWrite(f'Starting {botName}')
+        logger.outputWrite(f' Passed Checks\n')
+        logger.outputWrite(f'Starting {botName}\n')
         logger.outputWrite('Debug:')
         logger.outputWrite(f' date/time: {datetime.datetime.now()}') # date and time
         logger.outputWrite(f' discord.py version: {discord.__version__}') # discord.py version
-        logger.outputWrite(f' python version: {sys.version}\n') # python version
-        logger.outputWrite(f'Passed Checks')
+        logger.outputWrite(f' python version: {sys.version}') # python version
 
         ### Requires Addons loading
         ### Any file in /cogs/required is considered a required cog.
@@ -63,13 +65,13 @@ async def on_ready(): # on startup
                     except Exception as e:
                         logger.outputWrite(f' Failed to load {required} (required cog)') # output-log.txt
                         logger.outputWrite(f' {e}') # output-log.txt
-                        logger.outputWrite('startup halted') # output-log.txt
+                        logger.outputWrite('Startup aborted') # output-log.txt
                         return
 
         ### Main loading
         ### Any file in /cogs/main is considered a cog.
         ### These files are attempted to be loaded. If a file errors then it is skipped and initializing continues.
-        logger.outputWrite('\nInitializing Addons') # output-log.txt
+        logger.outputWrite('\nInitializing Cogs') # output-log.txt
         countSuccess = 0 # counts cogs that successful loaded (not including required addons)
         countFail = 0 # counts cogs that failed to load (not including required addons)
         countSkip = 0 # counts cogs that were skipped from loading (not including required addons)
@@ -96,7 +98,7 @@ async def on_ready(): # on startup
                     logger.outputWrite(f' Skipped loading {cog}') # output-log.txt
                     countSkip += 1 # adds to skipped cogs
 
-        logger.outputWrite(f' Addons Loaded: Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n') # output-log.txt
+        logger.outputWrite(f' Cogs Loaded: Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n') # output-log.txt
         logger.outputWrite(f'{botName} is ready to rumble!') # output-log.txt
 
 bot.run(config['main']['token']) # gets Discord token from config.json and starts bot
