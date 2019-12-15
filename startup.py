@@ -2,7 +2,7 @@
 Applesauce
 Created By: Matthew
 Framework Version: v1.2
-Last Updated: December 10, 2019
+Last Updated: December 14, 2019
 Created On: October 12, 2019
 
 Please read license.txt for license information.
@@ -11,13 +11,15 @@ Please read license.txt for license information.
 import discord
 from discord.ext import commands
 from cogs.utils import configloader, startupchecks, commandchecks, databaseconnect
+from discord.ext.commands import has_permissions
 from logs import logger
 import sys
 import os
 import datetime
 import json
 
-def get_prefix(bot, message): # gets prefix
+# gets prefix
+def get_prefix(bot, message): 
     try:
         configGuild = configloader.configLoad('guildconfig.json') # loads guildconfig.json
         return configGuild[str(message.guild.id)]['prefix'] # returns guild specific prefix
@@ -28,6 +30,13 @@ def get_prefix(bot, message): # gets prefix
 config = configloader.configLoad('config.json') # loads config.json
 botName = config['main']['botName'] # gets bots name from config.json
 bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True) # gets bots prefix and case_insensitivity
+
+# output log command
+@bot.command(name="outputLog", description="prints output log", usage="outputLog")
+@commands.is_owner()
+async def outputLog(ctx):
+    with open(r'logs/output-log.txt') as f: # opens log file
+        await ctx.send(f"```{f.read()}```") # sends log file in message
 
 @bot.event
 async def on_ready(): # on startup
