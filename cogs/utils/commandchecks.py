@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
-from logs import logger
-from . import configloader
+from . import configloader, logger
 import json
 
 # checks if user is ignored in guild

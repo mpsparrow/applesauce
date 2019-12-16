@@ -1,6 +1,5 @@
-from . import configloader
+from . import configloader, logger
 import json
-from logs import logger
 
 def startUpChecks():
     # checks config.json for important missing information

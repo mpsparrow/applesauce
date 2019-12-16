@@ -10,9 +10,8 @@ Please read license.txt for license information.
 
 import discord
 from discord.ext import commands
-from cogs.utils import configloader, startupchecks, commandchecks, databaseconnect
 from discord.ext.commands import has_permissions
-from logs import logger
+from cogs.utils import configloader, startupchecks, commandchecks, databaseconnect, logger
 import sys
 import os
 import datetime

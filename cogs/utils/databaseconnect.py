@@ -1,8 +1,7 @@
 import json
-from . import configloader
+from . import configloader, logger
 import mysql.connector
 from mysql.connector import errorcode
-from logs import logger
 
 def SQLquery(query):
     try:

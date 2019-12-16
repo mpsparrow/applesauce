@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from logs import logger
+from cogs.utils import logger
 
 class Error(commands.Cog):
     def __init__(self, bot):
