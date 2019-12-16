@@ -64,7 +64,7 @@ async def on_ready(): # on startup
         ### Requires Addons loading
         ### Any file in /cogs/required is considered a required cog.
         ### These files MUST all be loaded in order for the bot to continue initializing.
-        logger.outputWrite('\nInitializing Required Extensions') # output-log.txt
+        logger.outputWrite('\nInitializing Required Cogs') # output-log.txt
         for required in os.listdir('./cogs/required'): # looks in /cogs/required
             if required.endswith('.py'): # if a .py file is found
                 if required[:-3] not in config['main']['excludedRequired']: # checks if config lists required cog as excluded
