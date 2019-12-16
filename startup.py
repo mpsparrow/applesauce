@@ -34,7 +34,7 @@ bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True) # gets 
 @bot.command(name='outputLog', description='prints output-log.txt', usage='outputLog')
 @commands.is_owner()
 async def outputLog(ctx):
-    await ctx.send(f'```{logger.logReturn('output-log.txt')}```') # sends output-log.txt file in message
+    await ctx.send(f"```{logger.logReturn('output-log.txt')}```") # sends output-log.txt file in message
 
 # on startup
 @bot.event
