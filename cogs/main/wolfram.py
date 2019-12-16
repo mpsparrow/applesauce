@@ -16,9 +16,9 @@ class Wolfram(commands.Cog):
         loading = await ctx.send('loading....') # loading message
         questionLink = 'https://www.wolframalpha.com/input/?i=' + question.strip().lower().replace(' ', '+') # builds wolfram URL (used just for link in results)
 
-        config = configloader.configLoad('config.json')
+        config = configloader.configLoad('cogconfig.json')
         wolframKeys = config['wolfram']['wolframKeys'] # gets key list from config
-        clientWolfram = wolframalpha.Client(wolframKeys[random.randint(0,len(wolframKeys)-1)]) # initialize API and choose key from wolframKeys list
+        clientWolfram = wolframalpha.Client(wolframKeys[random.randint(0,len(wolframKeys)-1)]) # initialize API and chooses key from wolframKeys list
         res = clientWolfram.query(question) # sends a query with the question
 
         embeds = []

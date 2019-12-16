@@ -14,11 +14,5 @@
         "database": ""
     },
   "cogs": {
-  },
-  "wolfram": {
-    "wolframKeys": [
-      "key",
-      "another key"
-    ]
   }
 }
