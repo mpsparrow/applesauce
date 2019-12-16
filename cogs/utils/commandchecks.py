@@ -18,7 +18,7 @@ def ignoredCheck(ctx, guildID):
             configloader.configDump('guildconfig.json', config)
             return False
         except:
-            logger.outputWrite(f'Command Check Failure (ignored user)') # if accessing failed
+            logger.logWrite('output-log.txt', f'Command Check Failure (ignored user)') # if accessing failed
             return False
 
 # checks if command is disabled in guild
@@ -55,7 +55,7 @@ def guildBuild(ctx, guildID, name):
             config3[guildID]["Commands"][name] = False
             configloader.configDump('guildconfig.json', config3)
     except:
-        logger.outputWrite('Command Check Failure (rebuild)')
+        logger.logWrite('output-log.txt', 'Command Check Failure (rebuild)')
 
 # main command check function
 def isAllowed(ctx):
@@ -65,7 +65,7 @@ def isAllowed(ctx):
         guildID = str(ctx.guild.id)
         name = str(ctx.command.qualified_name)
     except:
-        logger.outputWrite('Command Check Failure (main)')
+        logger.logWrite('output-log.txt', 'Command Check Failure (main)')
         return False
 
     return guildCheck(ctx, guildID, name) and ignoredCheck(ctx, guildID) # if all checks are passed

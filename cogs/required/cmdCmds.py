@@ -16,10 +16,10 @@ class cogCmds(commands.Cog):
             config = configloader.configLoad('guildconfig.json')
             config[str(ctx.guild.id)]["Commands"][cmd] = False
             configloader.configDump('guildconfig.json', config)
-            logger.outputWrite(f'Successfully disabled {cmd}')
+            logger.logWrite('output-log.txt', f'Successfully disabled {cmd}')
             await ctx.send(f'Successfully disabled {cmd}')
         except:
-            logger.outputWrite(f'Failed to disable {cmd}')
+            logger.logWrite('output-log.txt', f'Failed to disable {cmd}')
             await ctx.send(f'Failed to disable {cmd}')
 
     # enable command
@@ -30,10 +30,10 @@ class cogCmds(commands.Cog):
             config = configloader.configLoad('guildconfig.json')
             config[str(ctx.guild.id)]["Commands"][cmd] = True
             configloader.configDump('guildconfig.json', config)
-            logger.outputWrite(f'Successfully enabled {cmd}')
+            logger.logWrite('output-log.txt', f'Successfully enabled {cmd}')
             await ctx.send(f'Successfully enabled {cmd}')
         except:
-            logger.outputWrite(f'Failed to enable {cmd}')
+            logger.logWrite('output-log.txt', f'Failed to enable {cmd}')
             await ctx.send(f'Failed to enable {cmd}')
 
 def setup(bot):
