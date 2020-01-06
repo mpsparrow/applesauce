@@ -4,7 +4,7 @@ def logWrite(filename, message):
     outputLog.write(f'{message}\n')
     outputLog.close()
 
-# wipes clean log file
+# wipes log file
 def logWipe(filename):
     outputLog = open(f'logs/{filename}','w+')
     outputLog.close()

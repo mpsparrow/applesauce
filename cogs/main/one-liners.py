@@ -36,6 +36,13 @@ class Basic(commands.Cog):
     async def hank(self, ctx):
         await ctx.send('<:hank:651284638958092301>')
 
+    # mushroom command
+    @commands.check(commandchecks.isAllowed)
+    @commands.command(name="mushroom", description="<a:mushroomDance:659932848035463198>", usage="mushroom", aliases=['shroom'])
+    @commands.cooldown(1, 1, commands.BucketType.user)
+    async def mushroom(self, ctx):
+        await ctx.send('<a:mushroomDance:659932848035463198>')
+
     # ping command
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="ping", description="pong", usage="ping")
