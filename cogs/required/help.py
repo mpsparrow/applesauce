@@ -30,10 +30,10 @@ class Help(commands.MinimalHelpCommand):
         except:
             config2 = configloader.configLoad('config.json')
             prefix = config2['main']['prefix']
+
         try:
             randomVar = config[str(self.context.guild.id)]["Commands"][str(command.name)] # gets true/false value of command for guild
             if randomVar == True: # if command is enabled in guild
-
                 # creates list of aliases for command
                 alias = f'\n**Aliases:** '
                 if command.aliases == []:

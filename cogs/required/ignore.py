@@ -56,5 +56,4 @@ class Ignore(commands.Cog):
             await ctx.send(f'Error unignoring member {member}') # error message
         
 def setup(bot):
-    bot.remove_command("help")
     bot.add_cog(Ignore(bot))
