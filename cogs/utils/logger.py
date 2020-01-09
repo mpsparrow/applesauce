@@ -1,7 +1,12 @@
+'''
+Basic logging functions
+'''
+import datetime
+
 # writes message to log file
-def logWrite(filename, message):
+def logWrite(filename, message, tag="", start=""):
     outputLog = open(f'logs/{filename}','a+')
-    outputLog.write(f'{message}\n')
+    outputLog.write(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {message}\n")
     outputLog.close()
 
 # wipes log file

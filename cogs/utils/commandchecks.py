@@ -40,14 +40,14 @@ def guildBuild(ctx, guildID, name):
             config1 = configloader.configLoad('guildconfig.json')
             config1[guildID] = {}
             configloader.configDump('guildconfig.json', config1)
-    
+
         try:
             tmp2 = config[guildID]["Commands"]
         except:
             config2 = configloader.configLoad('guildconfig.json')
             config2[guildID]["Commands"] = {}
             configloader.configDump('guildconfig.json', config2)
-        
+
         try:
             tmp4 = config[guildID]["Commands"][name]
         except:
