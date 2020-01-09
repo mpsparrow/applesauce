@@ -1,11 +1,8 @@
 '''
-Name: 8ball
+Name: Wolfram Alpha
 Description: Wolfram Alpha command
-Last Updated: January 8, 2020
+Last Updated: January 9, 2020
 Created: October 30, 2019
-
-= Configuration =
-Boot up. Add to answers list in cogconfig.json.
 '''
 import discord
 from discord.ext import commands
@@ -22,7 +19,7 @@ class Wolfram(commands.Cog):
     @commands.command(name="wolfram", description="Queries Wolfram Alpha and returns the result and link.", usage="wolfram <query>", aliases=['wolf'])
     @commands.cooldown(1, 20, commands.BucketType.default)
     async def wolfram(self, ctx, *, question):
-        loading = await ctx.send('loading....') # loading message
+        loading = await ctx.send('Processing....') # loading message
         questionLink = 'https://www.wolframalpha.com/input/?i=' + question.strip().lower().replace(' ', '+') # builds wolfram URL (used just for link in results)
 
         config = configloader.configLoad('cogconfig.json')

@@ -1,3 +1,6 @@
+'''
+Basic error checking, logging, and ignoring
+'''
 import discord
 from discord.ext import commands
 from cogs.utils import logger

@@ -1,3 +1,9 @@
+'''
+Name: Pin Archive
+Description: Pin archiving system
+Last Updated: January 9, 2020
+Created: December 14, 2019
+'''
 import discord
 from discord.ext import commands
 import datetime

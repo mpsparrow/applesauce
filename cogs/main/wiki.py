@@ -1,3 +1,9 @@
+'''
+Name: Wikipedia
+Description: Wikipedia command
+Last Updated: January 9, 2020
+Created: October 30, 2019
+'''
 import discord
 from discord.ext import commands
 from cogs.utils import commandchecks
@@ -12,7 +18,7 @@ class Wiki(commands.Cog):
     @commands.command(name="wikipedia", description="Queries Wikipedia and returns summary and link to the page.", usage="wikipedia <query>", aliases=['wiki'])
     @commands.cooldown(1, 10, commands.BucketType.default)
     async def wikipedia(self, ctx, *, lookup):
-        loading = await ctx.send('loading....') # loading message
+        loading = await ctx.send('Searching for article....') # loading message
 
         try:
             page = wikipedia.summary(lookup, sentences=1) # gets pages first sentence
@@ -22,8 +28,8 @@ class Wiki(commands.Cog):
         except:
             # if nothing is found
             page = 'No results found.'
-            pageURL = '....'
-            pageTitle = '....'
+            pageURL = ''
+            pageTitle = ''
 
         # embed for results
         embed=discord.Embed(title='Wikipedia', description=f'{pageURL}', color=0xc1c100)

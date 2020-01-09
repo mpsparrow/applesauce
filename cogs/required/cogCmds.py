@@ -1,3 +1,6 @@
+'''
+Commands to manage the loading and enabling of cogs
+'''
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions

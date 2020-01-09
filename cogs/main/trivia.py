@@ -1,3 +1,9 @@
+'''
+Name: Trivia
+Description: Trivia system
+Last Updated: January 9, 2020
+Created: November 19, 2019
+'''
 import discord
 import asyncio
 import os
