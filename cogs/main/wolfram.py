@@ -1,3 +1,12 @@
+'''
+Name: 8ball
+Description: Wolfram Alpha command
+Last Updated: January 8, 2020
+Created: October 30, 2019
+
+= Configuration =
+Boot up. Add to answers list in cogconfig.json.
+'''
 import discord
 from discord.ext import commands
 from cogs.utils import configloader, commandchecks
@@ -18,7 +27,7 @@ class Wolfram(commands.Cog):
 
         config = configloader.configLoad('cogconfig.json')
         wolframKeys = config['wolfram']['wolframKeys'] # gets key list from config
-        clientWolfram = wolframalpha.Client(wolframKeys[random.randint(0,len(wolframKeys)-1)]) # initialize API and chooses key from wolframKeys list
+        clientWolfram = wolframalpha.Client(random.choice(wolframKeys)) # initialize API and chooses key from wolframKeys list
         res = clientWolfram.query(question) # sends a query with the question
 
         embeds = []

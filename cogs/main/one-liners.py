@@ -1,3 +1,9 @@
+'''
+Name: One Liners
+Description: random "one liner" commands
+Last Updated: January 8, 2020
+Created: October 30, 2019
+'''
 import discord
 from discord.ext import commands
 from cogs.utils import commandchecks
@@ -7,7 +13,6 @@ class Basic(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # commands
     # chance command
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="chance", description="Random integer between 0 and 100 (displayed as percent)", usage="chance")
