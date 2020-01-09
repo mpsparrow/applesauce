@@ -51,7 +51,6 @@ async def on_ready():
         logger.logWrite('output-log.txt', f'Passed Checks\n')
         logger.logWrite('output-log.txt', f'Starting {botName}\n')
         logger.logWrite('output-log.txt', 'Getting Debug Information')
-        logger.logWrite('output-log.txt', f'date/time: {datetime.datetime.now()}') # date and time
         logger.logWrite('output-log.txt', f'discord.py {discord.__version__}') # discord.py version
         logger.logWrite('output-log.txt', f'Python {sys.version[:6]}') # python version
 
