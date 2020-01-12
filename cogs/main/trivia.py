@@ -1,7 +1,7 @@
 '''
 Name: Trivia
 Description: Trivia system
-Last Updated: January 9, 2020
+Last Updated: January 11, 2020
 Created: November 19, 2019
 '''
 import discord

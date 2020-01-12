@@ -1,7 +1,7 @@
 '''
 Name: Wikipedia
 Description: Wikipedia command
-Last Updated: January 9, 2020
+Last Updated: January 11, 2020
 Created: October 30, 2019
 '''
 import discord
