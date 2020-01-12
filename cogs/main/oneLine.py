@@ -1,6 +1,6 @@
 '''
-Name: One Liners
-Description: random "one liner" commands
+Name: One Line 
+Description: random "one line" simple commands
 Last Updated: January 12, 2020
 Created: October 30, 2019
 '''
@@ -9,7 +9,7 @@ from discord.ext import commands
 from utils import commandchecks
 import random
 
-class Basic(commands.Cog):
+class oneLine(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -25,7 +25,7 @@ class Basic(commands.Cog):
     @commands.command(name="coin", description="Flips a coin and returns heads or tails.", usage="coin")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def coin(self, ctx):
-        await ctx.send(random.choice(['heads', 'tails']))
+        await ctx.send(random.choice(['Heads', 'Tails']))
         
     # DDOS
     @commands.check(commandchecks.isAllowed)
@@ -33,20 +33,6 @@ class Basic(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def ddos(self, ctx, *, name):
         await ctx.send(f'{name} is being DDoSed')
-
-    # hank
-    @commands.check(commandchecks.isAllowed)
-    @commands.command(name="hank", description="<:hank:651284638958092301>", usage="hank")
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def hank(self, ctx):
-        await ctx.send('<:hank:651284638958092301>')
-
-    # mushroom
-    @commands.check(commandchecks.isAllowed)
-    @commands.command(name="mushroom", description="<a:mushroomDance:659932848035463198>", usage="mushroom", aliases=['shroom'])
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def mushroom(self, ctx):
-        await ctx.send('<a:mushroomDance:659932848035463198>')
 
     # ping
     @commands.check(commandchecks.isAllowed)
@@ -62,12 +48,5 @@ class Basic(commands.Cog):
     async def rate(self, ctx):
         await ctx.send(f'{random.randint(0,10)}/10')
 
-    # saber
-    @commands.check(commandchecks.isAllowed)
-    @commands.command(name="saber", description="<a:pepelightsaber:663496095065964585>", usage="saber")
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def saber(self, ctx):
-        await ctx.send('<a:pepelightsaber:663496095065964585>')
-
 def setup(bot):
-    bot.add_cog(Basic(bot))
+    bot.add_cog(oneLine(bot))

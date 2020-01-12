@@ -8,9 +8,9 @@ import discord
 from discord.ext import commands
 from utils import commandchecks
 
-class Reactions(commands.Cog):
+class Reaction(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
 def setup(bot):
-    bot.add_cog(Reactions(bot))
+    bot.add_cog(Reaction(bot))

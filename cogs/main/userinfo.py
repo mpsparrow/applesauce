@@ -1,7 +1,7 @@
 '''
 Name: User Info
 Description: User information command
-Last Updated: January 11, 2020
+Last Updated: January 12, 2020
 Created: November 18, 2019
 '''
 import discord
@@ -10,7 +10,7 @@ from utils import commandchecks
 import random
 import datetime
 
-class UserInfo(commands.Cog):
+class userInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -30,4 +30,4 @@ class UserInfo(commands.Cog):
         await ctx.send(embed=embed)
 
 def setup(bot):
-    bot.add_cog(UserInfo(bot))
+    bot.add_cog(userInfo(bot))
