@@ -7,7 +7,7 @@ Created: October 30, 2019
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from cogs.utils import commandchecks, logger
+from utils import commandchecks, logger
 
 class Moderation(commands.Cog):
     def __init__(self, bot):

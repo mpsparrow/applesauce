@@ -18,3 +18,18 @@ def logWipe(filename):
 def logReturn(filename):
     with open(f'logs/{filename}') as f:
         return f.read()
+
+def errorLog(message):
+    logWrite('output-log.txt', message, tag="[error]")
+
+def warningLog(message):
+    logWrite('output-log.txt', message, tag="[warning]")
+
+def passedLog(message):
+    logWrite('output-log.txt', message, tag="[passed]")
+
+def infoLog(message):
+    logWrite('output-log.txt', message, tag="[info]")
+
+def normalLog(message):
+    logWrite('output-log.txt', message, tag="")

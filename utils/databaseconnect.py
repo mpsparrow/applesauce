@@ -1,11 +1,15 @@
+'''
+mySql connection module
+This isn't functioning yet
+'''
 import json
-from . import configloader, logger
+from utils import config, logger
 import mysql.connector
 from mysql.connector import errorcode
 
 def SQLquery(query):
     try:
-        config = configloader.configLoad('config.json')
+        config = config.configLoad('config.json')
         connection = mysql.connector.connect(
             host=config['mysql']['host'], 
             database=config['mysql']['database'], 

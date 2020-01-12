@@ -6,7 +6,7 @@ Created: October 30, 2019
 '''
 import discord
 from discord.ext import commands
-from cogs.utils import configloader, commandchecks
+from utils import config, commandchecks
 import random
 import wolframalpha
 
@@ -22,8 +22,8 @@ class Wolfram(commands.Cog):
         loading = await ctx.send('Processing....') # loading message
         questionLink = 'https://www.wolframalpha.com/input/?i=' + question.strip().lower().replace(' ', '+') # builds wolfram URL (used just for link in results)
 
-        config = configloader.configLoad('cogconfig.json')
-        wolframKeys = config['wolfram']['wolframKeys'] # gets key list from config
+        conf = config.configLoad('cogconfig.json')
+        wolframKeys = conf['wolfram']['wolframKeys'] # gets key list from config
         clientWolfram = wolframalpha.Client(random.choice(wolframKeys)) # initialize API and chooses key from wolframKeys list
         res = clientWolfram.query(question) # sends a query with the question
 

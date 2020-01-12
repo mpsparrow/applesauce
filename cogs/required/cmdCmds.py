@@ -4,7 +4,7 @@ Commands to manage the enabling of individual commands
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from cogs.utils import configloader, logger
+from utils import config, logger
 import json
 
 class cogCmds(commands.Cog):
@@ -16,28 +16,30 @@ class cogCmds(commands.Cog):
     @commands.is_owner()
     async def disableCmd(self, ctx, cmd):
         try:
-            config = configloader.configLoad('guildconfig.json')
-            config[str(ctx.guild.id)]["Commands"][cmd] = False
-            configloader.configDump('guildconfig.json', config)
-            logger.logWrite('output-log.txt', f'Successfully disabled {cmd}')
-            await ctx.send(f'Successfully disabled {cmd}')
-        except:
-            logger.logWrite('output-log.txt', f'Failed to disable {cmd}')
-            await ctx.send(f'Failed to disable {cmd}')
+            conf = config.configLoad('guildconfig.json')
+            conf[str(ctx.guild.id)]["Commands"][cmd] = False
+            config.configDump('guildconfig.json', conf)
+            logger.normalLog(f'Successfully disabled {cmd}')
+            await ctx.message.add_reaction("✅")
+        except Exception as e:
+            logger.errorLog(f'Failed to disable {cmd}')
+            logger.errorLog(f'{e}')
+            await ctx.message.add_reaction("❌")
 
     # enable command
     @commands.command()
     @commands.is_owner()
     async def enableCmd(self, ctx, cmd):
         try:
-            config = configloader.configLoad('guildconfig.json')
-            config[str(ctx.guild.id)]["Commands"][cmd] = True
-            configloader.configDump('guildconfig.json', config)
-            logger.logWrite('output-log.txt', f'Successfully enabled {cmd}')
-            await ctx.send(f'Successfully enabled {cmd}')
-        except:
-            logger.logWrite('output-log.txt', f'Failed to enable {cmd}')
-            await ctx.send(f'Failed to enable {cmd}')
+            conf = config.configLoad('guildconfig.json')
+            conf[str(ctx.guild.id)]["Commands"][cmd] = True
+            config.configDump('guildconfig.json', conf)
+            logger.normalLog(f'Successfully enabled {cmd}')
+            await ctx.message.add_reaction("✅")
+        except Exception as e:
+            logger.errorLog(f'Failed to enable {cmd}')
+            logger.errorLog(f'{e}')
+            await ctx.message.add_reaction("❌")
 
 def setup(bot):
     bot.add_cog(cogCmds(bot))

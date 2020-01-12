@@ -2,7 +2,7 @@
 Applesauce
 Created By: Matthew
 Framework Version: v1.2
-Last Updated: January 8, 2020
+Last Updated: January 11, 2020
 Created On: October 12, 2019
 
 Please read license.txt for license information
@@ -10,7 +10,7 @@ Please read license.txt for license information
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from cogs.utils import configloader, startupchecks, commandchecks, databaseconnect, logger
+from utils import config, startupchecks, commandchecks, logger
 import sys
 import os
 import datetime
@@ -19,14 +19,14 @@ import json
 # gets prefix
 def get_prefix(bot, message): 
     try:
-        configGuild = configloader.configLoad('guildconfig.json') # loads guildconfig.json
+        configGuild = config.configLoad('guildconfig.json') # loads guildconfig.json
         return configGuild[str(message.guild.id)]['prefix'] # returns guild specific prefix
     except:
-        config = configloader.configLoad('config.json') # loads config.json
-        return config['main']['prefix'] # returns default prefix if no guild prefix is found
+        conf = config.configLoad('config.json') # loads config.json
+        return conf['main']['prefix'] # returns default prefix if no guild prefix is found
 
-config = configloader.configLoad('config.json') # loads config.json
-botName = config['main']['botName'] # gets bots name from config.json
+conf = config.configLoad('config.json') # loads config.json
+botName = conf['main']['botName'] # gets bots name from config.json
 bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True) # gets bots prefix and case_insensitivity
 
 # outputLog command
@@ -39,20 +39,20 @@ async def outputLog(ctx):
 @bot.event
 async def on_ready():
     logger.logWipe('output-log.txt')
-    logger.logWrite('output-log.txt', 'Running Checks')
+    logger.normalLog('Running Checks')
 
     if startupchecks.startUpChecks() == False: # runs startup checks that are in startupchecks.py
         # if startup checks fail
-        logger.logWrite('output-log.txt', f"Something isn't configured correctly for Applesauce to startup.", '[error]')
-        logger.logWrite('output-log.txt', f"Startup aborted", '[error]')
+        logger.errorLog("Something isn't configured correctly for Applesauce to startup.")
+        logger.errorLog("Startup aborted")
     else:
         # startup checks passed
         # writes startup information to output-log.txt
-        logger.logWrite('output-log.txt', f'Passed Checks\n')
-        logger.logWrite('output-log.txt', f'Starting {botName}\n')
-        logger.logWrite('output-log.txt', 'Getting Debug Information')
-        logger.logWrite('output-log.txt', f'discord.py {discord.__version__}') # discord.py version
-        logger.logWrite('output-log.txt', f'Python {sys.version[:6]}') # python version
+        logger.normalLog('Passed Checks\n')
+        logger.normalLog(f'Starting {botName}\n')
+        logger.normalLog('Getting Debug Information')
+        logger.normalLog(f'discord.py {discord.__version__}') # discord.py version
+        logger.normalLog(f'Python {sys.version[:6]}') # python version
 
         # Requires Addons loading
         # Any file in /cogs/required is considered a required cog
@@ -60,14 +60,14 @@ async def on_ready():
         logger.logWrite('output-log.txt', 'Initializing Required Cogs', "", "\n")
         for required in os.listdir('./cogs/required'): # looks in /cogs/required
             if required.endswith('.py'): # if a .py file is found
-                if required[:-3] not in config['main']['excludedRequired']: # checks if config lists required cog as excluded
+                if required[:-3] not in conf['main']['excludedRequired']: # checks if config lists required cog as excluded
                     try:
                         bot.load_extension(f'cogs.required.{required[:-3]}') # loads cog
-                        logger.logWrite('output-log.txt', f'{required} --> Success')
+                        logger.normalLog(f'{required} --> Success')
                     except Exception as e:
-                        logger.logWrite('output-log.txt', f'{required} --> Failed', '[error]')
-                        logger.logWrite('output-log.txt', f'{e}', '[error]')
-                        logger.logWrite('output-log.txt', 'Startup aborted', '[error]')
+                        logger.errorLog(f'{required} --> Failed')
+                        logger.errorLog(f'{e}')
+                        logger.errorLog('Startup aborted')
                         return
 
         # Main loading
@@ -80,27 +80,27 @@ async def on_ready():
         for cog in os.listdir(f'./cogs/main'): # looks in /cogs/main
             if cog.endswith('.py'): # if a .py file is found
                 try:
-                    value = config['cogs'][cog[:-3]]
+                    value = conf['cogs'][cog[:-3]]
                 except:
-                    newConfig = configloader.configLoad('config.json')
+                    newConfig = config.configLoad('config.json')
                     newConfig['cogs'][cog[:-3]] = False
-                    configloader.configDump('config.json', newConfig)
+                    config.configDump('config.json', newConfig)
                     value = False
 
                 if value == True: # if module doesn't exist in excludedModules list (config.json)
                     try:
                         bot.load_extension(f'cogs.main.{cog[:-3]}') # load cog
-                        logger.logWrite('output-log.txt', f'{cog} --> Success')
+                        logger.normalLog(f'{cog} --> Success')
                         countSuccess += 1 # adds to successfully loaded cogs
                     except Exception as e:
-                        logger.logWrite('output-log.txt', f'{cog} --> Failed', '[error]')
-                        logger.logWrite('output-log.txt', f' Error: {e}', '[error]')
+                        logger.errorLog(f'{cog} --> Failed')
+                        logger.errorLog(f' Error: {e}')
                         countFail += 1 # adds to failed to load addons
                 else:
-                    logger.logWrite('output-log.txt', f'{cog} --> Skipped')
+                    logger.passedLog(f'{cog} --> Skipped')
                     countSkip += 1 # adds to skipped cogs
 
-        logger.logWrite('output-log.txt', f'Cogs Loaded: Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n')
-        logger.logWrite('output-log.txt', f'{botName} is ready to rumble!')
+        logger.normalLog(f'Cogs Loaded: Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n')
+        logger.normalLog(f'{botName} is ready to rumble!')
 
-bot.run(config['main']['token']) # gets Discord token from config.json and starts bot
+bot.run(conf['main']['token']) # gets Discord token from config.json and starts bot

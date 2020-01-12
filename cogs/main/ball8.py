@@ -6,8 +6,7 @@ Created: October 30, 2019
 '''
 import discord
 from discord.ext import commands
-from cogs.utils import commandchecks
-from cogs.utils import configloader
+from utils import commandchecks
 import random
 
 class ball8(commands.Cog):

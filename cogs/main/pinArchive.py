@@ -9,7 +9,7 @@ from discord.ext import commands
 import datetime
 import time
 from discord.ext.commands import has_permissions
-from cogs.utils import configloader, commandchecks
+from utils import config, commandchecks
 
 class pinArchive(commands.Cog):
     def __init__(self, bot):
@@ -21,8 +21,8 @@ class pinArchive(commands.Cog):
         data = payload.data
         try:
             if data['pinned'] == True: 
-                config = configloader.configLoad("guildconfig.json")
-                channelID = config[str(data["guild_id"])]["archive"]
+                conf = config.configLoad("guildconfig.json")
+                channelID = conf[str(data["guild_id"])]["archive"]
                 channel = self.bot.get_channel(channelID)                
                 current_date = datetime.datetime.utcfromtimestamp(int(time.time()))
                 embed = discord.Embed(description=f"{data['content']}", color=0xc1c100, timestamp=current_date)
@@ -43,9 +43,9 @@ class pinArchive(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def setArchive(self, ctx, channel):
         try:
-            config = configloader.configLoad("guildconfig.json")
-            config[str(ctx.guild.id)]["archive"] = int(channel)
-            configloader.configDump("guildconfig.json", config)
+            conf = config.configLoad("guildconfig.json")
+            conf[str(ctx.guild.id)]["archive"] = int(channel)
+            config.configDump("guildconfig.json", conf)
             await ctx.send("channel id set")
         except:
             await ctx.send("invalid or enable to set")
