@@ -1,7 +1,7 @@
 '''
 Name: One Liners
 Description: random "one liner" commands
-Last Updated: January 8, 2020
+Last Updated: January 12, 2020
 Created: October 30, 2019
 '''
 import discord
@@ -37,14 +37,14 @@ class Basic(commands.Cog):
     # hank
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="hank", description="<:hank:651284638958092301>", usage="hank")
-    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.cooldown(1, 2, commands.BucketType.user)
     async def hank(self, ctx):
         await ctx.send('<:hank:651284638958092301>')
 
     # mushroom
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="mushroom", description="<a:mushroomDance:659932848035463198>", usage="mushroom", aliases=['shroom'])
-    @commands.cooldown(1, 1, commands.BucketType.user)
+    @commands.cooldown(1, 2, commands.BucketType.user)
     async def mushroom(self, ctx):
         await ctx.send('<a:mushroomDance:659932848035463198>')
 
@@ -61,6 +61,13 @@ class Basic(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def rate(self, ctx):
         await ctx.send(f'{random.randint(0,10)}/10')
+
+    # saber
+    @commands.check(commandchecks.isAllowed)
+    @commands.command(name="saber", description="<a:pepelightsaber:663496095065964585>", usage="saber")
+    @commands.cooldown(1, 2, commands.BucketType.user)
+    async def saber(self, ctx):
+        await ctx.send('<a:pepelightsaber:663496095065964585>')
 
 def setup(bot):
     bot.add_cog(Basic(bot))
