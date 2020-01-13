@@ -1,7 +1,7 @@
 '''
 Name: Pin Archive
 Description: Pin archiving system
-Last Updated: January 11, 2020
+Last Updated: January 13, 2020
 Created: December 14, 2019
 '''
 import discord
@@ -38,7 +38,7 @@ class pinArchive(commands.Cog):
         except:
             pass
 
-    # clear/purge command
+    # set archiving channel command
     @commands.command(name="setArchive", description="Sets channel for pins archiving.", usage="setArchive <channel-ID>", aliases=['setChannelArchive'])
     @commands.has_permissions(manage_messages=True)
     async def setArchive(self, ctx, channel):
