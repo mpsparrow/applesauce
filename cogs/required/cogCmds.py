@@ -55,30 +55,59 @@ class cogCmds(commands.Cog):
     @commands.command()
     @commands.is_owner()
     async def enableCog(self, ctx, extension):
+        flag = False
         try:
-            conf = config.configLoad('config.json')
-            conf['cogs'][extension] = True
-            config.configDump('config.json', conf)
-            logger.normalLog(f'Successfully enabled {extension}')
-            await ctx.message.add_reaction("✅")
-        except Exception as e:
+            self.bot.load_extension(f'cogs.main.{extension}')
+            self.bot.unload_extension(f'cogs.main.{extension}')
+            flag = True
+        except:
+            self.bot.unload_extension(f'cogs.main.{extension}')
+            self.bot.load_extension(f'cogs.main.{extension}')
+            flag = True
+
+        if flag == True:
+            try:
+                conf = config.configLoad('config.json')
+                x = conf['cogs'][extension]
+                conf['cogs'][extension] = True
+                config.configDump('config.json', conf)
+                logger.normalLog(f'Successfully enabled {extension}')
+                await ctx.message.add_reaction("✅")
+            except Exception as e:
+                logger.errorLog(f'Failed enabling {extension}')
+                logger.errorLog(f'{e}')
+                await ctx.message.add_reaction("❌")
+        else:
             logger.errorLog(f'Failed enabling {extension}')
-            logger.errorLog(f'{e}')
             await ctx.message.add_reaction("❌")
 
     # disable extension
     @commands.command()
     @commands.is_owner()
     async def disableCog(self, ctx, extension):
+        flag = False
         try:
-            conf = config.configLoad('config.json')
-            conf['cogs'][extension] = False
-            config.configDump('config.json', conf)
-            logger.normalLog(f'Successfully disabled {extension}')
-            await ctx.message.add_reaction("✅")
-        except Exception as e:
+            self.bot.load_extension(f'cogs.main.{extension}')
+            self.bot.unload_extension(f'cogs.main.{extension}')
+            flag = True
+        except:
+            self.bot.unload_extension(f'cogs.main.{extension}')
+            self.bot.load_extension(f'cogs.main.{extension}')
+            flag = True
+
+        if flag == True:
+            try:
+                conf = config.configLoad('config.json')
+                conf['cogs'][extension] = False
+                config.configDump('config.json', conf)
+                logger.normalLog(f'Successfully disabled {extension}')
+                await ctx.message.add_reaction("✅")
+            except Exception as e:
+                logger.errorLog(f'Failed disabling {extension}')
+                logger.errorLog(f'{e}')
+                await ctx.message.add_reaction("❌")
+        else:
             logger.errorLog(f'Failed disabling {extension}')
-            logger.errorLog(f'{e}')
             await ctx.message.add_reaction("❌")
 
 def setup(bot):
