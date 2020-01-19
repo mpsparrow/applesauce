@@ -1,7 +1,7 @@
 '''
 Name: Wikipedia
 Description: Wikipedia command
-Last Updated: January 11, 2020
+Last Updated: January 19, 2020
 Created: October 30, 2019
 '''
 import discord
@@ -28,8 +28,8 @@ class Wiki(commands.Cog):
         except:
             # if nothing is found
             page = 'No results found.'
-            pageURL = ''
-            pageTitle = ''
+            pageURL = '.'
+            pageTitle = '.'
 
         # embed for results
         embed=discord.Embed(title='Wikipedia', description=f'{pageURL}', color=0xc1c100)
