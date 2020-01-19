@@ -61,9 +61,12 @@ class cogCmds(commands.Cog):
             self.bot.unload_extension(f'cogs.main.{extension}')
             flag = True
         except:
-            self.bot.unload_extension(f'cogs.main.{extension}')
-            self.bot.load_extension(f'cogs.main.{extension}')
-            flag = True
+            try:
+                self.bot.unload_extension(f'cogs.main.{extension}')
+                self.bot.load_extension(f'cogs.main.{extension}')
+                flag = True
+            except:
+                pass
 
         if flag == True:
             try:
@@ -91,10 +94,13 @@ class cogCmds(commands.Cog):
             self.bot.unload_extension(f'cogs.main.{extension}')
             flag = True
         except:
-            self.bot.unload_extension(f'cogs.main.{extension}')
-            self.bot.load_extension(f'cogs.main.{extension}')
-            flag = True
-
+            try:
+                self.bot.unload_extension(f'cogs.main.{extension}')
+                self.bot.load_extension(f'cogs.main.{extension}')
+                flag = True
+            except:
+                pass
+            
         if flag == True:
             try:
                 conf = config.configLoad('config.json')
