@@ -7,31 +7,56 @@ Created: January 12, 2020
 import discord
 from discord.ext import commands
 from utils import commandchecks
+import random
 
 class Emoji(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # hank
+    # emoji main group
     @commands.check(commandchecks.isAllowed)
-    @commands.command(name="hank", description="<:hank:651284638958092301>", usage="hank")
+    @commands.group(name="emoji", description="Makes the bot print emojis.", usage="emoji <emoji-name>", aliases=['e'])
     @commands.cooldown(1, 2, commands.BucketType.user)
+    async def emoji(self, ctx):
+        pass
+
+    # hank
+    @emoji.command(name="hank", description="<:hank:651284638958092301>", usage="hank", aliases=['h'])
     async def hank(self, ctx):
         await ctx.send('<:hank:651284638958092301>')
 
     # mushroom
-    @commands.check(commandchecks.isAllowed)
-    @commands.command(name="mushroom", description="<a:mushroomDance:659932848035463198>", usage="mushroom", aliases=['shroom'])
-    @commands.cooldown(1, 2, commands.BucketType.user)
+    @emoji.command(name="mushroom", description="<a:mushroomDance:659932848035463198>", usage="mushroom", aliases=['ms', 'shroom'])
     async def mushroom(self, ctx):
         await ctx.send('<a:mushroomDance:659932848035463198>')
 
     # saber
-    @commands.check(commandchecks.isAllowed)
-    @commands.command(name="saber", description="<a:pepelightsaber:663496095065964585>", usage="saber")
-    @commands.cooldown(1, 2, commands.BucketType.user)
+    @emoji.command(name="saber", description="<a:pepelightsaber:663496095065964585>", usage="saber", aliases=['sb'])
     async def saber(self, ctx):
         await ctx.send('<a:pepelightsaber:663496095065964585>') 
+
+    # thonks
+    @emoji.command(name="thonk", description="<:think:527902122692444161>", usage="thonk", aliases=['t', 'think'])
+    async def thonk(self, ctx):
+        thonks = [
+            '<:think:527902122692444161>',
+            '<:thowonking:605504425083011102>',
+            '<:thonkshock:609621801412198410>',
+            '<:thunk:568294885258428416>',
+            '<:thonkosis:649902777925107712>',
+            '<:thonkong:638800699345469451>',
+            '<a:ThonkmegaSpin:638800592977920010>',
+            '<:thonkLUL:649902693137252352>',
+            '<:thonkfold:649902869008351256>',
+            '<:nerdthink:649117561543458816>',
+            '<:LennyThink:638801336284086276>',
+            '<:thinkfoil:649117139667648535>',
+            '<:thinkdrops:649117385818898452>',
+            '<:thinkception:649117474356199424>',
+            '<:eggplantThink:639570203105296394>',
+            '<:OofThinking:638801365057011721>'
+            ]
+        await ctx.send(random.choice(thonks))
 
 def setup(bot):
     bot.add_cog(Emoji(bot))

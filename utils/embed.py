@@ -29,3 +29,9 @@ def make_embed_fields_footer(title: str, desc: str, footer: str, *fields: tuple)
     for name, value in fields:
         embed.add_field(name=name, value=value)
     return embed
+
+def make_embed_fields_ninl(title: str, desc: str, *fields: tuple) -> discord.Embed:
+    embed = discord.Embed(title=title, description=desc, colour=0xc1c100, inline=False)
+    for name, value in fields:
+        embed.add_field(name=name, value=value, inline=False)
+    return embed
