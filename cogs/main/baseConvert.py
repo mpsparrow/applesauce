@@ -13,22 +13,54 @@ class BaseConvert(commands.Cog):
         self.bot = bot
 
     @commands.check(commandchecks.isAllowed)
-    @commands.command(name="base10", description="Converts to base 10", usage="b10 <base-from> <value>", aliases=['b10'])
+    @commands.command(name="baseConvert", description="Converts from a base to another base. Base range(2-32).", usage="bc <base-from> <base-to> <value>", aliases=['bc'])
     @commands.cooldown(1, 5, commands.BucketType.user)
-    async def base10(self, ctx, baseFrom: int, numValue):
-        if len(numValue) > 20 or baseFrom > 36 or baseFrom < 2:
-            await ctx.send(embed=embed.make_error_embed("Value too large."))
+    async def baseConvert(self, ctx, baseFrom: int, baseTo: int, numValue):
+        alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        try:
+            if len(numValue) > 20:
+                await ctx.send(embed=embed.make_error_embed("Value too large."))
+                return
+            
+            if baseFrom > 36 or baseFrom < 2 or baseTo > 32 or baseTo < 2:
+                await ctx.send(embed=embed.make_error_embed("Please use a base between 2 and 32."))
+                return
+
+            for i in numValue:
+                if (str(i) in alphabet):
+                    if ((int(alphabet.index(i)) + 10) > baseFrom):
+                        await ctx.send(embed=embed.make_error_embed(f"Invalid value for base {baseFrom}."))
+                        return
+                try:
+                    if int(i) > baseFrom:
+                        await ctx.send(embed=embed.make_error_embed(f"Invalid value for base {baseFrom}."))
+                        return
+                except:
+                    pass
+        except:
+            await ctx.send(embed=embed.make_error_embed("Error"))
             return
         
-        alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         x = len(numValue)
-        finalValue = 0
+        base10Value = 0
         for num in numValue:
             x = x - 1
             if num.upper() in alphabet:
-                finalValue += (alphabet.index(num) + 10)*(baseFrom**x)
+                base10Value += (alphabet.index(num) + 10)*(baseFrom**x)
             else:
-                finalValue += int(num)*(baseFrom**x)
+                base10Value += int(num)*(baseFrom**x)
+
+        digits = []
+        while base10Value > 0:
+            digits.insert(0, base10Value % baseTo)
+            base10Value = base10Value // baseTo
+
+        finalValue = ""
+        for i in digits:
+            if i > 9:
+                finalValue += alphabet[i -10]
+            else:
+                finalValue += str(i)
         
         await ctx.send(finalValue)
 
