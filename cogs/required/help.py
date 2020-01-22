@@ -24,7 +24,35 @@ class Help(commands.MinimalHelpCommand):
         await self.context.send(embed=embed.make_error_embed("Command not found"))
 
     async def send_group_help(self, group):
-        await self.context.send(embed=embed.make_error_embed("Command not found"))
+        conf = config.configLoad('guildconfig.json') # loads guildconfig.json
+        try:
+            prefix = conf[str(self.context.guild.id)]['prefix']
+        except:
+            conf2 = config.configLoad('config.json')
+            prefix = conf2['main']['prefix']
+            
+        try:
+            subcmds = ""
+            if group.commands != []:
+                for command in group.commands:
+                    subcmds += "`" + command.name + "`, "
+                subcmds = subcmds[:-2]
+            else:
+                subcmds = "`None`"
+
+            alias = ""
+            if group.aliases != []:
+                for i in range(len(group.aliases)):
+                    if i == len(group.aliases) - 1:
+                        alias = alias + '`' + group.aliases[i] + '`'
+                    else:
+                        alias = alias + '`' + group.aliases[i] + '`' + ', '
+            else:
+                alias = "`None`"
+
+            await self.context.send(embed=embed.make_embed_fields_ninl(group.name, group.description, ("Usage", f"`{prefix}{group.usage}`"), ("Aliases", alias), ("Subcommands", subcmds)))
+        except:
+            await self.context.send(embed=embed.make_error_embed("Command not found"))
 
     async def send_command_help(self, command):
         conf = config.configLoad('guildconfig.json') # loads guildconfig.json
@@ -48,13 +76,11 @@ class Help(commands.MinimalHelpCommand):
                 else:
                     alias = 'None'
 
-                # builds and sends embed for command help
-                embed=discord.Embed(title=f'{command.name}', description=f'**Description:** {command.description}\n**Usage:**  `{prefix}{command.usage}`\n**Aliases:** `{alias}`', color=0xc1c100)
-                await self.context.send(embed=embed)
+                await self.context.send(embed=embed.make_embed_fields_ninl(command.name, command.description, ("Usage", f"`{prefix}{command.usage}`"), ("Aliases", alias)))
             else:
-                await self.context.send(embed=embed.make_error_embed("Command not found")) # command is disabled
+                await self.context.send(embed=embed.make_error_embed("Command not found"))
         except:
-            await self.context.send(embed=embed.make_error_embed("Command not found")) # error somehow in getting command
+            await self.context.send(embed=embed.make_error_embed("Command not found"))
 
     async def send_bot_help(self, mapping):
         # get list of commands
@@ -91,7 +117,7 @@ class Help(commands.MinimalHelpCommand):
             embed=discord.Embed(title='Help', description=f'Specify a command to get further information `{prefix}help <command>`', color=0xc1c100)
             embed.add_field(name='Commands', value=f'{cmdString}', inline=False)
         else:
-            embed=discord.Embed(title='Help', description=f'No commands found', color=0xc1c100)
+            embed=discord.Embed(title='Help', description=f'No commands found.', color=0xc1c100)
         await self.context.send(embed=embed)
 
 def setup(bot):
