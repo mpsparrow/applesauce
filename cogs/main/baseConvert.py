@@ -22,7 +22,7 @@ class BaseConvert(commands.Cog):
                 await ctx.send(embed=embed.make_error_embed("Value too large."))
                 return
             
-            if baseFrom > 36 or baseFrom < 2 or baseTo > 32 or baseTo < 2:
+            if baseFrom > 36 or baseFrom < 2 or baseTo > 36 or baseTo < 2:
                 await ctx.send(embed=embed.make_error_embed("Please use a base between 2 and 32."))
                 return
 
