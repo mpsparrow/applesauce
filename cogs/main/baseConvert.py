@@ -13,7 +13,7 @@ class BaseConvert(commands.Cog):
         self.bot = bot
 
     @commands.check(commandchecks.isAllowed)
-    @commands.command(name="baseConvert", description="Converts from a base to another base. Base range(2-32).", usage="bc <base-from> <base-to> <value>", aliases=['bc'])
+    @commands.command(name="baseConvert", description="Converts from one base to another. Acceptable base range 2-36.", usage="bc <base-from> <base-to> <value>", aliases=['bc'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def baseConvert(self, ctx, baseFrom: int, baseTo: int, numValue):
         alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']

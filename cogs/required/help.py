@@ -12,6 +12,9 @@ class SetupHelp(commands.Cog):
         self._original_help_command = bot.help_command
         bot.help_command = Help()
         bot.help_command.cog = self
+        
+    def cog_unload(self):
+        self.bot.help_command = self._original_help_command
 
 class Help(commands.MinimalHelpCommand):
     async def command_not_found(self, string):
@@ -84,15 +87,15 @@ class Help(commands.MinimalHelpCommand):
 
     async def send_bot_help(self, mapping):
         # get list of commands
-        cmds = []
+        allCmds = []
         conf = config.configLoad('guildconfig.json')
         prefix = config.guildPrefix(str(self.context.guild.id))
 
-        for cog, cog_commands in mapping.items():
-            cmds = cmds + cog_commands
+        for cog, cmds in mapping.items():
+            allCmds += cmds
 
         newCmds = []
-        for item in cmds:
+        for item in allCmds:
             newCmds.append(str(item))
         newCmds = sorted(newCmds)
 
