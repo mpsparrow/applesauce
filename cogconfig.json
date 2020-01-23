@@ -3,5 +3,9 @@
         "wolframKeys": [
             "key here"
         ]
+    },
+    "wordsAPI": {
+        "host": "host name",
+        "key": "API key"
     }
 }
