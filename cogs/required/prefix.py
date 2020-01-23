@@ -1,5 +1,6 @@
 '''
-Command to change prefix
+Prefix related commands
+ *prefix
 '''
 import discord
 from discord.ext import commands
@@ -11,7 +12,7 @@ class Prefix(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # change prefix command
+    # change prefix (command)
     @commands.command()
     @commands.is_owner()
     async def prefix(self, ctx, prefix):
@@ -19,9 +20,9 @@ class Prefix(commands.Cog):
             conf = config.configLoad('guildconfig.json')
             conf[str(ctx.guild.id)]['prefix'] = str(prefix)
             config.configDump('guildconfig.json', conf)
-            await ctx.message.add_reaction("✅")
+            await ctx.message.add_reaction("✅") # success
         except:
-            await ctx.message.add_reaction("❌")
+            await ctx.message.add_reaction("❌") # fail
 
 def setup(bot):
     bot.add_cog(Prefix(bot))

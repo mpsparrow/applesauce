@@ -23,10 +23,10 @@ def errorLog(message):
     logWrite('output-log.txt', message, tag="[error]")
 
 def warningLog(message):
-    logWrite('output-log.txt', message, tag="[warning]")
+    logWrite('output-log.txt', message, tag="[warn]")
 
 def passedLog(message):
-    logWrite('output-log.txt', message, tag="[passed]")
+    logWrite('output-log.txt', message, tag="[pass]")
 
 def infoLog(message):
     logWrite('output-log.txt', message, tag="[info]")

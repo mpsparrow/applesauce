@@ -1,18 +1,22 @@
 {
-  "main": {
-    "botName": "Applesauce",
-    "token": "token",
-    "prefix": "-",
-    "excludedRequired": [
-      ""
-    ]
-  },
+    "main": {
+        "botName": "Applesauce",
+        "token": "token",
+        "prefix": "-",
+        "excludedRequired": [
+            ""
+        ]
+    },
+    "customization": {
+        "embedErrorColour": "0xf84722",
+        "embedColour": "0xc1c100"
+    },
     "mysql": {
         "user": "",
         "password": "",
         "host": "",
         "database": ""
     },
-  "cogs": {
-  }
+    "cogs": {
+    }
 }

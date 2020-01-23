@@ -1,5 +1,5 @@
 '''
-Useful functions to get config information
+Useful functions to retrieve and load config information
 '''
 import json
 
