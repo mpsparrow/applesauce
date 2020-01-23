@@ -36,10 +36,9 @@ class Emoji(commands.Cog):
         await ctx.send('<a:pepelightsaber:663496095065964585>') 
 
     # thonks
-    @emoji.command(name="thonk", description="<:think:527902122692444161>", usage="thonk", aliases=['t', 'think'])
+    @emoji.command(name="thonk", description="<:thowonking:605504425083011102>", usage="thonk", aliases=['t', 'think'])
     async def thonk(self, ctx):
         thonks = [
-            '<:think:527902122692444161>',
             '<:thowonking:605504425083011102>',
             '<:thonkshock:609621801412198410>',
             '<:thunk:568294885258428416>',
