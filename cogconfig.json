@@ -5,7 +5,7 @@
         ]
     },
     "wordsAPI": {
-        "host": "host name",
-        "key": "API key"
+        "x-rapidapi-host": "host here",
+        "x-rapidapi-key": "key here"
     }
 }
