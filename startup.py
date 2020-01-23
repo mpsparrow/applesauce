@@ -1,5 +1,5 @@
 '''
-Applesauce
+Bot Name: Applesauce
 Created By: Matthew
 Framework Version: v1.2.2
 Last Updated: January 23, 2020

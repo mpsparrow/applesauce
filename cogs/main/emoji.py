@@ -1,7 +1,7 @@
 '''
 Name: Emoji Commands
 Description: Pile of commands to display emojis
-Last Updated: January 12, 2020
+Last Updated: January 23, 2020
 Created: January 12, 2020
 '''
 import discord
