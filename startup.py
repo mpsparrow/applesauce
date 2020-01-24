@@ -14,6 +14,7 @@ from utils import config, startupchecks, commandchecks, logger
 import sys
 import os
 import datetime
+import time
 import json
 
 # gets prefix for bot
@@ -33,6 +34,7 @@ async def outputLog(ctx):
 # on startup
 @bot.event
 async def on_ready():
+    startTime = time.time()
     # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="started"))
 
     logger.logWipe('output-log.txt')
@@ -97,5 +99,6 @@ async def on_ready():
 
         logger.infoLog(f'Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n')
         logger.infoLog(f'{botName} is ready to rumble!')
+        logger.infoLog(f'Initialized in {int((time.time() - startTime)*1000)}ms')
 
 bot.run(conf['main']['token']) # gets Discord token from config.json and starts bot
