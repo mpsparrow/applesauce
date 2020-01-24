@@ -33,6 +33,8 @@ async def outputLog(ctx):
 # on startup
 @bot.event
 async def on_ready():
+    # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="started"))
+
     logger.logWipe('output-log.txt')
     logger.infoLog('Running Checks')
 
