@@ -14,13 +14,19 @@ class cogCmds(commands.Cog):
     # disabled command
     @commands.command()
     @commands.is_owner()
-    async def disableCmd(self, ctx, cmd):
+    async def disableCmd(self, ctx, *, cmd):
+        allCmd = []
+        for command in set(ctx.bot.walk_commands()):
+            allCmd.append(str(command))
         try:
-            conf = config.configLoad('guildconfig.json')
-            conf[str(ctx.guild.id)]["Commands"][cmd] = False
-            config.configDump('guildconfig.json', conf)
-            logger.normalLog(f'Successfully disabled {cmd}')
-            await ctx.message.add_reaction("✅")
+            if str(cmd) in allCmd:
+                conf = config.configLoad('guildconfig.json')
+                conf[str(ctx.guild.id)]["Commands"][str(cmd)] = False
+                config.configDump('guildconfig.json', conf)
+                logger.normalLog(f'Successfully disabled {cmd}')
+                await ctx.message.add_reaction("✅")
+            else:
+                await ctx.message.add_reaction("❌")
         except Exception as e:
             logger.errorLog(f'Failed to disable {cmd}')
             logger.errorLog(f'{e}')
@@ -29,13 +35,19 @@ class cogCmds(commands.Cog):
     # enable command
     @commands.command()
     @commands.is_owner()
-    async def enableCmd(self, ctx, cmd):
+    async def enableCmd(self, ctx, *, cmd):
+        allCmd = []
+        for command in set(ctx.bot.walk_commands()):
+            allCmd.append(str(command))
         try:
-            conf = config.configLoad('guildconfig.json')
-            conf[str(ctx.guild.id)]["Commands"][cmd] = True
-            config.configDump('guildconfig.json', conf)
-            logger.normalLog(f'Successfully enabled {cmd}')
-            await ctx.message.add_reaction("✅")
+            if str(cmd) in allCmd:
+                conf = config.configLoad('guildconfig.json')
+                conf[str(ctx.guild.id)]["Commands"][str(cmd)] = True
+                config.configDump('guildconfig.json', conf)
+                logger.normalLog(f'Successfully enabled {cmd}')
+                await ctx.message.add_reaction("✅")
+            else:
+                await ctx.message.add_reaction("❌")
         except Exception as e:
             logger.errorLog(f'Failed to enable {cmd}')
             logger.errorLog(f'{e}')
