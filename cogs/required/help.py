@@ -61,9 +61,9 @@ class Help(commands.MinimalHelpCommand):
 
                 await self.context.send(embed=embed.make_embed_fields_ninl(group.name, group.description, ("Usage", f"`{prefix}{group.usage}`"), ("Aliases", alias), ("Subcommands", subcmds)))
             else:
-                await self.context.send(embed=embed.make_error_embed("Command not found."))
+                await self.context.send(embed=embed.make_error_embed("Command not found"))
         except:
-            await self.context.send(embed=embed.make_error_embed("Command not found."))
+            await self.context.send(embed=embed.make_error_embed("Command not found"))
 
     async def send_command_help(self, command):
         conf = config.configLoad('guildconfig.json')
@@ -97,13 +97,17 @@ class Help(commands.MinimalHelpCommand):
         allCmds = sorted(allCmds)
 
         enableCmds = []
+        enableSubCmds = []
         disableCmds= []
         otherCmds = []
         for item in allCmds:
             try:
                 randomVar = conf[str(self.context.guild.id)]["Commands"][item]
                 if randomVar == True:
-                    enableCmds.append(item)
+                    if " " in item:
+                        enableSubCmds.append(item)
+                    else:
+                        enableCmds.append(item)
                 else:
                     disableCmds.append(item)
             except:
@@ -111,6 +115,7 @@ class Help(commands.MinimalHelpCommand):
                 pass
 
         enableString = commandList(enableCmds)
+        enableSubString = commandList(enableSubCmds)
         disableString = commandList(disableCmds)
         otherString = commandList(otherCmds)
 
@@ -119,6 +124,7 @@ class Help(commands.MinimalHelpCommand):
         else:
             embed=discord.Embed(title='Help', description=f'Specify a command to get further information `{prefix}help <command>`', color=0xc1c100)
             embed.add_field(name='Enabled Commands', value=f'{enableString}', inline=False)
+            embed.add_field(name='Enabled Sub Commands', value=f'{enableSubString}', inline=False)
             embed.add_field(name='Disabled Commands', value=f'{disableString}', inline=False)
             embed.add_field(name='Other Commands', value=f'{otherString}', inline=False)
         await self.context.send(embed=embed)
