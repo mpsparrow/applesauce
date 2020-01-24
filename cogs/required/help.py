@@ -72,11 +72,13 @@ class Help(commands.MinimalHelpCommand):
         try:
             if command.parent == None:
                 name = f"{command.name}"
+                randomVar2 = True
             else:
                 name = f"{command.parent} {command.name}"
+                randomVar2 = conf[str(self.context.guild.id)]["Commands"][str(command.parent)]
 
             randomVar = conf[str(self.context.guild.id)]["Commands"][str(name)] # gets true/false value of command for guild
-            if randomVar == True: # if command is enabled in guild
+            if randomVar and randomVar2: # if command is enabled in guild
                 alias = commandList(command.aliases)
 
                 await self.context.send(embed=embed.make_embed_fields_ninl(command.name, command.description, ("Usage", f"`{prefix}{command.usage}`"), ("Aliases", alias)))
