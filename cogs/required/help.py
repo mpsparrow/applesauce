@@ -6,15 +6,22 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from utils import config, embed
 
+def commandList(cmds):
+    cmdString = ""
+    if len(cmds) != 0:
+        for i in range(len(cmds)):
+            cmdString = cmdString + '`' + cmds[i] + '`' + ', '
+        cmdString = cmdString[:-2]
+        return cmdString
+    else:
+        return "None"
+
 class SetupHelp(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self._original_help_command = bot.help_command
         bot.help_command = Help()
         bot.help_command.cog = self
-        
-    def cog_unload(self):
-        self.bot.help_command = self._original_help_command
 
 class Help(commands.MinimalHelpCommand):
     async def command_not_found(self, string):
@@ -27,57 +34,50 @@ class Help(commands.MinimalHelpCommand):
         await self.context.send(embed=embed.make_error_embed("Command not found"))
 
     async def send_group_help(self, group):
-        conf = config.configLoad('guildconfig.json') # loads guildconfig.json
-        try:
-            prefix = conf[str(self.context.guild.id)]['prefix']
-        except:
-            conf2 = config.configLoad('config.json')
-            prefix = conf2['main']['prefix']
+        conf = config.configLoad('guildconfig.json')
+        prefix = config.guildPrefix(str(self.context.guild.id))
             
         try:
-            subcmds = ""
-            if group.commands != []:
-                for command in group.commands:
-                    subcmds += "`" + command.name + "`, "
-                subcmds = subcmds[:-2]
-            else:
-                subcmds = "`None`"
-
-            alias = ""
-            if group.aliases != []:
-                for i in range(len(group.aliases)):
-                    if i == len(group.aliases) - 1:
-                        alias = alias + '`' + group.aliases[i] + '`'
+            randomVar = conf[str(self.context.guild.id)]["Commands"][str(group.name)] # gets true/false value of command for guild
+            if randomVar == True: # if command is enabled in guild
+                subcmds = ""
+                if group.commands != []:
+                    for command in group.commands:
+                        try:
+                            name = f"{group.name} {command.name}"
+                            randomVar2 = conf[str(self.context.guild.id)]["Commands"][name]
+                            if randomVar2 == True:
+                                subcmds = subcmds + '`' + command.name + '`' + ', '
+                        except:
+                            pass
+                    if subcmds != "":
+                        subcmds = subcmds[:-2]
                     else:
-                        alias = alias + '`' + group.aliases[i] + '`' + ', '
-            else:
-                alias = "`None`"
+                        subcmds = "None"
+                else:
+                    subcmds = "None"
 
-            await self.context.send(embed=embed.make_embed_fields_ninl(group.name, group.description, ("Usage", f"`{prefix}{group.usage}`"), ("Aliases", alias), ("Subcommands", subcmds)))
+                alias = commandList(group.aliases)
+
+                await self.context.send(embed=embed.make_embed_fields_ninl(group.name, group.description, ("Usage", f"`{prefix}{group.usage}`"), ("Aliases", alias), ("Subcommands", subcmds)))
+            else:
+                await self.context.send(embed=embed.make_error_embed("Command not found."))
         except:
-            await self.context.send(embed=embed.make_error_embed("Command not found"))
+            await self.context.send(embed=embed.make_error_embed("Command not found."))
 
     async def send_command_help(self, command):
-        conf = config.configLoad('guildconfig.json') # loads guildconfig.json
-        try:
-            prefix = conf[str(self.context.guild.id)]['prefix']
-        except:
-            conf2 = config.configLoad('config.json')
-            prefix = conf2['main']['prefix']
+        conf = config.configLoad('guildconfig.json')
+        prefix = config.guildPrefix(str(self.context.guild.id))
 
         try:
-            randomVar = conf[str(self.context.guild.id)]["Commands"][str(command.name)] # gets true/false value of command for guild
+            if command.parent == None:
+                name = f"{command.name}"
+            else:
+                name = f"{command.parent} {command.name}"
+
+            randomVar = conf[str(self.context.guild.id)]["Commands"][str(name)] # gets true/false value of command for guild
             if randomVar == True: # if command is enabled in guild
-                # creates list of aliases for command
-                alias = ''
-                if command.aliases != []:
-                    for i in range(len(command.aliases)):
-                        if i == len(command.aliases) - 1:
-                            alias = alias + '`' + command.aliases[i] + '`'
-                        else:
-                            alias = alias + '`' + command.aliases[i] + '`' + ', '
-                else:
-                    alias = 'None'
+                alias = commandList(command.aliases)
 
                 await self.context.send(embed=embed.make_embed_fields_ninl(command.name, command.description, ("Usage", f"`{prefix}{command.usage}`"), ("Aliases", alias)))
             else:
@@ -91,36 +91,36 @@ class Help(commands.MinimalHelpCommand):
         conf = config.configLoad('guildconfig.json')
         prefix = config.guildPrefix(str(self.context.guild.id))
 
-        for cog, cmds in mapping.items():
-            allCmds += cmds
+        for command in set(self.context.bot.walk_commands()):
+            allCmds.append(str(command))
 
-        newCmds = []
+        allCmds = sorted(allCmds)
+
+        enableCmds = []
+        disableCmds= []
+        otherCmds = []
         for item in allCmds:
-            newCmds.append(str(item))
-        newCmds = sorted(newCmds)
-
-        finalCmds = []
-        for item in newCmds:
             try:
                 randomVar = conf[str(self.context.guild.id)]["Commands"][item]
                 if randomVar == True:
-                    finalCmds.append(item)
+                    enableCmds.append(item)
+                else:
+                    disableCmds.append(item)
             except:
+                otherCmds.append(item)
                 pass
 
-        cmdString = ""
-        if len(finalCmds) != 0:
-            for i in range(len(finalCmds)):
-                if i == len(finalCmds)-1:
-                    cmdString = cmdString + '`' + finalCmds[i] + '`'
-                else:
-                    cmdString = cmdString + '`' + finalCmds[i] + '`' + ', '
+        enableString = commandList(enableCmds)
+        disableString = commandList(disableCmds)
+        otherString = commandList(otherCmds)
 
-        if cmdString != "":
-            embed=discord.Embed(title='Help', description=f'Specify a command to get further information `{prefix}help <command>`', color=0xc1c100)
-            embed.add_field(name='Commands', value=f'{cmdString}', inline=False)
-        else:
+        if (enableString == "") and (disableString == "") and (otherString == ""):
             embed=discord.Embed(title='Help', description=f'No commands found.', color=0xc1c100)
+        else:
+            embed=discord.Embed(title='Help', description=f'Specify a command to get further information `{prefix}help <command>`', color=0xc1c100)
+            embed.add_field(name='Enabled Commands', value=f'{enableString}', inline=False)
+            embed.add_field(name='Disabled Commands', value=f'{disableString}', inline=False)
+            embed.add_field(name='Other Commands', value=f'{otherString}', inline=False)
         await self.context.send(embed=embed)
 
 def setup(bot):
