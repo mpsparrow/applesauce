@@ -53,5 +53,26 @@ class cogCmds(commands.Cog):
             logger.errorLog(f'{e}')
             await ctx.message.add_reaction("❌")
 
+    # enable command
+    @commands.command()
+    @commands.is_owner()
+    async def removeCmd(self, ctx, *, cmd):
+        allCmd = []
+        for command in set(ctx.bot.walk_commands()):
+            allCmd.append(str(command))
+        try:
+            if str(cmd) in allCmd:
+                conf = config.configLoad('guildconfig.json')
+                del conf[str(ctx.guild.id)]["Commands"][str(cmd)]
+                config.configDump('guildconfig.json', conf)
+                logger.normalLog(f'Successfully removed {cmd}')
+                await ctx.message.add_reaction("✅")
+            else:
+                await ctx.message.add_reaction("❌")
+        except Exception as e:
+            logger.errorLog(f'Failed to remove {cmd}')
+            logger.errorLog(f'{e}')
+            await ctx.message.add_reaction("❌")
+
 def setup(bot):
     bot.add_cog(cogCmds(bot))

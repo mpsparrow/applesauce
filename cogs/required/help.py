@@ -39,7 +39,7 @@ def botHelp(ctx, passAll=False):
                     enableSubCmds.append(item)
                 else:
                     enableCmds.append(item)
-            else:
+            elif randomVar == False:
                 disableCmds.append(item)
         except:
             otherCmds.append(item)
