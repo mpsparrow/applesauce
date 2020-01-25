@@ -23,7 +23,7 @@ class BaseConvert(commands.Cog):
                 return
             
             if baseFrom > 36 or baseFrom < 2 or baseTo > 36 or baseTo < 2:
-                await ctx.send(embed=embed.make_error_embed("Please use a base between 2 and 32."))
+                await ctx.send(embed=embed.make_error_embed("Please use a base between 2 and 36."))
                 return
 
             for i in numValue:
