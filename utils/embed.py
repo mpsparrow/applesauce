@@ -35,3 +35,10 @@ def make_embed_fields_ninl(title: str, desc: str, *fields: tuple) -> discord.Emb
     for name, value in fields:
         embed.add_field(name=name, value=value, inline=False)
     return embed
+
+def make_embed_image(title: str, path: str) -> (discord.Embed, discord.File):
+    embed = discord.Embed(title=title, colour=0xc1c100)
+    attachment = discord.File(path, filename="image.png")
+    embed.set_image(url='attachment://image.png')
+
+    return (embed, attachment)
