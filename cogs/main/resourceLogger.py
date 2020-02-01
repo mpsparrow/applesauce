@@ -1,15 +1,16 @@
 '''
 Name: Resource Logger
 Description: Logs resource usage of server. Made to work with srLogger
-Last Updated: January 31, 2020
+Last Updated: February 1, 2020
 Created: January 29, 2020
 '''
 import discord
 from discord.ext import commands
 import mysql.connector as mysql
 from mysql.connector import errorcode
-import matplotlib.pyplot as plt
 from utils import embed, config
+import matplotlib.pyplot as plt
+import numpy as np
 import datetime
 from datetime import date as dated
 from datetime import timedelta
@@ -28,34 +29,22 @@ class resourceLogger(commands.Cog):
             cnx = mysql.connect(user=conf['srLogger']['user'], password=conf['srLogger']['password'], host=conf['srLogger']['host'], database=conf['srLogger']['database'])
             cursor = cnx.cursor()
             cursor.execute("SELECT cpu_percent_avg, vmemory_percent_avg, smemory_percent_avg, time, date FROM `usage` WHERE date BETWEEN %s AND %s", (start_date, end_date))
-            cpuPercent = []
-            timeValue = []
-            dateValue = []
-            vmemoryPercent = []
-            smemoryPercent = []
-            newLegend = []
-            for (cpu_percent_avg, vmemory_percent_avg, smemory_percent_avg, time, date) in cursor:
-                cpuPercent.append(cpu_percent_avg)
-                timeValue.append(str(time))
-                dateValue.append(str(date))
-                vmemoryPercent.append(vmemory_percent_avg)
-                smemoryPercent.append(smemory_percent_avg)
-            '''
-            plt.plot(timeValue, cpuPercent, label="CPU Avg.")
-            plt.plot(timeValue, cpuMin, label="CPU Min")
-            plt.plot(timeValue, cpuMax, label="CPU Max")
-            '''
-            plt.stackplot(timeValue, cpuPercent, vmemoryPercent, smemoryPercent, labels=["CPU", "Virtual Memory", "Swap Memory"])
+            data = np.array(cursor.fetchall())
+            cpuPercent = np.array([item[0] for item in data])
+            vmemoryPercent = np.array([item[1] for item in data])
+            datetimeValue = []
+            for item in data:
+                datetimeValue.append(datetime.datetime.combine(item[4], (datetime.datetime.min + item[3]).time()))
+            plt.plot(datetimeValue, cpuPercent, label="CPU Avg.")
+            plt.plot(datetimeValue, vmemoryPercent, label="Virtual Mem Avg.")
             plt.ylabel("Usage 0-100%")
+            plt.xlabel("Date/Time (MM-DD HH)")
             plt.ylim(0, 100)
-            for i in range(len(dateValue)):
-                if i % 15 == 0:
-                    newLegend.append(dateValue[i] + "\n" + timeValue[i][:-3])
-                else:
-                    newLegend.append(" ")
-            plt.xticks(timeValue, newLegend, fontsize=8, rotation=80)
             plt.legend(loc='best')
+            plt.xticks(rotation=30)
+            plt.grid()
             plt.tight_layout()
+            plt.margins(0,0)
             plt.savefig("plot.png")
             plt.clf()
             cnx.close()
