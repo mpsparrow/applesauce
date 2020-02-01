@@ -28,13 +28,13 @@ class resourceLogger(commands.Cog):
             end_date = dated.today() 
             cnx = mysql.connect(user=conf['srLogger']['user'], password=conf['srLogger']['password'], host=conf['srLogger']['host'], database=conf['srLogger']['database'])
             cursor = cnx.cursor()
-            cursor.execute("SELECT cpu_percent_avg, vmemory_percent_avg, smemory_percent_avg, time, date FROM `usage` WHERE date BETWEEN %s AND %s", (start_date, end_date))
+            cursor.execute("SELECT cpu_percent_avg, vmemory_percent_avg, time, date FROM `usage` WHERE date BETWEEN %s AND %s", (start_date, end_date))
             data = np.array(cursor.fetchall())
             cpuPercent = np.array([item[0] for item in data])
             vmemoryPercent = np.array([item[1] for item in data])
             datetimeValue = []
             for item in data:
-                datetimeValue.append(datetime.datetime.combine(item[4], (datetime.datetime.min + item[3]).time()))
+                datetimeValue.append(datetime.datetime.combine(item[3], (datetime.datetime.min + item[2]).time()))
             plt.plot(datetimeValue, cpuPercent, label="CPU Avg.")
             plt.plot(datetimeValue, vmemoryPercent, label="Virtual Mem Avg.")
             plt.ylabel("Usage 0-100%")
