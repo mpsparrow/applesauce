@@ -20,6 +20,6 @@ def guildPrefix(guildid):
         conf = configLoad('guildconfig.json')
         prefix = conf[guildid]['prefix']
     except:
-        conf = configLoad('config.json')
+        conf2 = configLoad('config.json')
         prefix = conf2['main']['prefix']
     return prefix
