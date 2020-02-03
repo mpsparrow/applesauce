@@ -39,6 +39,7 @@ class resourceLogger(commands.Cog):
             plt.plot(datetimeValue, vmemoryPercent, label="Virtual Mem Avg.")
             plt.ylabel("Usage 0-100%")
             plt.xlabel("Date/Time (MM-DD HH)")
+            plt.yscale("log")
             plt.ylim(0, 100)
             plt.legend(loc='best')
             plt.xticks(rotation=30)
