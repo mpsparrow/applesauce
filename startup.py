@@ -1,8 +1,8 @@
 '''
 Bot Name: Applesauce
 Created By: Matthew
-Framework Version: v1.2.4
-Last Updated: January 31, 2020
+Framework Version: v1.2
+Last Updated: February 4, 2020
 Created On: October 12, 2019
 
 Please read license.txt for license information
@@ -26,7 +26,7 @@ botName = conf['main']['botName'] # gets bots name from config
 bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True) # gets bots prefix and case_insensitivity
 
 # outputLog (command)
-@bot.command(name='outputLog', description='prints output-log.txt', usage='outputLog')
+@bot.command(name='outputLog', description='prints output-log.txt', usage='outputLog', aliases=['outlog', 'output', 'oplog'])
 @commands.is_owner()
 async def outputLog(ctx):
     await ctx.send(f"```{logger.logReturn('output-log.txt')}```") # sends output-log.txt
@@ -35,14 +35,13 @@ async def outputLog(ctx):
 @bot.event
 async def on_ready():
     startTime = time.time()
-    # await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="started"))
 
     logger.logWipe('output-log.txt')
     logger.infoLog('Running Checks')
 
     if startupchecks.startUpChecks() == False: # runs startup checks that are in startupchecks.py
         # if startup checks fail
-        logger.errorLog("Something isn't configured correctly for Applesauce to startup.")
+        logger.errorLog("Something isn't configured correctly for startup")
         logger.errorLog("Startup aborted")
     else:
         # startup checks passed

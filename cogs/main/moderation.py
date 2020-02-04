@@ -13,7 +13,7 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # ban command
+    # ban (command)
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="ban", description="Bans user from the guild.", usage="ban <user>")
     @commands.has_permissions(ban_members=True)
@@ -21,7 +21,7 @@ class Moderation(commands.Cog):
         await member.ban(reason=reason)
         logger.logWrite('command-log.txt', f'{member} was banned by {ctx.message.author} for "{reason}"')
 
-    # clear/purge command
+    # clear (command)
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="clear", description="Clears x amount of messages from channel (including the message containing the command call).", usage="clear <#messages>", aliases=['purge'])
     @commands.has_permissions(manage_messages=True)
@@ -29,7 +29,7 @@ class Moderation(commands.Cog):
         await ctx.channel.purge(limit=amount+1)
         logger.logWrite('command-log.txt', f'{amount} message(s) were cleared by {ctx.message.author} in #{ctx.message.channel}')
 
-    # kick command
+    # kick (command)
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="kick", description="Kicks user from the guild.", usage="kick <user>")
     @commands.has_permissions(kick_members=True)

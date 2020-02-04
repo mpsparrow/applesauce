@@ -14,7 +14,7 @@ class Wolfram(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # wolfram command
+    # wolfram (command)
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="wolfram", description="Queries Wolfram Alpha and returns the result and link.", usage="wolfram <query>", aliases=['wolf'])
     @commands.cooldown(1, 20, commands.BucketType.default)

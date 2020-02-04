@@ -13,7 +13,7 @@ class Wiki(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # wikipedia command
+    # wikipedia (command)
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="wikipedia", description="Queries Wikipedia and returns summary and link to the page.", usage="wikipedia <query>", aliases=['wiki'])
     @commands.cooldown(1, 10, commands.BucketType.default)

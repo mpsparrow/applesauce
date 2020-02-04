@@ -23,12 +23,11 @@ class ball8(commands.Cog):
         'yes daddy OwO'
     ]
 
-    # 8ball command
+    # 8ball (command)
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="8ball", description="gives a random answer completely not based on what you ask him", usage="8ball", aliases=['magicball'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def _8ball(self, ctx):
-        # picks random value from ballAnswers list
         await ctx.send(random.choice(self.ballAnswers))
 
 def setup(bot):

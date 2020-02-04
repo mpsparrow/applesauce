@@ -60,7 +60,7 @@ class pinArchive(commands.Cog):
         except:
             pass
 
-    # set archiving channel command
+    # setArchive (command)
     @commands.command(name="setArchive", description="Sets channel for pins archiving.", usage="setArchive <channel-ID>", aliases=['setChannelArchive'])
     @commands.has_permissions(manage_guild=True)
     async def setArchive(self, ctx, channel):
@@ -72,7 +72,7 @@ class pinArchive(commands.Cog):
         except:
             await ctx.send("invalid or enable to set")
 
-    # set archiving channel command
+    # messageArchive (command)
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="messageArchive", description="Archives message", usage="a <message-ID>", aliases=['a'])
     @commands.has_permissions(manage_guild=True)

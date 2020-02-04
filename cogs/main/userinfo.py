@@ -14,7 +14,7 @@ class userInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # userinfo command
+    # userinfo (command)
     @commands.check(commandchecks.isAllowed)
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="userinfo", description="Displays random information and stats about the user.", usage="userinfo <user>", aliases=["player", "playerinfo", "user"])

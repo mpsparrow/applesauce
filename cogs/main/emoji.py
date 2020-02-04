@@ -13,29 +13,29 @@ class Emoji(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # emoji main group
+    # emoji (group)
     @commands.check(commandchecks.isAllowed)
     @commands.group(name="emoji", description="Makes the bot print emojis.", usage="emoji <emoji-name>", aliases=['e'])
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def emoji(self, ctx):
         pass
 
-    # hank
+    # hank (subcommand)
     @emoji.command(name="hank", description="<:hank:651284638958092301>", usage="emoji hank", aliases=['h'])
     async def hank(self, ctx):
         await ctx.send('<:hank:651284638958092301>')
 
-    # mushroom
+    # mushroom (subcommand)
     @emoji.command(name="mushroom", description="<a:mushroomDance:659932848035463198>", usage="emoji mushroom", aliases=['ms', 'shroom'])
     async def mushroom(self, ctx):
         await ctx.send('<a:mushroomDance:659932848035463198>')
 
-    # saber
+    # saber (subcommand)
     @emoji.command(name="saber", description="<a:pepelightsaber:663496095065964585>", usage="emoji saber", aliases=['sb'])
     async def saber(self, ctx):
         await ctx.send('<a:pepelightsaber:663496095065964585>') 
 
-    # thonks
+    # thonks (subcommand)
     @emoji.command(name="thonk", description="<:thowonking:605504425083011102>", usage="emoji thonk", aliases=['t', 'think'])
     async def thonk(self, ctx):
         thonks = [
