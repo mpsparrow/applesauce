@@ -9,7 +9,7 @@ import json
 # checks if user is ignored in guild
 def ignoredCheck(ctx, guildID):
     try: 
-        conf = config.configLoad('guildconfig.json')
+        conf = config.readJSON('guildconfig.json')
         ignoredUsers = conf[guildID]['ignored'] # gets ignored users
 
         if str(ctx.author) not in ignoredUsers: # if user is not in ignored users
@@ -18,16 +18,16 @@ def ignoredCheck(ctx, guildID):
     except:
         try: 
             conf[guildID]['ignored'] = []
-            config.configDump('guildconfig.json', conf)
+            config.dumpJSON('guildconfig.json', conf)
             return False
         except:
-            logger.warningLog('Command Check Failure (ignored user)') # if accessing failed
+            logger.warnRun('Command Check Failure (ignored user)') # if accessing failed
             return False
 
 # checks if command is disabled in guild
 def guildCheck(ctx, guildID, name):
     try:
-        conf = config.configLoad('guildconfig.json')
+        conf = config.readJSON('guildconfig.json')
         return conf[guildID]["Commands"][name] # sees if it can access the required data
     except:
         guildBuild(ctx, guildID, name)
@@ -36,39 +36,39 @@ def guildCheck(ctx, guildID, name):
 # checks and builds config file if fields are missing
 def guildBuild(ctx, guildID, name):
     try:
-        conf = config.configLoad('guildconfig.json')
+        conf = config.readJSON('guildconfig.json')
         try:
             tmp1 = conf[guildID]
         except:
-            conf1 = config.configLoad('guildconfig.json')
+            conf1 = config.readJSON('guildconfig.json')
             conf1[guildID] = {}
-            config.configDump('guildconfig.json', conf1)
+            config.dumpJSON('guildconfig.json', conf1)
 
         try:
             tmp2 = conf[guildID]["Commands"]
         except:
-            conf2 = config.configLoad('guildconfig.json')
+            conf2 = config.readJSON('guildconfig.json')
             conf2[guildID]["Commands"] = {}
-            config.configDump('guildconfig.json', conf2)
+            config.dumpJSON('guildconfig.json', conf2)
 
         try:
             tmp4 = conf[guildID]["Commands"][name]
         except:
-            conf3 = config.configLoad('guildconfig.json')
+            conf3 = config.readJSON('guildconfig.json')
             conf3[guildID]["Commands"][name] = False
-            config.configDump('guildconfig.json', conf3)
+            config.dumpJSON('guildconfig.json', conf3)
     except:
-        logger.warningLog('Command Check Failure (rebuild)')
+        logger.warnRun('Command Check Failure (rebuild)')
 
 # main command check function
 def isAllowed(ctx):
     try:
         # gets information about command
-        conf = config.configLoad('guildconfig.json')
+        conf = config.readJSON('guildconfig.json')
         guildID = str(ctx.guild.id)
         name = str(ctx.command.qualified_name)
     except:
-        logger.warningLog('Command Check Failure (main)')
+        logger.warnRun('Command Check Failure (main)')
         return False
 
     return guildCheck(ctx, guildID, name) and ignoredCheck(ctx, guildID) # if all checks are passed

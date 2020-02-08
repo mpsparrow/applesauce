@@ -1,11 +1,10 @@
 '''
 Prefix related commands
- *prefix
 '''
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from utils import config
+from utils import dbConnect, logger
 import json
 
 class Prefix(commands.Cog):
@@ -14,14 +13,22 @@ class Prefix(commands.Cog):
 
     # change prefix (command)
     @commands.command()
-    @commands.is_owner()
-    async def prefix(self, ctx, prefix):
+    @commands.has_permissions(manage_guild=True)
+    async def prefix(self, ctx, prefix: str):
         try:
-            conf = config.configLoad('guildconfig.json')
-            conf[str(ctx.guild.id)]['prefix'] = str(prefix)
-            config.configDump('guildconfig.json', conf)
-            await ctx.message.add_reaction("✅") # success
-        except:
+            try:
+                cnx = dbConnect.SQLconnect()
+                cursor = cnx.cursor()
+                query = f"""UPDATE prefix SET prefix = '{prefix}' WHERE guild_id = {ctx.guild.id}"""
+                cursor.execute(query)
+                cnx.commit()
+                await ctx.message.add_reaction("✅") # success
+            except:
+                dbConnect.prefix(ctx.guild.id, prefix)
+                await ctx.message.add_reaction("✅") # success
+        except Exception as e:
+            logger.errorRun("prefix.py prefix - error changing prefix")
+            logger.normRun(e)
             await ctx.message.add_reaction("❌") # fail
 
 def setup(bot):

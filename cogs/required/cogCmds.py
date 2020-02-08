@@ -18,11 +18,11 @@ class cogCmds(commands.Cog):
     async def reloadCog(self, ctx, extension):
         try:
             self.bot.reload_extension(f'cogs.main.{extension}')
-            logger.normalLog(f'Successfully reloaded {extension}')
+            logger.normRun(f'Successfully reloaded {extension}')
             await ctx.message.add_reaction("✅")
         except Exception as e:
-            logger.errorLog(f'Failed to reload {extension}')
-            logger.errorLog(f'{e}')
+            logger.errorRun(f'Failed to reload {extension}')
+            logger.errorRun(f'{e}')
             await ctx.message.add_reaction("❌")
 
     # unload extension
@@ -31,11 +31,11 @@ class cogCmds(commands.Cog):
     async def unloadCog(self, ctx, extension):
         try:
             self.bot.unload_extension(f'cogs.main.{extension}')
-            logger.normalLog(f'Successfully unloaded {extension}')
+            logger.normRun(f'Successfully unloaded {extension}')
             await ctx.message.add_reaction("✅")
         except Exception as e:
-            logger.errorLog(f'Failed to unload {extension}')
-            logger.errorLog(f'{e}')
+            logger.errorRun(f'Failed to unload {extension}')
+            logger.errorRun(f'{e}')
             await ctx.message.add_reaction("❌")
 
     # unload extension
@@ -44,11 +44,11 @@ class cogCmds(commands.Cog):
     async def loadCog(self, ctx, extension):
         try:
             self.bot.load_extension(f'cogs.main.{extension}')
-            logger.normalLog(f'Successfully loaded {extension}')
+            logger.normRun(f'Successfully loaded {extension}')
             await ctx.message.add_reaction("✅")
         except Exception as e:
-            logger.errorLog(f'Failed to load {extension}')
-            logger.errorLog(f'{e}')
+            logger.errorRun(f'Failed to load {extension}')
+            logger.errorRun(f'{e}')
             await ctx.message.add_reaction("❌")
 
     # enable extension
@@ -70,18 +70,18 @@ class cogCmds(commands.Cog):
 
         if flag == True:
             try:
-                conf = config.configLoad('config.json')
+                conf = config.readJSON('config.json')
                 x = conf['cogs'][extension]
                 conf['cogs'][extension] = True
-                config.configDump('config.json', conf)
-                logger.normalLog(f'Successfully enabled {extension}')
+                config.dumpJSON('config.json', conf)
+                logger.normRun(f'Successfully enabled {extension}')
                 await ctx.message.add_reaction("✅")
             except Exception as e:
-                logger.errorLog(f'Failed enabling {extension}')
-                logger.errorLog(f'{e}')
+                logger.errorRun(f'Failed enabling {extension}')
+                logger.errorRun(f'{e}')
                 await ctx.message.add_reaction("❌")
         else:
-            logger.errorLog(f'Failed enabling {extension}')
+            logger.errorRun(f'Failed enabling {extension}')
             await ctx.message.add_reaction("❌")
 
     # disable extension
@@ -103,17 +103,17 @@ class cogCmds(commands.Cog):
             
         if flag == True:
             try:
-                conf = config.configLoad('config.json')
+                conf = config.readJSON('config.json')
                 conf['cogs'][extension] = False
-                config.configDump('config.json', conf)
-                logger.normalLog(f'Successfully disabled {extension}')
+                config.dumpJSON('config.json', conf)
+                logger.normRun(f'Successfully disabled {extension}')
                 await ctx.message.add_reaction("✅")
             except Exception as e:
-                logger.errorLog(f'Failed disabling {extension}')
-                logger.errorLog(f'{e}')
+                logger.errorRun(f'Failed disabling {extension}')
+                logger.errorRun(f'{e}')
                 await ctx.message.add_reaction("❌")
         else:
-            logger.errorLog(f'Failed disabling {extension}')
+            logger.errorRun(f'Failed disabling {extension}')
             await ctx.message.add_reaction("❌")
 
 def setup(bot):

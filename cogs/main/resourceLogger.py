@@ -1,7 +1,7 @@
 '''
 Name: Resource Logger
 Description: Logs resource usage of server. Made to work with srLogger
-Last Updated: February 1, 2020
+Last Updated: February 7, 2020
 Created: January 29, 2020
 '''
 import discord
@@ -47,9 +47,9 @@ class resourceLogger(commands.Cog):
             plt.ylabel("Usage 0-100%")
             plt.xlabel("Date/Time (MM-DD HH)")
             plt.yscale("log")
-            plt.ylim(0, 100)
+            plt.ylim(1e-1, 1e2)
             plt.legend(loc='best')
-            plt.xticks(rotation=30)
+            plt.xticks(rotation=45)
             plt.grid()
             plt.tight_layout()
             plt.margins(0,0)

@@ -3,33 +3,52 @@ Basic logging functions
 '''
 import datetime
 
-# writes message to log file
-def logWrite(filename, message, tag="", start=""):
-    outputLog = open(f'logs/{filename}','a+')
-    outputLog.write(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {message}\n")
-    outputLog.close()
+# writes to log
+def write(filename: str, msg: str, tag="", start=""):
+    log = open(f'logs/{filename}','a+')
+    log.write(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {msg}\n")
+    log.close()
 
-# wipes log file
-def logWipe(filename):
-    outputLog = open(f'logs/{filename}','w+')
-    outputLog.close()
+# wipes log
+def wipe(filename: str):
+    log = open(f'logs/{filename}','w+')
+    log.close()
 
-# returns log file contents
-def logReturn(filename):
-    with open(f'logs/{filename}') as f:
-        return f.read()
+# returns log
+def output(filename: str):
+    with open(f'logs/{filename}') as log:
+        return log.read()
 
-def errorLog(message):
-    logWrite('output-log.txt', message, tag="[error]")
+# startup log logging commands    
+startFilename = "startup-log.txt"
+def errorStart(msg: str):
+    write(startFilename, msg, tag="[error]")
 
-def warningLog(message):
-    logWrite('output-log.txt', message, tag="[warn]")
+def warnStart(msg: str):
+    write(startFilename, msg, tag="[warn]")
 
-def passedLog(message):
-    logWrite('output-log.txt', message, tag="[pass]")
+def passStart(msg: str):
+    write(startFilename, msg, tag="[pass]")
 
-def infoLog(message):
-    logWrite('output-log.txt', message, tag="[info]")
+def infoStart(msg: str):
+    write(startFilename, msg, tag="[info]")
 
-def normalLog(message):
-    logWrite('output-log.txt', message, tag="")
+def normStart(msg: str):
+    write(startFilename, msg, tag="")
+
+# runtime log logging commands
+runFilename = "runtime-log.txt"
+def errorRun(msg: str):
+    write(runFilename, msg, tag="[error]")
+
+def warnRun(msg: str):
+    write(runFilename, msg, tag="[warn]")
+
+def infoRun(msg: str):
+    write(runFilename, msg, tag="[info]")
+
+def adminRun(msg: str):
+    write(runFilename, msg, tag="[admin]")
+
+def normRun(msg: str):
+    write(runFilename, msg, tag="")

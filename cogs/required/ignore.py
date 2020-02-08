@@ -18,7 +18,7 @@ class Ignore(commands.Cog):
     async def ignore(self, ctx, member : discord.Member):
         # loads ignore list from config
         try:
-            conf = config.configLoad('guildconfig.json')
+            conf = config.readJSON('guildconfig.json')
             try:
                 x = conf[str(ctx.guild.id)]
                 try:
@@ -28,12 +28,12 @@ class Ignore(commands.Cog):
             except:
                 conf[str(ctx.guild.id)] = {}
                 conf[str(ctx.guild.id)]['ignored'] = []
-                config.configDump('guildconfig.json', conf)
+                config.dumpJSON('guildconfig.json', conf)
 
             # adds user to ignore list
             if str(member) not in conf[str(ctx.guild.id)]['ignored']:
                 conf[str(ctx.guild.id)]['ignored'].append(str(member))
-            config.configDump('guildconfig.json', conf)
+            config.dumpJSON('guildconfig.json', conf)
             await ctx.message.add_reaction("✅") # success
         except:
             await ctx.message.add_reaction("❌") # fail
@@ -44,7 +44,7 @@ class Ignore(commands.Cog):
     async def unignore(self, ctx, member : discord.Member):
         # loads ignore list from config
         try:
-            conf = config.configLoad('guildconfig.json')
+            conf = config.readJSON('guildconfig.json')
             userList = conf[str(ctx.guild.id)]['ignored']
             
             # removes user from list
@@ -57,7 +57,7 @@ class Ignore(commands.Cog):
                 await ctx.message.add_reaction("❌") # if user isn't in list (fail)
 
             conf[str(ctx.guild.id)]['ignored'] = userList
-            config.configDump('guildconfig.json', conf)
+            config.dumpJSON('guildconfig.json', conf)
             await ctx.message.add_reaction("✅") # success
         except:
             await ctx.message.add_reaction("❌") # fail

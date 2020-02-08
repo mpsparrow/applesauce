@@ -9,7 +9,7 @@ from discord.ext import commands
 import datetime
 import time
 from discord.ext.commands import has_permissions
-from utils import config, commandchecks, embed, logger
+from utils import config, commandchecks, embed, dbQuery
 
 class pinArchive(commands.Cog):
     def __init__(self, bot):
@@ -20,7 +20,7 @@ class pinArchive(commands.Cog):
     async def on_raw_message_edit(self, payload):
         data = payload.data
         try:
-            conf = config.configLoad("guildconfig.json")
+            conf = config.readJSON("guildconfig.json")
             if (data['pinned'] == True) and (conf[str(data["guild_id"])]["archivePins"]) and (conf[str(data["guild_id"])]["archiveToggle"]): 
                 try:
                     channelID = conf[str(data["guild_id"])]["archiveChannel"]
@@ -65,7 +65,7 @@ class pinArchive(commands.Cog):
     @commands.group(name="archiveSetup", description="Help menu and commands for configuring archiving.", usage="archiveSetup", aliases=['as'], invoke_without_command=True)
     @commands.has_permissions(manage_guild=True)
     async def archiveSetup(self, ctx):
-        prefix = config.guildPrefix(str(ctx.guild.id))
+        prefix = dbQuery.prefix(ctx.guild.id)
         embed2 = embed.make_embed_fields_ninl("Archiving Setup", "commands for configuring archiving", 
             (f"{prefix}a <message-ID>", "Archives given message in archiving channel."),
             (f"{prefix}as t <true/false>", "Override toggle on/off for archiving. `True` is enabled."),

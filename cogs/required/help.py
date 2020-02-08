@@ -4,7 +4,7 @@ Custom help command
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from utils import config, embed
+from utils import config, embed, dbQuery
 
 def commandList(cmds):
     cmdString = ""
@@ -27,8 +27,8 @@ class SetupHelp(commands.Cog):
     @commands.is_owner()
     async def helpAll(self, ctx):
         allCmds = []
-        conf = config.configLoad('guildconfig.json')
-        prefix = config.guildPrefix(str(ctx.guild.id))
+        conf = config.readJSON('guildconfig.json')
+        prefix = dbQuery.prefix(ctx.guild.id)
 
         for command in set(ctx.bot.walk_commands()):
             allCmds.append(str(command))
@@ -76,8 +76,8 @@ class Help(commands.MinimalHelpCommand):
         await self.context.send(embed=embed.make_error_embed("Command not found"))
 
     async def send_group_help(self, group):
-        conf = config.configLoad('guildconfig.json')
-        prefix = config.guildPrefix(str(self.context.guild.id))
+        conf = config.readJSON('guildconfig.json')
+        prefix = dbQuery.prefix(ctx.guild.id)
 
         try:
             await group.can_run(self.context)
@@ -114,8 +114,8 @@ class Help(commands.MinimalHelpCommand):
             await self.context.send(embed=embed.make_error_embed("Command not found"))
 
     async def send_command_help(self, command):
-        conf = config.configLoad('guildconfig.json')
-        prefix = config.guildPrefix(str(self.context.guild.id))
+        conf = config.readJSON('guildconfig.json')
+        prefix = dbQuery.prefix(ctx.guild.id)
 
         try:
             await command.can_run(self.context)
@@ -144,8 +144,8 @@ class Help(commands.MinimalHelpCommand):
     async def send_bot_help(self, mapping):
         # get list of commands
         allCmds = []
-        conf = config.configLoad('guildconfig.json')
-        prefix = config.guildPrefix(str(self.context.guild.id))
+        conf = config.readJSON('guildconfig.json')
+        prefix = dbQuery.prefix(ctx.guild.id)
 
         for command in set(self.context.bot.walk_commands()):
             try:
