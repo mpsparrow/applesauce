@@ -65,7 +65,7 @@ def tableIgnore(guildID: int):
         cursor = cnx.cursor()
         cursor.execute("""CREATE TABLE `ignore` (
             `guild_id` BIGINT NOT NULL,
-            `member_id` LONGTEXT NOT NULL, 
+            `member_id` BIGINT NOT NULL, 
             `is_ignored` BOOLEAN NOT NULL,
             primary key (guild_id, member_id)
             )""")
@@ -80,7 +80,7 @@ def tableCommands(guildID: int):
         cursor = cnx.cursor()
         cursor.execute("""CREATE TABLE `commands` (
             `guild_id` BIGINT NOT NULL,
-            `command_name` LONGTEXT NOT NULL, 
+            `command_name` VARCHAR(30) NOT NULL, 
             `is_enabled` BOOLEAN NOT NULL,
             `times_used` BIGINT,
             primary key (guild_id, command_name)
