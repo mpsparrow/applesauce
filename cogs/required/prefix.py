@@ -15,7 +15,6 @@ class Prefix(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def prefix(self, ctx, prefix: str):
         try:
-            await ctx.send(prefix)
             dbConnect.prefix(ctx.guild.id, prefix)
             await ctx.message.add_reaction("✅") # success
         except Exception as e:

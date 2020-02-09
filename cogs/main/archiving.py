@@ -58,7 +58,7 @@ class pinArchive(commands.Cog):
                         member = self.bot.get_guild(int(data["guild_id"])).get_member(int(data["author"]["id"]))
                         if member != self.bot.user:
                             await member.add_roles(role, atomic=True)
-                    except Exception as e:
+                    except:
                         pass
 
                     embed.set_author(name=data["author"]["username"], icon_url=f'https://cdn.discordapp.com/avatars/{data["author"]["id"]}/{data["author"]["avatar"]}.png', url=f'https://discordapp.com/channels/{data["guild_id"]}/{data["channel_id"]}/{data["id"]}')

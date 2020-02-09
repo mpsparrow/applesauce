@@ -6,7 +6,7 @@ Created: October 30, 2019
 '''
 import discord
 from discord.ext import commands
-from utils import commandchecks, dbConnect
+from utils import commandchecks, dbConnect, dbQuery
 
 class Reaction(commands.Cog):
     def __init__(self, bot):
@@ -16,9 +16,12 @@ class Reaction(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_guild=True)
     async def test(self, ctx):
-        dbConnect.prefix(ctx.guild.id, "abc")
-        dbConnect.ignore(ctx.guild.id, f"{ctx.message.author}", False)
-        dbConnect.commands(ctx.guild.id, "ball8", True)
+        '''
+        dbConnect.prefix(ctx.guild.id, "!")
+        dbConnect.commands(ctx.guild.id, "ball8", True, 1)
+        dbConnect.ignore(ctx.guild.id, f"{ctx.message.author.id}", False)
+        '''
+        dbQuery.ignore(ctx.guild.id, ctx.message.author.id)
         await ctx.send("worked?")
 
 def setup(bot):
