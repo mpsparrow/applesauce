@@ -21,7 +21,7 @@ class Reaction(commands.Cog):
         dbConnect.commands(ctx.guild.id, "ball8", True, 1)
         dbConnect.ignore(ctx.guild.id, f"{ctx.message.author.id}", False)
         '''
-        dbQuery.ignore(ctx.guild.id, ctx.message.author.id)
+        dbConnect.commandCount(ctx.guild.id, "ping")
         await ctx.send("worked?")
 
 def setup(bot):

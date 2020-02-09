@@ -9,11 +9,9 @@ from mysql.connector import errorcode
 def prefix(guildID: int):
     try:
         try:
-            cnx = dbConnect.SQLconnect()
-            cursor = cnx.cursor()
             query = f"""SELECT prefix FROM `prefix` WHERE guild_id = {guildID}"""
-            cursor.execute(query)
-            data = cursor.fetchall()
+            values = ()
+            data = dbConnect.SQLcommit(query, values, True)
             for i in data:
                 return i[0]
         except:
@@ -29,11 +27,9 @@ def prefix(guildID: int):
 
 def ignore(guildID: int, memberID: int):
     try:
-        cnx = dbConnect.SQLconnect()
-        cursor = cnx.cursor()
-        query = f"""SELECT is_ignored FROM `ignore` WHERE guild_id = {guildID} AND member_id = {memberID}"""
-        cursor.execute(query)
-        data = cursor.fetchall()
+        query = f"""SELECT is_ignored FROM `ignore` WHERE guild_id = %s AND member_id = %s"""
+        values = (guildID, memberID)
+        data = dbConnect.SQLcommit(query, values, True)
         if len(data) == 0:
             return False
         else:
@@ -41,4 +37,29 @@ def ignore(guildID: int, memberID: int):
                 return bool(i[0])
     except Exception as e:
         logger.errorRun("dbQuery.py ignore - unable to obtain ignore")
+        logger.normRun(e)
+
+def command(guildID: int, name: str):
+    try:
+        query = f"""SELECT is_enabled FROM `commands` WHERE guild_id = %s AND command_name = %s"""
+        values = (guildID, name)
+        data = dbConnect.SQLcommit(query, values, True)
+        if len(data) == 0:
+            return False
+        else:
+            for i in data:
+                return bool(i[0])
+    except Exception as e:
+        logger.errorRun("dbQuery.py command - unable to obtain command")
+        logger.normRun(e)
+
+def commandCount(guildID: int, name: str):
+    try:
+        query = f"""SELECT times_used FROM `commands` WHERE guild_id = %s AND command_name = %s"""
+        values = (guildID, name)
+        data = dbConnect.SQLcommit(query, values, True)
+        for i in data:
+            return bool(i[0])
+    except Exception as e:
+        logger.errorRun("dbQuery.py commandCount - unable to obtain times_used")
         logger.normRun(e)

@@ -28,7 +28,7 @@ def SQLconnect():
             logger.normRun(err)
 
 # adds data to database
-def SQLcommit(query, values):
+def SQLcommit(query, values, data=False):
     try:
         cnx = SQLconnect()
         cursor = cnx.cursor()
@@ -38,8 +38,14 @@ def SQLcommit(query, values):
     else:
         try:
             cursor.execute(query, values)
-            cnx.commit()
-            cnx.close()
+            if data == True:
+                returnData = cursor.fetchall()
+                cnx.commit()
+                cnx.close()
+                return returnData
+            else:
+                cnx.commit()
+                cnx.close()
         except Exception as e:
             logger.errorRun("dbConnect.py SQLcommit - error committing query")
             logger.normRun(e)
@@ -54,9 +60,8 @@ def tablePrefix(guildID: int):
             `prefix` CHAR(50) NOT NULL,
             primary key (guild_id)
             )""")
-    except Exception as e:
-        logger.errorRun("dbConnect.py tablePrefix - error creating table")
-        logger.normRun(e)
+    except:
+        pass
 
 # creates Ignore table
 def tableIgnore(guildID: int):
@@ -69,9 +74,8 @@ def tableIgnore(guildID: int):
             `is_ignored` BOOLEAN NOT NULL,
             primary key (guild_id, member_id)
             )""")
-    except Exception as e:
-        logger.errorRun("dbConnect.py tableIgnore - error creating table")
-        logger.normRun(e)
+    except:
+        pass
 
 # created Commands table
 def tableCommands(guildID: int):
@@ -85,9 +89,8 @@ def tableCommands(guildID: int):
             `times_used` BIGINT,
             primary key (guild_id, command_name)
             )""")
-    except Exception as e:
-        logger.errorRun("dbConnect.py tableCommands - error creating table")
-        logger.normRun(e)
+    except:
+        pass
 
 # main function to add to Prefix table
 def prefix(guildID: int, pref: str):
@@ -123,6 +126,18 @@ def commands(guildID: int, name: str, enabled: bool, used: int):
             guild_id, command_name, is_enabled, times_used
         ) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
         values = (guildID, name, enabled, used)
+        SQLcommit(query, values)
+    except Exception as e:
+        logger.errorRun("dbConnect.py prefix - error")
+        logger.normRun(e)
+
+# main function to add times_used to Commands table
+def commandCount(guildID: int, name: str):
+    try:
+        query = f"""UPDATE `commands`
+            SET times_used = times_used + 1
+            WHERE guild_id = %s AND command_name = %s AND is_enabled = 1"""
+        values = (guildID, name)
         SQLcommit(query, values)
     except Exception as e:
         logger.errorRun("dbConnect.py prefix - error")
