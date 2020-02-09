@@ -14,6 +14,7 @@ class Reaction(commands.Cog):
 
     # chance (command)
     @commands.command()
+    @commands.has_permissions(manage_guild=True)
     async def test(self, ctx):
         dbConnect.prefix(ctx.guild.id, "abc")
         dbConnect.ignore(ctx.guild.id, f"{ctx.message.author}", False)

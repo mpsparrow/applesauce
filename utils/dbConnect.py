@@ -67,7 +67,7 @@ def tableIgnore(guildID: int):
             `guild_id` BIGINT NOT NULL,
             `member_id` LONGTEXT NOT NULL, 
             `is_ignored` BOOLEAN NOT NULL,
-            primary key (guild_id)
+            primary key (guild_id, member_id)
             )""")
     except Exception as e:
         logger.errorRun("dbConnect.py tableIgnore - error creating table")
@@ -82,7 +82,8 @@ def tableCommands(guildID: int):
             `guild_id` BIGINT NOT NULL,
             `command_name` LONGTEXT NOT NULL, 
             `is_enabled` BOOLEAN NOT NULL,
-            primary key (guild_id)
+            `times_used` BIGINT,
+            primary key (guild_id, command_name)
             )""")
     except Exception as e:
         logger.errorRun("dbConnect.py tableCommands - error creating table")
@@ -92,9 +93,9 @@ def tableCommands(guildID: int):
 def prefix(guildID: int, pref: str):
     try:
         tablePrefix(guildID)
-        query = """INSERT INTO `prefix` (
+        query = f"""INSERT INTO `prefix` (
             guild_id, prefix
-        ) VALUES (%s, %s)"""
+        ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE prefix = VALUES(prefix)"""
         values = (guildID, pref)
         SQLcommit(query, values)
     except Exception as e:
@@ -107,7 +108,7 @@ def ignore(guildID: int, member: str, ignored: bool):
         tableIgnore(guildID)
         query = f"""INSERT INTO `ignore` (
             guild_id, member_id, is_ignored
-        ) VALUES (%s, %s, %s)"""
+        ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_ignored = VALUES(is_ignored)"""
         values = (guildID, member, ignored)
         SQLcommit(query, values)
     except Exception as e:
@@ -115,13 +116,13 @@ def ignore(guildID: int, member: str, ignored: bool):
         logger.normRun(e)
 
 # main function to add to Commands table
-def commands(guildID: int, name: str, enabled: bool):
+def commands(guildID: int, name: str, enabled: bool, used: int):
     try:
         tableCommands(guildID)
         query = f"""INSERT INTO `commands` (
-            guild_id, command_name, is_enabled
-        ) VALUES (%s, %s, %s)"""
-        values = (guildID, name, enabled)
+            guild_id, command_name, is_enabled, times_used
+        ) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
+        values = (guildID, name, enabled, used)
         SQLcommit(query, values)
     except Exception as e:
         logger.errorRun("dbConnect.py prefix - error")

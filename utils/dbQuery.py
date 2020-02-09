@@ -15,11 +15,14 @@ def prefix(guildID: int):
             cursor.execute(query)
             data = cursor.fetchall()
             for i in data:
-                print(i)
                 return i[0]
         except:
+            pass
+        try:
             conf = config.read('mainConfig.ini')
             return conf['main']['prefix']
+        except:
+            pass
     except Exception as e:
         logger.errorRun("dbQuery.py prefix - unable to obtain a prefix")
         logger.normRun(e)
