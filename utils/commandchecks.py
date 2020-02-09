@@ -3,26 +3,17 @@ Checks if everything is allowed before running a command
 '''
 import discord
 from discord.ext import commands
-from utils import config, logger
+from utils import config, logger, dbQuery
 import json
 
 # checks if user is ignored in guild
 def ignoredCheck(ctx, guildID):
     try: 
-        conf = config.readJSON('guildconfig.json')
-        ignoredUsers = conf[guildID]['ignored'] # gets ignored users
-
-        if str(ctx.author) not in ignoredUsers: # if user is not in ignored users
-            return True
-        return False
-    except:
-        try: 
-            conf[guildID]['ignored'] = []
-            config.dumpJSON('guildconfig.json', conf)
-            return False
-        except:
-            logger.warnRun('Command Check Failure (ignored user)') # if accessing failed
-            return False
+        return not(dbQuery.ignore(guildID, ctx.message.author.id))
+    except Exception as e:
+        logger.warnRun('Command Check Failure (ignored user)') # if accessing failed
+        logger.normRun(e)
+        return True
 
 # checks if command is disabled in guild
 def guildCheck(ctx, guildID, name):
