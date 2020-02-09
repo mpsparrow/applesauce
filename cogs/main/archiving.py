@@ -52,6 +52,16 @@ class pinArchive(commands.Cog):
                     except:
                         pass
 
+                    try:
+                        roleID = conf[str(data["guild_id"])]["archiveRole"]
+                        role = self.bot.get_guild(int(data["guild_id"])).get_role(roleID)
+                        guild = self.bot.get_guild(int(data["guild_id"]))
+                        member = self.bot.get_guild(int(data["guild_id"])).get_member(int(data["author"]["id"]))
+                        if member != self.bot.user:
+                            await member.add_roles(role, atomic=True)
+                    except Exception as e:
+                        await channel.send(e)
+
                     embed.set_author(name=data["author"]["username"], icon_url=f'https://cdn.discordapp.com/avatars/{data["author"]["id"]}/{data["author"]["avatar"]}.png', url=f'https://discordapp.com/channels/{data["guild_id"]}/{data["channel_id"]}/{data["id"]}')
                     embed.set_footer(text=f'Sent in #{self.bot.get_channel(int(data["channel_id"]))}')
                     await channel.send(embed=embed)
