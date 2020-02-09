@@ -135,7 +135,7 @@ def commands(guildID: int, name: str, enabled: bool, used: int):
 def commandCount(guildID: int, name: str):
     try:
         query = f"""UPDATE `commands`
-            SET times_used = times_used + 1
+            SET times_used = IFNULL(times_used, 0) + 1
             WHERE guild_id = %s AND command_name = %s AND is_enabled = 1"""
         values = (guildID, name)
         SQLcommit(query, values)

@@ -3,7 +3,7 @@ Checks if everything is allowed before running a command
 '''
 import discord
 from discord.ext import commands
-from utils import config, logger, dbQuery
+from utils import config, logger, dbQuery, dbConnect
 import json
 
 # checks if user is ignored in guild
@@ -30,7 +30,10 @@ def isAllowed(ctx):
         # gets information about command
         guildID = str(ctx.guild.id)
         name = str(ctx.command.qualified_name)
-        return guildCheck(ctx, guildID, name) and ignoredCheck(ctx, guildID) # if all checks are passed
+        value =  guildCheck(ctx, guildID, name) and ignoredCheck(ctx, guildID) # if all checks are passed
+        if value:
+            dbConnect.commandCount(guildID, name)
+        return value
     except Exception as e:
         logger.errorRun("commandchecks.py isAllowed - command check failure")
         logger.normRun(e)
