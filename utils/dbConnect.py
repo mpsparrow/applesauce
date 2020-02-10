@@ -92,7 +92,7 @@ def tableCommands(guildID: int):
     except:
         pass
 
-# main function to add to Prefix table
+# add to Prefix table
 def prefix(guildID: int, pref: str):
     try:
         tablePrefix(guildID)
@@ -105,7 +105,7 @@ def prefix(guildID: int, pref: str):
         logger.errorRun("dbConnect.py prefix - error")
         logger.normRun(e)
 
-# main function to add to Ignore table
+# add to Ignore table
 def ignore(guildID: int, member: str, ignored: bool):
     try:
         tableIgnore(guildID)
@@ -118,7 +118,7 @@ def ignore(guildID: int, member: str, ignored: bool):
         logger.errorRun("dbConnect.py prefix - error")
         logger.normRun(e)
 
-# main function to add to Commands table
+# add to Commands table
 def commands(guildID: int, name: str, enabled: bool, used: int):
     try:
         tableCommands(guildID)
@@ -131,7 +131,7 @@ def commands(guildID: int, name: str, enabled: bool, used: int):
         logger.errorRun("dbConnect.py prefix - error")
         logger.normRun(e)
 
-# main function to add times_used to Commands table
+# add to times_used in Commands table
 def commandCount(guildID: int, name: str):
     try:
         query = f"""UPDATE `commands`
