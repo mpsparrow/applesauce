@@ -13,15 +13,6 @@ def startUpChecks():
         logger.errorStart('mainConfig.ini missing or unable to load')
         logger.errorStart(f'{e}')
         return False
-    
-    # guildconfig.json loads
-    try:
-        conf2 = config.readJSON('guildconfig.json')
-        logger.passStart('guildconfig.json successfully loaded')
-    except Exception as e:
-        logger.errorStart('guildconfig.json missing or unable to load')
-        logger.errorStart(f'{e}')
-        return False
 
     # checks for name
     try:
