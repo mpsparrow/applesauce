@@ -25,6 +25,7 @@ def prefix(guildID: int):
         logger.errorRun("dbQuery.py prefix - unable to obtain a prefix")
         logger.normRun(e)
 
+# gets ignored player
 def ignore(guildID: int, memberID: int):
     try:
         query = f"""SELECT is_ignored FROM `ignore` WHERE guild_id = %s AND member_id = %s"""
@@ -39,6 +40,7 @@ def ignore(guildID: int, memberID: int):
         logger.errorRun("dbQuery.py ignore - unable to obtain ignore")
         logger.normRun(e)
 
+# gets guild command
 def command(guildID: int, name: str):
     try:
         query = f"""SELECT is_enabled FROM `commands` WHERE guild_id = %s AND command_name = %s"""
@@ -53,13 +55,29 @@ def command(guildID: int, name: str):
         logger.errorRun("dbQuery.py command - unable to obtain command")
         logger.normRun(e)
 
+# gets cog
+def cog(name: str):
+    try:
+        query = f"""SELECT is_enabled FROM `cogs` WHERE cog_name = {name}"""
+        values = ()
+        data = dbConnect.SQLcommit(query, values, True)
+        if len(data) == 0:
+            return False
+        else:
+            for i in data:
+                return bool(i[0])
+    except Exception as e:
+        logger.errorRun("dbQuery.py cog - uneable to obtain cog")
+        logger.normRun(e)
+
+# gets command times_used
 def commandCount(guildID: int, name: str):
     try:
         query = f"""SELECT times_used FROM `commands` WHERE guild_id = %s AND command_name = %s"""
         values = (guildID, name)
         data = dbConnect.SQLcommit(query, values, True)
         for i in data:
-            return bool(i[0])
+            return i[0]
     except Exception as e:
         logger.errorRun("dbQuery.py commandCount - unable to obtain times_used")
         logger.normRun(e)

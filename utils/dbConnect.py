@@ -51,7 +51,7 @@ def SQLcommit(query, values, data=False):
             logger.normRun(e)
 
 # creates Prefix table
-def tablePrefix(guildID: int):
+def tablePrefix():
     try:
         cnx = SQLconnect()
         cursor = cnx.cursor()
@@ -64,7 +64,7 @@ def tablePrefix(guildID: int):
         pass
 
 # creates Ignore table
-def tableIgnore(guildID: int):
+def tableIgnore():
     try:
         cnx = SQLconnect()
         cursor = cnx.cursor()
@@ -78,7 +78,7 @@ def tableIgnore(guildID: int):
         pass
 
 # created Commands table
-def tableCommands(guildID: int):
+def tableCommands():
     try:
         cnx = SQLconnect()
         cursor = cnx.cursor()
@@ -92,10 +92,23 @@ def tableCommands(guildID: int):
     except:
         pass
 
+# created Cogs table
+def tableCogs():
+    try:
+        cnx = SQLconnect()
+        cursor = cnx.cursor()
+        cursor.execute("""CREATE TABLE `cogs` (
+            `cog_name` VARCHAR(50) NOT NULL,
+            `is_enabled` BOOLEAN NOT NULL,
+            primary key (cog_name)
+            )""")
+    except:
+        pass
+
 # add to Prefix table
 def prefix(guildID: int, pref: str):
     try:
-        tablePrefix(guildID)
+        tablePrefix()
         query = f"""INSERT INTO `prefix` (
             guild_id, prefix
         ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE prefix = VALUES(prefix)"""
@@ -108,27 +121,40 @@ def prefix(guildID: int, pref: str):
 # add to Ignore table
 def ignore(guildID: int, member: str, ignored: bool):
     try:
-        tableIgnore(guildID)
+        tableIgnore()
         query = f"""INSERT INTO `ignore` (
             guild_id, member_id, is_ignored
         ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_ignored = VALUES(is_ignored)"""
         values = (guildID, member, ignored)
         SQLcommit(query, values)
     except Exception as e:
-        logger.errorRun("dbConnect.py prefix - error")
+        logger.errorRun("dbConnect.py ignore - error")
         logger.normRun(e)
 
 # add to Commands table
 def commands(guildID: int, name: str, enabled: bool):
     try:
-        tableCommands(guildID)
+        tableCommands()
         query = f"""INSERT INTO `commands` (
             guild_id, command_name, is_enabled
         ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
         values = (guildID, name, enabled)
         SQLcommit(query, values)
     except Exception as e:
-        logger.errorRun("dbConnect.py prefix - error")
+        logger.errorRun("dbConnect.py commands - error")
+        logger.normRun(e)
+
+# add to Cogs table
+def cogs(name: str, enabled: bool):
+    try:
+        tableCogs()
+        query = f"""INSERT INTO `cogs` (
+            cog_name, is_enabled
+        ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
+        values = (name, enabled)
+        SQLcommit(query, values)
+    except Exception as e:
+        logger.errorRun("dbConnect.py cogs - error")
         logger.normRun(e)
 
 # add to times_used in Commands table

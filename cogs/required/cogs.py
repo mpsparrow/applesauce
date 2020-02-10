@@ -4,7 +4,7 @@ Commands to manage the loading and enabling of cogs
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from utils import config, logger
+from utils import logger, dbConnect
 import json
 
 class cogCmds(commands.Cog):
@@ -18,10 +18,10 @@ class cogCmds(commands.Cog):
     async def reloadCog(self, ctx, extension):
         try:
             self.bot.reload_extension(f'cogs.main.{extension}')
-            logger.normRun(f'Successfully reloaded {extension}')
+            logger.normRun(f'Successfully reloaded cog: {extension}')
             await ctx.message.add_reaction("✅")
         except Exception as e:
-            logger.errorRun(f'Failed to reload {extension}')
+            logger.errorRun(f'Failed to reload cog: {extension}')
             logger.errorRun(f'{e}')
             await ctx.message.add_reaction("❌")
 
@@ -31,10 +31,10 @@ class cogCmds(commands.Cog):
     async def unloadCog(self, ctx, extension):
         try:
             self.bot.unload_extension(f'cogs.main.{extension}')
-            logger.normRun(f'Successfully unloaded {extension}')
+            logger.normRun(f'Successfully unloaded cog: {extension}')
             await ctx.message.add_reaction("✅")
         except Exception as e:
-            logger.errorRun(f'Failed to unload {extension}')
+            logger.errorRun(f'Failed to unload cog: {extension}')
             logger.errorRun(f'{e}')
             await ctx.message.add_reaction("❌")
 
@@ -44,10 +44,10 @@ class cogCmds(commands.Cog):
     async def loadCog(self, ctx, extension):
         try:
             self.bot.load_extension(f'cogs.main.{extension}')
-            logger.normRun(f'Successfully loaded {extension}')
+            logger.normRun(f'Successfully loaded cog: {extension}')
             await ctx.message.add_reaction("✅")
         except Exception as e:
-            logger.errorRun(f'Failed to load {extension}')
+            logger.errorRun(f'Failed to load cog: {extension}')
             logger.errorRun(f'{e}')
             await ctx.message.add_reaction("❌")
 
@@ -70,18 +70,15 @@ class cogCmds(commands.Cog):
 
         if flag == True:
             try:
-                conf = config.readJSON('config.json')
-                x = conf['cogs'][extension]
-                conf['cogs'][extension] = True
-                config.dumpJSON('config.json', conf)
-                logger.normRun(f'Successfully enabled {extension}')
+                dbConnect.cogs(extension, True)
+                logger.normRun(f'Successfully enabled cog: {extension}')
                 await ctx.message.add_reaction("✅")
             except Exception as e:
-                logger.errorRun(f'Failed enabling {extension}')
+                logger.errorRun(f'Failed to enable cog: {extension}')
                 logger.errorRun(f'{e}')
                 await ctx.message.add_reaction("❌")
         else:
-            logger.errorRun(f'Failed enabling {extension}')
+            logger.errorRun(f'Failed to enable cog: {extension}')
             await ctx.message.add_reaction("❌")
 
     # disable extension
@@ -103,17 +100,15 @@ class cogCmds(commands.Cog):
             
         if flag == True:
             try:
-                conf = config.readJSON('config.json')
-                conf['cogs'][extension] = False
-                config.dumpJSON('config.json', conf)
-                logger.normRun(f'Successfully disabled {extension}')
+                dbConnect.cogs(extension, False)
+                logger.normRun(f'Successfully disabled cog: {extension}')
                 await ctx.message.add_reaction("✅")
             except Exception as e:
-                logger.errorRun(f'Failed disabling {extension}')
+                logger.errorRun(f'Failed to disable cog: {extension}')
                 logger.errorRun(f'{e}')
                 await ctx.message.add_reaction("❌")
         else:
-            logger.errorRun(f'Failed disabling {extension}')
+            logger.errorRun(f'Failed to disable cog: {extension}')
             await ctx.message.add_reaction("❌")
 
 def setup(bot):

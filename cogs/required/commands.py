@@ -20,13 +20,13 @@ class cogCmds(commands.Cog):
         try:
             if str(cmd) in allCmd:
                 dbConnect.commands(ctx.guild.id, cmd, False)
-                logger.normRun(f"Successfully disabled {cmd}")
+                logger.normRun(f"Successfully disabled command: {cmd}")
                 await ctx.message.add_reaction("✅")
             else:
-                logger.warnRun(f"Commend doesn't exist {cmd}")
+                logger.warnRun(f"Commend doesn't exist: {cmd}")
                 await ctx.message.add_reaction("❌")
         except Exception as e:
-            logger.errorRun(f"Failed to disable {cmd}")
+            logger.errorRun(f"Failed to disable command: {cmd}")
             logger.normRun(e)
             await ctx.message.add_reaction("❌")
 
@@ -40,13 +40,13 @@ class cogCmds(commands.Cog):
         try:
             if str(cmd) in allCmd:
                 dbConnect.commands(ctx.guild.id, cmd, True)
-                logger.normRun(f"Successfully enabled {cmd}")
+                logger.normRun(f"Successfully enabled command: {cmd}")
                 await ctx.message.add_reaction("✅")
             else:
-                logger.warnRun(f"Command doesn't exist {cmd}")
+                logger.warnRun(f"Command doesn't exist: {cmd}")
                 await ctx.message.add_reaction("❌")
         except Exception as e:
-            logger.errorRun(f"Failed to enable {cmd}")
+            logger.errorRun(f"Failed to enable command: {cmd}")
             logger.normRun(e)
             await ctx.message.add_reaction("❌")
 
