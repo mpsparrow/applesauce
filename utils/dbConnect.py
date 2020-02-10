@@ -119,13 +119,13 @@ def ignore(guildID: int, member: str, ignored: bool):
         logger.normRun(e)
 
 # add to Commands table
-def commands(guildID: int, name: str, enabled: bool, used: int):
+def commands(guildID: int, name: str, enabled: bool):
     try:
         tableCommands(guildID)
         query = f"""INSERT INTO `commands` (
-            guild_id, command_name, is_enabled, times_used
-        ) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
-        values = (guildID, name, enabled, used)
+            guild_id, command_name, is_enabled
+        ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
+        values = (guildID, name, enabled)
         SQLcommit(query, values)
     except Exception as e:
         logger.errorRun("dbConnect.py prefix - error")
