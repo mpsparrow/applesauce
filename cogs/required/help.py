@@ -4,7 +4,7 @@ Custom help command
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from utils import config, embed, dbQuery
+from utils import embed, dbQuery
 
 def commandList(cmds):
     cmdString = ""
@@ -27,7 +27,6 @@ class SetupHelp(commands.Cog):
     @commands.is_owner()
     async def helpAll(self, ctx):
         allCmds = []
-        conf = config.readJSON('guildconfig.json')
         prefix = dbQuery.prefix(ctx.guild.id)
 
         for command in set(ctx.bot.walk_commands()):
@@ -40,7 +39,7 @@ class SetupHelp(commands.Cog):
         otherCmds = []
         for item in allCmds:
             try:
-                randomVar = conf[str(ctx.guild.id)]["Commands"][item]
+                randomVar = dbQuery.command(ctx.guild.id, item)
                 if randomVar == True:
                     if " " in item:
                         enableSubCmds.append(item)
@@ -76,8 +75,7 @@ class Help(commands.MinimalHelpCommand):
         await self.context.send(embed=embed.make_error_embed("Command not found"))
 
     async def send_group_help(self, group):
-        conf = config.readJSON('guildconfig.json')
-        prefix = dbQuery.prefix(ctx.guild.id)
+        prefix = dbQuery.prefix(self.context.guild.id)
 
         try:
             await group.can_run(self.context)
@@ -86,14 +84,14 @@ class Help(commands.MinimalHelpCommand):
             return
             
         try:
-            randomVar = conf[str(self.context.guild.id)]["Commands"][str(group.name)] # gets true/false value of command for guild
+            randomVar = dbQuery.command(self.context.guild.id, group.name) # gets true/false value of command for guild
             if randomVar == True: # if command is enabled in guild
                 subcmds = ""
                 if group.commands != []:
                     for command in group.commands:
                         try:
                             name = f"{group.name} {command.name}"
-                            randomVar2 = conf[str(self.context.guild.id)]["Commands"][name]
+                            randomVar2 = dbQuery.command(self.context.guild.id, name)
                             if randomVar2 == True:
                                 subcmds = subcmds + '`' + command.name + '`' + ', '
                         except:
@@ -114,8 +112,7 @@ class Help(commands.MinimalHelpCommand):
             await self.context.send(embed=embed.make_error_embed("Command not found"))
 
     async def send_command_help(self, command):
-        conf = config.readJSON('guildconfig.json')
-        prefix = dbQuery.prefix(ctx.guild.id)
+        prefix = dbQuery.prefix(self.context.guild.id)
 
         try:
             await command.can_run(self.context)
@@ -129,9 +126,9 @@ class Help(commands.MinimalHelpCommand):
                 randomVar2 = True
             else:
                 name = f"{command.parent} {command.name}"
-                randomVar2 = conf[str(self.context.guild.id)]["Commands"][str(command.parent)]
+                randomVar2 = dbQuery.command(self.context.guild.id, command.parent)
 
-            randomVar = conf[str(self.context.guild.id)]["Commands"][str(name)] # gets true/false value of command for guild
+            randomVar = dbQuery.command(self.context.guild.id, name) # gets true/false value of command for guild
             if randomVar and randomVar2: # if command is enabled in guild
                 alias = commandList(command.aliases)
 
@@ -144,7 +141,6 @@ class Help(commands.MinimalHelpCommand):
     async def send_bot_help(self, mapping):
         # get list of commands
         allCmds = []
-        conf = config.readJSON('guildconfig.json')
         prefix = dbQuery.prefix(self.context.guild.id)
 
         for command in set(self.context.bot.walk_commands()):
@@ -158,7 +154,7 @@ class Help(commands.MinimalHelpCommand):
         enableCmds = []
         for item in allCmds:
             try:
-                randomVar = conf[str(self.context.guild.id)]["Commands"][item]
+                randomVar = dbQuery.command(self.context.guild.id, item)
                 if (randomVar == True) and (" " not in item):
                     enableCmds.append(item)
             except:
