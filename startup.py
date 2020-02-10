@@ -2,7 +2,7 @@
 Bot Name: Applesauce
 Created By: Matthew
 Framework Version: v1.2.1
-Last Updated: February 8, 2020
+Last Updated: February 10, 2020
 Created On: October 12, 2019
 
 Please read license.txt for license information
@@ -10,7 +10,7 @@ Please read license.txt for license information
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from utils import config, startupchecks, commandchecks, logger, dbQuery
+from utils import config, startupchecks, commandchecks, logger, dbQuery, dbConnect
 import sys
 import os
 import datetime
@@ -21,7 +21,6 @@ def get_prefix(bot, message):
     return dbQuery.prefix(message.guild.id) # returns prefix
 
 conf = config.read('mainConfig.ini') # loads config
-conf2 = config.readJSON('config.json')
 botName = conf['main']['botname'] # gets bots name from config
 bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True) # gets bots prefix and case_insensitivity
 
@@ -76,12 +75,13 @@ async def on_ready():
         for cog in os.listdir(f'./cogs/main'): # looks in /cogs/main
             if cog.endswith('.py'): # if a .py file is found
                 try:
-                    value = conf2['cogs'][cog[:-3]]
+                    value = dbQuery.cog(cog[:-3])
+                    if value != True and value != False:
+                        dbConnect.cogs(cog[:-3], False)
+                        value = False
                 except:
-                    newConfig = config.readJSON('config.json')
-                    newConfig['cogs'][cog[:-3]] = False
-                    config.dumpJSON('config.json', newConfig)
                     value = False
+                    pass
 
                 if value == True: # if module doesn't exist in excludedModules list (config.json)
                     try:

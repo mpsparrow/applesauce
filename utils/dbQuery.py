@@ -58,16 +58,13 @@ def command(guildID: int, name: str):
 # gets cog
 def cog(name: str):
     try:
-        query = f"""SELECT is_enabled FROM `cogs` WHERE cog_name = {name}"""
+        query = f"""SELECT is_enabled FROM `cogs` WHERE cog_name = '{name}'"""
         values = ()
         data = dbConnect.SQLcommit(query, values, True)
-        if len(data) == 0:
-            return False
-        else:
-            for i in data:
-                return bool(i[0])
+        for i in data:
+            return bool(i[0])
     except Exception as e:
-        logger.errorRun("dbQuery.py cog - uneable to obtain cog")
+        logger.errorRun("dbQuery.py cog - unable to obtain cog")
         logger.normRun(e)
 
 # gets command times_used
