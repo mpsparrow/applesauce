@@ -145,7 +145,7 @@ class Help(commands.MinimalHelpCommand):
         # get list of commands
         allCmds = []
         conf = config.readJSON('guildconfig.json')
-        prefix = dbQuery.prefix(ctx.guild.id)
+        prefix = dbQuery.prefix(self.context.guild.id)
 
         for command in set(self.context.bot.walk_commands()):
             try:
