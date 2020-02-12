@@ -28,6 +28,9 @@ def warnStart(msg: str):
 def passStart(msg: str):
     write(startFilename, msg, tag="[pass]")
 
+def skipStart(msg: str):
+    write(startFilename, msg, tag="[skip]")
+
 def infoStart(msg: str):
     write(startFilename, msg, tag="[info]")
 
