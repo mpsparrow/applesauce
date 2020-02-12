@@ -6,7 +6,7 @@ Created: October 30, 2019
 '''
 import discord
 from discord.ext import commands
-from utils import config, commandchecks
+from util import config, commandchecks
 import random
 import wolframalpha
 

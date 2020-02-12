@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands
 import mysql.connector as mysql
 from mysql.connector import errorcode
-from utils import embed, config
+from util import embed, config
 import matplotlib.pyplot as plt
 import numpy as np
 import datetime

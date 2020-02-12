@@ -9,7 +9,7 @@ from discord.ext import commands
 import datetime
 import time
 from discord.ext.commands import has_permissions
-from utils import config, commandchecks, embed, dbQuery
+from util import config, commandchecks, embed, dbQuery
 
 class pinArchive(commands.Cog):
     def __init__(self, bot):

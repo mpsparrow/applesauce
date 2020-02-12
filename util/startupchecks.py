@@ -1,7 +1,7 @@
 # Checks that are run at startup
 # If any fail startup is aborted
 import json
-import config, logger
+from util import config, logger
 
 def startUpChecks():
     # mainConfig.ini loads

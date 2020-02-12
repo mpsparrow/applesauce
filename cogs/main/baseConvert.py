@@ -6,7 +6,7 @@ Created: January 22, 2020
 '''
 import discord
 from discord.ext import commands
-from utils import commandchecks, embed
+from util import commandchecks, embed
 
 class BaseConvert(commands.Cog):
     def __init__(self, bot):

@@ -6,7 +6,7 @@ Created: October 30, 2019
 '''
 import discord
 from discord.ext import commands
-from utils import commandchecks, dbConnect, dbQuery
+from util import commandchecks, dbConnect, dbQuery
 
 class Reaction(commands.Cog):
     def __init__(self, bot):

@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-import embed, dbQuery
+from util import embed, dbQuery
 
 def commandList(cmds):
     cmdString = ""

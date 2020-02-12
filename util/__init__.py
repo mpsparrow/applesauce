@@ -1,1 +1,0 @@
-# detects submodule

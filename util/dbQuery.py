@@ -1,7 +1,7 @@
 # Query database functions
 import mysql.connector as mysql
 from mysql.connector import errorcode
-import dbConnect, logger, config
+from util import dbConnect, logger, config
 
 # Prefix based on guild id
 def prefix(guildID: int):

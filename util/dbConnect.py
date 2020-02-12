@@ -1,7 +1,7 @@
 # Database connection and query functions.
 import mysql.connector as mysql
 from mysql.connector import errorcode
-import logger, config
+from util import logger, config
 
 # Connects to mySQL database
 def connect():

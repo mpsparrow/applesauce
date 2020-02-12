@@ -1,5 +1,5 @@
 # Creation of database tables.
-import dbConnect
+from util import dbConnect
 
 # Prefix table for per guild prefix keeping
 def prefix():

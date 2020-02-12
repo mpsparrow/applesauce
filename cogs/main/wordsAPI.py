@@ -6,7 +6,7 @@ Created: January 23, 2020
 '''
 import discord
 from discord.ext import commands
-from utils import commandchecks, embed, config
+from util import commandchecks, embed, config
 import requests
 import json
 

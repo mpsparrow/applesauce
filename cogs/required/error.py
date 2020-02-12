@@ -2,7 +2,7 @@
 # Catches and logs commands and command errors
 import discord
 from discord.ext import commands
-import logger
+from util import logger
 
 class Error(commands.Cog):
     def __init__(self, bot):

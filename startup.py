@@ -20,15 +20,17 @@ from util import config, startupchecks, commandchecks, logger, dbQuery, dbInsert
 def get_prefix(bot, message): 
     return dbQuery.prefix(message.guild.id) # returns prefix
 
-conf = config.read('mainConfig.ini') # loads config
+conf = config.readINI('mainConfig.ini') # loads config
 botName = conf['main']['botname'] # gets bots name from config
 bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True) # gets bots prefix and case_insensitivity
+
 
 # startupLog (command)
 @bot.command(name='startupLog', description='prints startup-log.txt', usage='outputLog', aliases=['outlog', 'output', 'oplog', 'log'])
 @commands.is_owner()
 async def startupLog(ctx):
     await ctx.send(f"```{logger.output('startup-log.txt')}```") # sends startup-log.txt
+
 
 # on startup
 @bot.event
@@ -41,7 +43,7 @@ async def on_ready():
     logger.infoStart('Running Checks')
 
     # runs startup checks that are in startupchecks.py
-    if startupchecks.startUpChecks():
+    if startupchecks.startUpChecks() is False:
         logger.errorStart("Something isn't configured correctly for startup")
         logger.errorStart("Startup aborted")
     else:
@@ -64,6 +66,7 @@ async def on_ready():
                     logger.errorStart(f'{e}')
                     logger.errorStart('Startup aborted')
                     return
+
 
         # Main loading
         # Any file in /cogs/main is considered a cog

@@ -1,7 +1,7 @@
 # Useful functions to read and write to config files.
 import json
 import configparser
-import logger
+from util import logger
 
 # Reads and returns .ini file
 def readINI(filename: str):

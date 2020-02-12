@@ -6,7 +6,7 @@ Created: October 30, 2019
 '''
 import discord
 from discord.ext import commands
-from utils import commandchecks
+from util import commandchecks
 import random
 
 class oneLine(commands.Cog):

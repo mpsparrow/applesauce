@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-import logger, dbInsert
+from util import logger, dbInsert
 
 class cogCmds(commands.Cog):
     def __init__(self, bot):
@@ -66,7 +66,7 @@ class cogCmds(commands.Cog):
             except:
                 pass
 
-        if flag == True:
+        if flag:
             try:
                 dbInsert.cogs(extension, True)
                 logger.normRun(f'Successfully enabled cog: {extension}')

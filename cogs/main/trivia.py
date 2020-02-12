@@ -11,7 +11,7 @@ import random
 import time
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from utils import commandchecks
+from util import commandchecks
 
 # main class for trivia
 class Quiz():

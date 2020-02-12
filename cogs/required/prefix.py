@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-import dbInsert, logger
+from util import dbInsert, logger
 
 class Prefix(commands.Cog):
     def __init__(self, bot):

@@ -1,6 +1,6 @@
 # Checks that run before each command is executed.
 # Certain owner commands bypass this.
-import logger, dbQuery, dbInsert
+from util import logger, dbQuery, dbInsert
 
 # If the user is set as ignored in the guild
 def ignoreCheck(guildID: int, author: int):
