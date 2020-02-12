@@ -7,4 +7,4 @@ I suck at coding. I try my best but please don't get mad if you come across some
 
 ### Development
 - `master` somewhat tested release
-- `dev` unstable development
+- `untested` unfinished or untested code
