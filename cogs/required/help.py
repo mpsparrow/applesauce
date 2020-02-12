@@ -1,10 +1,9 @@
-'''
-Custom help command
-'''
+# Help cog
+# Generates help commands
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from utils import embed, dbQuery
+import embed, dbQuery
 
 def commandList(cmds):
     cmdString = ""

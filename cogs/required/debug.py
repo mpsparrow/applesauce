@@ -1,6 +1,5 @@
-'''
-Debugging commands for owner
-'''
+# Debug cog
+# Debug related commands for owner
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions

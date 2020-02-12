@@ -1,11 +1,9 @@
-'''
-Commands to manage the loading and enabling of cogs
-'''
+# Cogs cog
+# For managing the loading and enabling of cogs
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from utils import logger, dbConnect
-import json
+import logger, dbInsert
 
 class cogCmds(commands.Cog):
     def __init__(self, bot):
@@ -70,7 +68,7 @@ class cogCmds(commands.Cog):
 
         if flag == True:
             try:
-                dbConnect.cogs(extension, True)
+                dbInsert.cogs(extension, True)
                 logger.normRun(f'Successfully enabled cog: {extension}')
                 await ctx.message.add_reaction("✅")
             except Exception as e:
@@ -98,9 +96,9 @@ class cogCmds(commands.Cog):
             except:
                 pass
             
-        if flag == True:
+        if flag:
             try:
-                dbConnect.cogs(extension, False)
+                dbInsert.cogs(extension, False)
                 logger.normRun(f'Successfully disabled cog: {extension}')
                 await ctx.message.add_reaction("✅")
             except Exception as e:

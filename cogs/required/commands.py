@@ -1,10 +1,9 @@
-'''
-Commands to manage the enabling of individual commands
-'''
+# Commands cog
+# For enabling and disabling commands per guild
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from utils import logger, dbConnect
+import logger, dbInsert
 
 class cogCmds(commands.Cog):
     def __init__(self, bot):
@@ -19,7 +18,7 @@ class cogCmds(commands.Cog):
             allCmd.append(str(command))
         try:
             if str(cmd) in allCmd:
-                dbConnect.commands(ctx.guild.id, cmd, False)
+                dbInsert.commands(ctx.guild.id, cmd, False)
                 logger.normRun(f"Successfully disabled command: {cmd}")
                 await ctx.message.add_reaction("✅")
             else:
@@ -39,7 +38,7 @@ class cogCmds(commands.Cog):
             allCmd.append(str(command))
         try:
             if str(cmd) in allCmd:
-                dbConnect.commands(ctx.guild.id, cmd, True)
+                dbInsert.commands(ctx.guild.id, cmd, True)
                 logger.normRun(f"Successfully enabled command: {cmd}")
                 await ctx.message.add_reaction("✅")
             else:

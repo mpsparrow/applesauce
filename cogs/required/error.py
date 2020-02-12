@@ -1,9 +1,8 @@
-'''
-Basic error checking, logging, and ignoring
-'''
+# Error cog
+# Catches and logs commands and command errors
 import discord
 from discord.ext import commands
-from utils import logger
+import logger
 
 class Error(commands.Cog):
     def __init__(self, bot):
