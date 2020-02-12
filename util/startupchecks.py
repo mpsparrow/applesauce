@@ -1,13 +1,12 @@
-'''
-Checks to run on bot startup
-'''
-from utils import config, logger
+# Checks that are run at startup
+# If any fail startup is aborted
 import json
+import config, logger
 
 def startUpChecks():
     # mainConfig.ini loads
     try:
-        conf = config.read('mainConfig.ini')
+        conf = config.readINI('mainConfig.ini')
         logger.passStart('mainConfig.ini successfully loaded')
     except Exception as e:
         logger.errorStart('mainConfig.ini missing or unable to load')

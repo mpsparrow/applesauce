@@ -2,19 +2,19 @@
 Bot Name: Applesauce
 Created By: Matthew
 Framework Version: v1.2.1
-Last Updated: February 10, 2020
+Last Updated: February 12, 2020
 Created On: October 12, 2019
 
 Please read license.txt for license information
 '''
-import discord
-from discord.ext import commands
-from discord.ext.commands import has_permissions
-from utils import config, startupchecks, commandchecks, logger, dbQuery, dbConnect
 import sys
 import os
 import datetime
 import time
+import discord
+from discord.ext import commands
+from discord.ext.commands import has_permissions
+from util import config, startupchecks, commandchecks, logger, dbQuery, dbInsert
 
 # gets prefix for bot
 def get_prefix(bot, message): 
@@ -35,29 +35,29 @@ async def startupLog(ctx):
 async def on_ready():
     startTime = time.time()
 
+    # wipes all logs
     logger.wipe('startup-log.txt')
     logger.wipe('runtime-log.txt')
     logger.infoStart('Running Checks')
 
-    if startupchecks.startUpChecks() == False: # runs startup checks that are in startupchecks.py
-        # if startup checks fail
+    # runs startup checks that are in startupchecks.py
+    if startupchecks.startUpChecks():
         logger.errorStart("Something isn't configured correctly for startup")
         logger.errorStart("Startup aborted")
     else:
-        # startup checks passed
         # writes startup information to startup-log.txt
         logger.write('startup-log.txt', f'Starting {botName}', "[info]", "\n")
-        logger.infoStart(f'discord.py {discord.__version__}') # discord.py version
-        logger.infoStart(f'Python {sys.version[:6]}') # python version
+        logger.infoStart(f'discord.py {discord.__version__}')
+        logger.infoStart(f'Python {sys.version[:6]}')
 
-        # Requires Addons loading
+        # Requires Cogs loading
         # Any file in /cogs/required is considered a required cog
-        # These files MUST all be loaded in order for the bot to continue initializing
+        # These files must ALL be loaded in order for the bot to continue initializing
         logger.write('startup-log.txt', 'Initializing Required Cogs', "[info]", "\n")
-        for required in os.listdir('./cogs/required'): # looks in /cogs/required
-            if required.endswith('.py'): # if a .py file is found
+        for required in os.listdir('./cogs/required'):
+            if required.endswith('.py'): 
                 try:
-                    bot.load_extension(f'cogs.required.{required[:-3]}') # loads cog
+                    bot.load_extension(f'cogs.required.{required[:-3]}')
                     logger.passStart(f'{required} --> Success')
                 except Exception as e:
                     logger.errorStart(f'{required} --> Failed')
@@ -72,32 +72,33 @@ async def on_ready():
         countSuccess = 0 
         countFail = 0
         countSkip = 0
-        for cog in os.listdir(f'./cogs/main'): # looks in /cogs/main
-            if cog.endswith('.py'): # if a .py file is found
+        for cog in os.listdir(f'./cogs/main'):
+            if cog.endswith('.py'):
                 try:
                     value = dbQuery.cog(cog[:-3])
                     if value != True and value != False:
-                        dbConnect.cogs(cog[:-3], False)
+                        dbInsert.cogs(cog[:-3], False)
                         value = False
                 except:
                     value = False
                     pass
 
-                if value == True: # if module doesn't exist in excludedModules list (config.json)
+                if value:
                     try:
-                        bot.load_extension(f'cogs.main.{cog[:-3]}') # load cog
+                        bot.load_extension(f'cogs.main.{cog[:-3]}')
                         logger.passStart(f'{cog} --> Success')
-                        countSuccess += 1 # adds to successfully loaded cogs
+                        countSuccess += 1
                     except Exception as e:
                         logger.errorStart(f'{cog} --> Failed')
                         logger.errorStart(f'{e}')
-                        countFail += 1 # adds to failed to load addons
+                        countFail += 1
                 else:
                     logger.passStart(f'{cog} --> Skipped')
-                    countSkip += 1 # adds to skipped cogs
+                    countSkip += 1
 
         logger.infoStart(f'Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n')
         logger.infoStart(f'{botName} is ready to rumble!')
         logger.infoStart(f'Initialized in {int((time.time() - startTime)*1000)}ms')
 
-bot.run(conf['main']['discordToken']) # starts bot with Discord token from mainConfig.ini
+# Starts bot with Discord token from mainConfig.ini
+bot.run(conf['main']['discordToken'])

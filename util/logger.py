@@ -1,6 +1,4 @@
-'''
-Basic logging functions
-'''
+# Quick logging functions
 import datetime
 
 # writes to log
