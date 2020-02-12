@@ -77,7 +77,7 @@ def tableIgnore():
     except:
         pass
 
-# created Commands table
+# creates Commands table
 def tableCommands():
     try:
         cnx = SQLconnect()
@@ -92,7 +92,7 @@ def tableCommands():
     except:
         pass
 
-# created Cogs table
+# creates Cogs table
 def tableCogs():
     try:
         cnx = SQLconnect()
@@ -101,6 +101,20 @@ def tableCogs():
             `cog_name` VARCHAR(50) NOT NULL,
             `is_enabled` BOOLEAN NOT NULL,
             primary key (cog_name)
+            )""")
+    except:
+        pass
+
+# creates Config table
+def tableConfig():
+    try:
+        cnx = SQLconnect()
+        cursor = cnx.cursor()
+        cursor.execute("""CREATE TABLE `config` (
+            `guild_id` BIGINT NOT NULL,
+            `option_name` VARCHAR(50) NOT NULL,
+            `value` LONGTEXT NOT NULL,
+            primary key (guild_id, option_name)
             )""")
     except:
         pass
@@ -155,6 +169,19 @@ def cogs(name: str, enabled: bool):
         SQLcommit(query, values)
     except Exception as e:
         logger.errorRun("dbConnect.py cogs - error")
+        logger.normRun(e)
+
+# add to Config table
+def configOptions(guildID: int, name: str, value: str):
+    try:
+        tableConfig()
+        query = f"""INSERT INTO `config` (
+            guild_id, option_name, value
+        ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE value = VALUES(value)"""
+        values = (guildID, name, value)
+        SQLcommit(query, values)
+    except Exception as e:
+        logger.errorRun("dbConnect.py config - error")
         logger.normRun(e)
 
 # add to times_used in Commands table

@@ -37,7 +37,7 @@ def ignore(guildID: int, memberID: int):
             for i in data:
                 return bool(i[0])
     except Exception as e:
-        logger.errorRun("dbQuery.py ignore - unable to obtain ignore")
+        logger.errorRun("dbQuery.py ignore - unable to obtain ignore value")
         logger.normRun(e)
 
 # gets guild command
@@ -52,7 +52,7 @@ def command(guildID: int, name: str):
             for i in data:
                 return bool(i[0])
     except Exception as e:
-        logger.errorRun("dbQuery.py command - unable to obtain command")
+        logger.errorRun("dbQuery.py command - unable to obtain command value")
         logger.normRun(e)
 
 # gets cog
@@ -64,7 +64,19 @@ def cog(name: str):
         for i in data:
             return bool(i[0])
     except Exception as e:
-        logger.errorRun("dbQuery.py cog - unable to obtain cog")
+        logger.errorRun("dbQuery.py cog - unable to obtain cog value")
+        logger.normRun(e)
+
+# get config
+def config(guildID: int, name: str):
+    try:
+        query = f"""SELECT value FROM `config` WHERE option_name = %s AND guild_id = %s"""
+        values = (name, guildID)
+        data = dbConnect.SQLcommit(query, values, True)
+        for i in data:
+            return i[0]
+    except Exception as e:
+        logger.errorRun("dbQuery.py config - unable to obtain config option")
         logger.normRun(e)
 
 # gets command times_used
