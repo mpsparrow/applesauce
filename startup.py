@@ -1,17 +1,17 @@
 '''
 Bot Name: Applesauce
 Created By: Matthew
-Framework Version: v1.2.1
+Framework Version: v1.3
 Last Updated: February 12, 2020
 Created On: October 12, 2019
 
 Please read license.txt for license information
 '''
-import sys
 import os
-import datetime
+import sys
 import time
 import discord
+import datetime
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from util import config, startupchecks, commandchecks, logger, dbQuery, dbInsert
@@ -24,7 +24,6 @@ def get_prefix(bot, message):
 
 conf = config.readINI('mainConfig.ini')  # loads config
 botName = conf['main']['botname']  # gets bots name from config
-# gets bots prefix and case_insensitivity
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
 
