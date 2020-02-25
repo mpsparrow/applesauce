@@ -31,7 +31,7 @@ class wordsAPI(commands.Cog):
 
     # definition (subcommand)
     @words.command(name="define", description="Returns a definition of the word provided.", usage="words define <word>", aliases=['d'])
-    async def define(self, ctx, word):
+    async def define(self, ctx, *, word):
         data = json.loads(self.wordsRequest(str(word), "definitions"))
         definitions = ""
 
