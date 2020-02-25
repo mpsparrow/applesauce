@@ -24,6 +24,7 @@ def connect():
         else:
             logger.errorRun("dbConnect.py SQLconnect - error")
             logger.normRun(e)
+        return False
 
 # Queries database
 # data controls whether to return query data
