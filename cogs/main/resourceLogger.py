@@ -1,7 +1,7 @@
 '''
 Name: Resource Logger
 Description: Logs resource usage of server. Made to work with srLogger
-Last Updated: February 7, 2020
+Last Updated: February 26, 2020
 Created: January 29, 2020
 '''
 import discord
@@ -25,7 +25,7 @@ class resourceLogger(commands.Cog):
     async def resourceUsage(self, ctx):
         try:
             conf = config.configLoad('cogconfig.json')
-            start_date = dated.today() - timedelta(days=3)
+            start_date = dated.today() - timedelta(days=1)
             end_date = dated.today() 
 
             # connects and gets database data
@@ -46,8 +46,7 @@ class resourceLogger(commands.Cog):
             plt.plot(datetimeValue, vmemoryPercent, label="Virtual Mem Avg.")
             plt.ylabel("Usage 0-100%")
             plt.xlabel("Date/Time (MM-DD HH)")
-            plt.yscale("log")
-            plt.ylim(1e-1, 1e2)
+            plt.ylim(bottom=0)
             plt.legend(loc='best')
             plt.xticks(rotation=45)
             plt.grid()
