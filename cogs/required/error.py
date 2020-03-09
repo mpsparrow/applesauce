@@ -13,9 +13,10 @@ class Error(commands.Cog):
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound): # invalid command, command not found
             logger.write('command-log.txt', f'{ctx.message.author} invalid command {ctx.message.content}')
-
-        if isinstance(error, commands.MissingRole): # invalid permissions, missing role
+        elif isinstance(error, commands.MissingRole): # invalid permissions, missing role
             logger.write('command-log.txt', f'{ctx.message.author} no permission {ctx.message.content}')
+        else:
+            logger.write('runtime-log.txt', f'Error: {error}')
 
     # logs every command used
     @commands.Cog.listener()

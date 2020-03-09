@@ -1,7 +1,7 @@
 '''
 Name: Archiving
 Description: Archiving message system
-Last Updated: February 6, 2020
+Last Updated: March 7, 2020
 Created: December 14, 2019
 '''
 import discord
@@ -62,7 +62,7 @@ class pinArchive(commands.Cog):
                         pass
 
                     embed.set_author(name=data["author"]["username"], icon_url=f'https://cdn.discordapp.com/avatars/{data["author"]["id"]}/{data["author"]["avatar"]}.png', url=f'https://discordapp.com/channels/{data["guild_id"]}/{data["channel_id"]}/{data["id"]}')
-                    embed.set_footer(text=f'Sent in #{self.bot.get_channel(int(data["channel_id"]))}')
+                    embed.set_footer(text=f'Pinned in #{self.bot.get_channel(int(data["channel_id"]))}')
                     await channel.send(embed=embed)
                     return
                 except:
