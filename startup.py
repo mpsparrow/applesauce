@@ -80,9 +80,9 @@ async def on_ready():
         for cog in os.listdir(f'./cogs/main'):
             if cog.endswith('.py'):
                 try:
-                    value = dbQuery.cog(cog[:-3])
+                    value = dbQuery.cogEnabled(cog[:-3])
                     if value != True and value != False:
-                        dbInsert.cogs(cog[:-3], False)
+                        dbInsert.cogs(cog[:-3], False, False)
                         value = False
                 except:
                     value = False
@@ -91,13 +91,16 @@ async def on_ready():
                 if value:
                     try:
                         bot.load_extension(f'cogs.main.{cog[:-3]}')
+                        dbInsert.cogs(cog[:-3], True, True)
                         logger.passStart(f'{cog}')
                         countSuccess += 1
                     except Exception as e:
+                        dbInsert.cogs(cog[:-3], True, False)
                         logger.errorStart(f'{cog}')
                         logger.errorStart(f'{e}')
                         countFail += 1
                 else:
+                    dbInsert.cogs(cog[:-3], False, False)
                     logger.skipStart(f'{cog}')
                     countSkip += 1
 

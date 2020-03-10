@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from util import logger, dbInsert
+from util import logger, dbInsert, dbQuery
 
 
 class cogCmds(commands.Cog):
@@ -16,7 +16,11 @@ class cogCmds(commands.Cog):
     @commands.is_owner()
     async def reloadCog(self, ctx, extension):
         try:
-            self.bot.reload_extension(f'cogs.main.{extension}')
+            state = dbQuery.cogEnabled(extension)
+            self.bot.unload_extension(f'cogs.main.{extension}')
+            dbInsert.cogs(extension, state, False)
+            self.bot.load_extension(f'cogs.main.{extension}')
+            dbInsert.cogs(extension, state, True)
             logger.normRun(f'Successfully reloaded cog: {extension}')
             await ctx.message.add_reaction("✅")
         except Exception as e:
@@ -31,6 +35,8 @@ class cogCmds(commands.Cog):
         try:
             self.bot.unload_extension(f'cogs.main.{extension}')
             logger.normRun(f'Successfully unloaded cog: {extension}')
+            state = dbQuery.cogEnabled(extension)
+            dbInsert.cogs(extension, state, False)
             await ctx.message.add_reaction("✅")
         except Exception as e:
             logger.errorRun(f'Failed to unload cog: {extension}')
@@ -44,6 +50,8 @@ class cogCmds(commands.Cog):
         try:
             self.bot.load_extension(f'cogs.main.{extension}')
             logger.normRun(f'Successfully loaded cog: {extension}')
+            state = dbQuery.cogEnabled(extension)
+            dbInsert.cogs(extension, state, True)
             await ctx.message.add_reaction("✅")
         except Exception as e:
             logger.errorRun(f'Failed to load cog: {extension}')
@@ -69,7 +77,8 @@ class cogCmds(commands.Cog):
 
         if flag:
             try:
-                dbInsert.cogs(extension, True)
+                state = dbQuery.cogLoaded(extension)
+                dbInsert.cogs(extension, True, state)
                 logger.normRun(f'Successfully enabled cog: {extension}')
                 await ctx.message.add_reaction("✅")
             except Exception as e:
@@ -99,7 +108,8 @@ class cogCmds(commands.Cog):
             
         if flag:
             try:
-                dbInsert.cogs(extension, False)
+                state = dbQuery.cogLoaded(extension)
+                dbInsert.cogs(extension, False, state)
                 logger.normRun(f'Successfully disabled cog: {extension}')
                 await ctx.message.add_reaction("✅")
             except Exception as e:

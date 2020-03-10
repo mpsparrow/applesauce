@@ -19,7 +19,7 @@ def isAllowed(ctx):
         author = ctx.message.author.id
         value = commandCheck(guildID, name) and ignoreCheck(guildID, author)
 
-        # Ups the command usage counter if command checks all pass
+        # ups the command usage counter if command checks all pass
         if value:
             dbInsert.commandCount(guildID, name) 
 

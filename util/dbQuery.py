@@ -43,8 +43,16 @@ def command(guildID: int, cmd: str):
             return bool(i[0])
 
 # Cog enabled value based on cog name
-def cog(name: str):
+def cogEnabled(name: str):
     query = f"""SELECT is_enabled FROM `cogs` WHERE cog_name = '{name}'"""
+    values = ()
+    data = dbConnect.commit(query, values, True)
+    for i in data:
+        return bool(i[0])
+
+# Cog loaded value based on cog name
+def cogLoaded(name: str):
+    query = f"""SELECT is_loaded FROM ` cogs` WHERE cog_name = '{name}'"""
     values = ()
     data = dbConnect.commit(query, values, True)
     for i in data:

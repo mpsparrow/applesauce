@@ -42,6 +42,7 @@ def cogs():
     cursor.execute("""CREATE TABLE `cogs` (
         `cog_name` VARCHAR(50) NOT NULL,
         `is_enabled` BOOLEAN NOT NULL,
+        `is_loaded` BOOLEAN NOT NULL,
         primary key (cog_name)
         )""")
 
