@@ -4,10 +4,12 @@ Description: Wikipedia command
 Last Updated: February 11, 2020
 Created: October 30, 2019
 '''
+import aiohttp
+import asyncio
 import discord
 from discord.ext import commands
 from util import commandchecks
-import wikipediaapi
+
 
 class Wiki(commands.Cog):
     def __init__(self, bot):
@@ -19,24 +21,20 @@ class Wiki(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.guild)
     async def wikipedia(self, ctx, *, lookup: str):
         loading = await ctx.send('Searching for article....') # loading message
+        url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{lookup}"
 
-        try:
-            wiki = wikipediaapi.Wikipedia('en')
-            wikipage = wiki.page(lookup)
-            page = wiki.extracts(wikipage, exsentences=2)
-            pageURL = wikipage.fullurl
-            pageTitle = wikipage.title
-        except:
-            # if nothing is found
-            page = 'No results found.'
-            pageURL = '.'
-            pageTitle = '.'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                if r.status == 200:
+                    js = await r.json()
 
-        # embed for results
-        embed=discord.Embed(title='Wikipedia', description=f'{pageURL}', color=0xc1c100)
-        embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Wikipedia_svg_logo.svg/200px-Wikipedia_svg_logo.svg.png")
-        embed.add_field(name=f'{pageTitle}', value=f'{page}', inline=False)
-        await ctx.send(embed=embed)
+                    embed=discord.Embed(title='Wikipedia', description=f"{js['content_urls']['desktop']['page']}", color=0xc1c100)
+                    # embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Wikipedia_svg_logo.svg/200px-Wikipedia_svg_logo.svg.png")
+                    embed.add_field(name=f"{js['displaytitle']}", value=f"{js['extract']}", inline=False)
+                    await ctx.send(embed=embed)
+                else:
+                    await ctx.send("no result found")
+
         await loading.delete() # deletes loading message
 
 def setup(bot):
