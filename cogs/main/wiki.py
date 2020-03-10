@@ -28,7 +28,6 @@ class Wiki(commands.Cog):
                     js = await r.json()
 
                     embed=discord.Embed(title='Wikipedia', description=f"{js['content_urls']['desktop']['page']}", color=0xc1c100)
-                    # embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Wikipedia_svg_logo.svg/200px-Wikipedia_svg_logo.svg.png")
                     embed.add_field(name=f"{js['displaytitle']}", value=f"{js['extract']}", inline=False)
                     await ctx.send(embed=embed)
                 else:
