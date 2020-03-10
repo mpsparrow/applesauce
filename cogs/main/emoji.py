@@ -1,13 +1,13 @@
 '''
 Name: Emoji Commands
 Description: Pile of commands to display emojis
-Last Updated: January 23, 2020
-Created: January 12, 2020
 '''
+
 import discord
 from discord.ext import commands
 from util import commandchecks
 import random
+
 
 class Emoji(commands.Cog):
     def __init__(self, bot):

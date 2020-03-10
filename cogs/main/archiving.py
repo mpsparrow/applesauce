@@ -1,15 +1,15 @@
 '''
 Name: Archiving
 Description: Archiving message system
-Last Updated: March 7, 2020
-Created: December 14, 2019
 '''
+
 import discord
 from discord.ext import commands
 import datetime
 import time
 from discord.ext.commands import has_permissions
 from util import config, commandchecks, embed, dbQuery
+
 
 class pinArchive(commands.Cog):
     def __init__(self, bot):

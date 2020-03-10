@@ -1,6 +1,7 @@
 # Quick embed functions
 import discord
 
+
 def make_error_embed(message: str) -> discord.Embed:
     embed = discord.Embed(title="Error", description=message, colour=0xf84722)
     return embed

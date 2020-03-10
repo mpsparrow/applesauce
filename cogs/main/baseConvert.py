@@ -1,12 +1,12 @@
 '''
 Name: Base Converter 
 Description: Commands to convert from one base to another.
-Last Updated: January 22, 2020
-Created: January 22, 2020
 '''
+
 import discord
 from discord.ext import commands
 from util import commandchecks, embed
+
 
 class BaseConvert(commands.Cog):
     def __init__(self, bot):

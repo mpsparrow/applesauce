@@ -1,12 +1,12 @@
 '''
 Name: Responses
 Description: random responses to things
-Last Updated: January 11, 2020
-Created: January 8, 2020
 '''
+
 import discord
 from discord.ext import commands
 import random
+
 
 class Response(commands.Cog):
     def __init__(self, bot):

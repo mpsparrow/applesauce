@@ -3,6 +3,7 @@ import json
 import configparser
 from util import logger
 
+
 # Reads and returns .ini file
 def readINI(filename: str):
     config = configparser.ConfigParser()

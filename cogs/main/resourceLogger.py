@@ -1,9 +1,8 @@
 '''
 Name: Resource Logger
 Description: Logs resource usage of server. Made to work with srLogger
-Last Updated: February 26, 2020
-Created: January 29, 2020
 '''
+
 import discord
 from discord.ext import commands
 import mysql.connector as mysql
@@ -14,6 +13,7 @@ import numpy as np
 import datetime
 from datetime import date as dated
 from datetime import timedelta
+
 
 class resourceLogger(commands.Cog):
     def __init__(self, bot):

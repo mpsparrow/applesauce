@@ -1,13 +1,13 @@
 '''
 Name: 8ball
 Description: not so magic 8ball command
-Last Updated: January 8, 2020
-Created: October 30, 2019
 '''
+
 import discord
 from discord.ext import commands
 from util import commandchecks
 import random
+
 
 class ball8(commands.Cog):
     def __init__(self, bot):

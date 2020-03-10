@@ -1,9 +1,8 @@
 '''
 Name: Wikipedia
 Description: Wikipedia command
-Last Updated: February 11, 2020
-Created: October 30, 2019
 '''
+
 import aiohttp
 import asyncio
 import discord

@@ -2,6 +2,7 @@
 # If any fail startup is aborted
 from util import config, logger, dbConnect
 
+
 def startUpChecks():
     # mainConfig.ini exists
     try:

@@ -5,6 +5,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from util import embed, dbQuery
 
+
 def commandList(cmds):
     cmdString = ""
     if len(cmds) != 0:

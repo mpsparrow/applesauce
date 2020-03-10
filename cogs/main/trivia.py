@@ -1,9 +1,8 @@
 '''
 Name: Trivia
 Description: Trivia system
-Last Updated: January 11, 2020
-Created: November 19, 2019
 '''
+
 import discord
 import asyncio
 import os
@@ -12,6 +11,7 @@ import time
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from util import commandchecks
+
 
 # main class for trivia
 class Quiz():

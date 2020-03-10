@@ -1,14 +1,14 @@
 '''
 Name: User Info
 Description: User information command
-Last Updated: January 12, 2020
-Created: November 18, 2019
 '''
+
 import discord
 from discord.ext import commands
 from util import commandchecks
 import random
 import datetime
+
 
 class userInfo(commands.Cog):
     def __init__(self, bot):

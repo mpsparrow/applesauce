@@ -2,6 +2,7 @@
 # Certain owner commands bypass this.
 from util import logger, dbQuery, dbInsert
 
+
 # If the user is set as ignored in the guild
 def ignoreCheck(guildID: int, author: int):
     return not(dbQuery.ignore(guildID, author))

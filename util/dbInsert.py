@@ -1,6 +1,7 @@
 # Insert functions for database.
 from util import dbConnect, dbTables
 
+
 # Inserts into prefix table
 def prefix(guildID: int, pref: str):
     try: dbTables.prefix()

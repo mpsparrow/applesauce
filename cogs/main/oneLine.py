@@ -1,13 +1,13 @@
 '''
 Name: One Line 
 Description: random "one line" simple commands
-Last Updated: January 12, 2020
-Created: October 30, 2019
 '''
+
 import discord
 from discord.ext import commands
 from util import commandchecks
 import random
+
 
 class oneLine(commands.Cog):
     def __init__(self, bot):

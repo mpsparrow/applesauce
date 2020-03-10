@@ -1,14 +1,14 @@
 '''
 Name: Wolfram Alpha
 Description: Wolfram Alpha command
-Last Updated: January 11, 2020
-Created: October 30, 2019
 '''
+
 import discord
 from discord.ext import commands
 from util import config, commandchecks
 import random
 import wolframalpha
+
 
 class Wolfram(commands.Cog):
     def __init__(self, bot):

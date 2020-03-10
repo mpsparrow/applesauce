@@ -1,6 +1,7 @@
 # Creation of database tables.
 from util import dbConnect
 
+
 # Prefix table for per guild prefix keeping
 def prefix():
     cnx = dbConnect.connect()

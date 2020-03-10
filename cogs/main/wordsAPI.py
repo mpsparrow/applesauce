@@ -1,14 +1,14 @@
 '''
 Name: Words API
 Description: Links up with WordsAPI to provide dictionary and word lookup commands
-Last Updated: January 23, 2020
-Created: January 23, 2020
 '''
+
 import discord
 from discord.ext import commands
 from util import commandchecks, embed, config
 import requests
 import json
+
 
 class wordsAPI(commands.Cog):
     def __init__(self, bot):

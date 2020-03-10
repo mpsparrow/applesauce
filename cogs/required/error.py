@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from util import logger
 
+
 class Error(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

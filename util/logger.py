@@ -1,6 +1,7 @@
 # Quick logging functions
 import datetime
 
+
 # writes to log
 def write(filename: str, msg: str, tag="", start=""):
     log = open(f'logs/{filename}','a+')

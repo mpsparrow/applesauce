@@ -3,6 +3,7 @@ import mysql.connector as mysql
 from mysql.connector import errorcode
 from util import dbConnect, logger, config
 
+
 # Prefix based on guild id
 def prefix(guildID: int):
     try:

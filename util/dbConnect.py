@@ -3,6 +3,7 @@ import mysql.connector as mysql
 from mysql.connector import errorcode
 from util import logger, config
 
+
 # Connects to mySQL database
 def connect():
     try:
