@@ -17,7 +17,7 @@ class wordsAPI(commands.Cog):
     # compiles URL, gets JSON result
     def wordsRequest(self, word, ending):
         url = f"https://wordsapiv1.p.rapidapi.com/words/{word}/{ending}"
-        conf = config.configLoad("cogconfig.json")
+        conf = config.readINI("cogConfig.ini")
         headers = conf['wordsAPI']
         response = requests.request("GET", url, headers=headers)
         return response.text

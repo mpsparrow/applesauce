@@ -24,7 +24,7 @@ class resourceLogger(commands.Cog):
     @commands.is_owner()
     async def resourceUsage(self, ctx):
         try:
-            conf = config.configLoad('cogconfig.json')
+            conf = config.readINI('cogConfig.ini')
             start_date = dated.today() - timedelta(days=1)
             end_date = dated.today() 
 
