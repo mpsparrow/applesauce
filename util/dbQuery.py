@@ -1,7 +1,7 @@
 # Query database functions
 import mysql.connector as mysql
 from mysql.connector import errorcode
-from util import dbConnect, logger, config
+from util import dbConnect, logger, config, dbTables
 
 
 # Prefix based on guild id
@@ -73,3 +73,13 @@ def commandCount(guildID: int, cmd: str):
     data = dbConnect.commit(query, values, True)
     for i in data:
         return i[0]
+
+# Archive
+def archive(guildID: int):
+    try: dbTables.archive()
+    except: pass
+
+    query = f"""SELECT * FROM `archive` WHERE guild_id = {guildID}"""
+    values = ()
+    data = dbConnect.commit(query, values, True)
+    return data[0]

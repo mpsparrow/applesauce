@@ -8,7 +8,7 @@ from discord.ext import commands
 import datetime
 import time
 from discord.ext.commands import has_permissions
-from util import config, commandchecks, embed, dbQuery
+from util import commandchecks, embed, dbQuery, dbInsert
 
 
 class pinArchive(commands.Cog):
@@ -20,10 +20,10 @@ class pinArchive(commands.Cog):
     async def on_raw_message_edit(self, payload):
         data = payload.data
         try:
-            conf = config.readJSON("guildconfig.json")
-            if (data['pinned'] == True) and (conf[str(data["guild_id"])]["archivePins"]) and (conf[str(data["guild_id"])]["archiveToggle"]): 
+            conf = dbQuery.archive(data["guild_id"])
+            if (data['pinned'] == True) and (conf[3]) and (conf[4]): 
                 try:
-                    channelID = conf[str(data["guild_id"])]["archiveChannel"]
+                    channelID = conf[1]
                     channel = self.bot.get_channel(channelID)
                     current_date = datetime.datetime.utcfromtimestamp(int(time.time()))
 
@@ -53,7 +53,7 @@ class pinArchive(commands.Cog):
                         pass
 
                     try:
-                        roleID = conf[str(data["guild_id"])]["archiveRole"]
+                        roleID = conf[2]
                         role = self.bot.get_guild(int(data["guild_id"])).get_role(roleID)
                         member = self.bot.get_guild(int(data["guild_id"])).get_member(int(data["author"]["id"]))
                         if member != self.bot.user:
@@ -77,10 +77,10 @@ class pinArchive(commands.Cog):
         prefix = dbQuery.prefix(ctx.guild.id)
         embed2 = embed.make_embed_fields_ninl("Archiving Setup", "commands for configuring archiving", 
             (f"{prefix}a <message-ID>", "Archives given message in archiving channel."),
-            (f"{prefix}as t <true/false>", "Override toggle on/off for archiving. `True` is enabled."),
-            (f"{prefix}as p <true/false>", "`true` will enabling archiving of pinned messages."),
+            (f"{prefix}as t <true/false>", "Override toggle on/off for archiving. `true` is enabled."),
+            (f"{prefix}as p <true/false>", "`true` will enable archiving of pinned messages."),
             (f"{prefix}as c <channel-ID>", "Sets channel for archiving."), 
-            (f"{prefix}as r <role-ID>", f"Role given to anyone who gets their message archived (either through pins or `{prefix}a`). Use `none` to disable."))
+            (f"{prefix}as r <role-ID>", f"Role given to anyone who gets their message archived (either through pins or `{prefix}a`). Use `0` to disable."))
         await ctx.send(embed=embed2)
 
     # archiveToggle (subcommand)
@@ -88,9 +88,7 @@ class pinArchive(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def archiveToggle(self, ctx, value: bool):
         try:
-            conf = config.configLoad("guildconfig.json")
-            conf[str(ctx.guild.id)]["archiveToggle"] = value
-            config.configDump("guildconfig.json", conf)
+            dbInsert.archiveToggle(ctx.guild.id, value)
             await ctx.send(embed=embed.make_embed("Archiving", f"Archiving set to {value}"))
         except:
             await ctx.send(embed=embed.make_error_embed("Error toggling. Please try again."))
@@ -100,9 +98,7 @@ class pinArchive(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def archivePins(self, ctx, value: bool):
         try:
-            conf = config.configLoad("guildconfig.json")
-            conf[str(ctx.guild.id)]["archivePins"] = value
-            config.configDump("guildconfig.json", conf)
+            dbInsert.archivePins(ctx.guild.id, value)
             await ctx.send(embed=embed.make_embed("Archiving", f"Archiving pins set to {value}"))
         except:
             await ctx.send(embed=embed.make_error_embed("Error. Please try again."))
@@ -112,9 +108,7 @@ class pinArchive(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def archiveChannel(self, ctx, channel):
         try:
-            conf = config.configLoad("guildconfig.json")
-            conf[str(ctx.guild.id)]["archiveChannel"] = int(channel)
-            config.configDump("guildconfig.json", conf)
+            dbInsert.archiveChannel(ctx.guild.id, channel)
             await ctx.send(embed=embed.make_embed("Archiving", f"Channel: <#{int(channel)}>"))
         except:
             await ctx.send(embed=embed.make_error_embed("Invalid channel ID"))
@@ -124,19 +118,7 @@ class pinArchive(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def archiveRole(self, ctx, role):
         try:
-            conf = config.configLoad("guildconfig.json")
-
-            try:
-                if str(role) == "none":
-                    del conf[str(ctx.guild.id)]["archiveRole"]
-                    config.configDump("guildconfig.json", conf)
-                    await ctx.send(embed=embed.make_embed("Archiving", f"Role removed."))
-                    return
-            except:
-                pass
-
-            conf[str(ctx.guild.id)]["archiveRole"] = int(role)
-            config.configDump("guildconfig.json", conf)
+            dbInsert.archiveRole(ctx.guild.id, role)
             await ctx.send(embed=embed.make_embed("Archiving", f"Role: <@&{int(role)}>"))
         except:
             await ctx.send(embed=embed.make_error_embed("Invalid role ID"))
@@ -147,13 +129,13 @@ class pinArchive(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     @commands.cooldown(1, 10, commands.BucketType.default)
     async def archive(self, ctx, messageID):
-        conf = config.configLoad("guildconfig.json")
-        if conf[str(ctx.guild.id)]["archiveToggle"] == True:
+        conf = dbQuery.archive(ctx.guild.id)
+        if conf[4] == True:
             try:
                 data = await ctx.fetch_message(messageID)
                 current_date = datetime.datetime.utcfromtimestamp(int(time.time()))
                 try:
-                    channelID = conf[str(data.guild.id)]["archiveChannel"]
+                    channelID = conf[1]
                     channel = self.bot.get_channel(channelID)
                 except:
                     await ctx.send(embed=embed.make_error_embed("No archiving channel set. Set one using `archiveChannel`"))
@@ -177,7 +159,7 @@ class pinArchive(commands.Cog):
                     pass
 
                 try:
-                    roleID = conf[str(data.guild.id)]["archiveRole"]
+                    roleID = conf[2]
                     role = ctx.guild.get_role(roleID)
                     member = ctx.guild.get_member(data.author.id)
                     if member != self.bot.user:

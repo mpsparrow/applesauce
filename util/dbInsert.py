@@ -67,3 +67,54 @@ def commandCount(guildID: int, name: str):
         dbConnect.commit(query, values)
     except:
         pass # command does not exist
+
+# Archive insert
+def archive(guildID: int, channel: int, role: int, pins: bool, toggle: bool):
+    try: dbTables.archive()
+    except: pass
+
+    query = f"""INSERT INTO `archive` (
+        guild_id, channel, role, pins, toggle
+    ) VALUES (%s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE channel = VALUES(channel), role = VALUES(role), pins = VALUES(pins), toggle = VALUES(toggle)"""
+    values = (guildID, channel, role, pins, toggle)
+    dbConnect.commit(query, values)
+
+def archiveChannel(guildID: int, channel: int):
+    try: dbTables.archive()
+    except: pass
+
+    query = f"""INSERT INTO `archive` (
+        guild_id, channel
+    ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE channel = VALUES(channel)"""
+    values = (guildID, channel)
+    dbConnect.commit(query, values)
+
+def archiveRole(guildID: int, role: int):
+    try: dbTables.archive()
+    except: pass
+
+    query = f"""INSERT INTO `archive` (
+        guild_id, role
+    ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE role = VALUES(role)"""
+    values = (guildID, role)
+    dbConnect.commit(query, values)
+
+def archivePins(guildID: int, pins: bool):
+    try: dbTables.archive()
+    except: pass
+
+    query = f"""INSERT INTO `archive` (
+        guild_id, pins
+    ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE pins = VALUES(pins)"""
+    values = (guildID, pins)
+    dbConnect.commit(query, values)
+
+def archiveToggle(guildID: int, toggle: bool):
+    try: dbTables.archive()
+    except: pass
+
+    query = f"""INSERT INTO `archive` (
+        guild_id, toggle
+    ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE toggle = VALUES(toggle)"""
+    values = (guildID, toggle)
+    dbConnect.commit(query, values)

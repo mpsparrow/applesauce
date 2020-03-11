@@ -56,3 +56,16 @@ def config():
         `value` LONGTEXT NOT NULL,
         primary key (guild_id, option_name)
         )""")
+
+# Archiving table for per guild archiving settings
+def archive():
+    cnx = dbConnect.connect()
+    cursor = cnx.cursor()
+    cursor.execute("""CREATE TABLE `archive` (
+        `guild_id` BIGINT NOT NULL,
+        `channel` BIGINT,
+        `role` BIGINT,
+        `pins` BOOLEAN,
+        `toggle` BOOLEAN,
+        primary key (guild_id)
+        )""")
