@@ -52,7 +52,7 @@ def cogEnabled(name: str):
 
 # Cog loaded value based on cog name
 def cogLoaded(name: str):
-    query = f"""SELECT is_loaded FROM ` cogs` WHERE cog_name = '{name}'"""
+    query = f"""SELECT is_loaded FROM `cogs` WHERE cog_name = '{name}'"""
     values = ()
     data = dbConnect.commit(query, values, True)
     for i in data:

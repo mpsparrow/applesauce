@@ -42,7 +42,7 @@ def cogs(name: str, enabled: bool, loaded: bool):
 
     query = f"""INSERT INTO `cogs` (
         cog_name, is_enabled, is_loaded
-    ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled, is_loaded)"""
+    ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled), is_loaded = VALUES(is_loaded)"""
     values = (name, enabled, loaded)
     dbConnect.commit(query, values)
 
