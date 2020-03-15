@@ -118,3 +118,13 @@ def archiveToggle(guildID: int, toggle: bool):
     ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE toggle = VALUES(toggle)"""
     values = (guildID, toggle)
     dbConnect.commit(query, values)
+
+def leaderboard(guildID: int, memberID: int, member_name: str, level: int, points: int, last_added, count: int):
+    try: dbTables.archive()
+    except: pass
+
+    query = f"""INSERT INTO `leaderboard` (
+        guild_id, member_id, member_name, level, points, last_added, count
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE member_name = VALUES(member_name), level = VALUES(level), points = VALUES(points), last_added = VALUES(last_added), count = VALUES(count)"""
+    values = (guildID, memberID, member_name, level, points, last_added, count)
+    dbConnect.commit(query, values)

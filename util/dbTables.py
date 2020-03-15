@@ -69,3 +69,18 @@ def archive():
         `toggle` BOOLEAN,
         primary key (guild_id)
         )""")
+
+# Leaderboard table
+def leaderboard():
+    cnx = dbConnect.connect()
+    cursor = cnx.cursor()
+    cursor.execute("""CREATE TABLE `leaderboard` (
+        `guild_id` BIGINT NOT NULL,
+        `member_id` BIGINT NOT NULL,
+        `member_name` VARCHAR(50),
+        `level` INT,
+        `points` BIGINT,
+        `last_added` DATETIME,
+        `count` BIGINT,
+        primary key (guild_id, member_id)
+        )""")

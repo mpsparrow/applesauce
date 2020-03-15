@@ -83,3 +83,13 @@ def archive(guildID: int):
     values = ()
     data = dbConnect.commit(query, values, True)
     return data[0]
+
+# Leaderboard
+def leaderboard(guildID: int, memberID: int):
+    try: dbTables.leaderboard()
+    except: pass
+
+    query = f"""SELECT * FROM `leaderboard` WHERE guild_id = %s AND member_id = %s"""
+    values = (guildID, memberID)
+    data = dbConnect.commit(query, values, True)
+    return data[0]
