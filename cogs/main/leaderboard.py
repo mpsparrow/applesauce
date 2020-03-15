@@ -20,7 +20,7 @@ class Leaderboard(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         try:
-            if message.author == self.bot.user:
+            if (message.author == self.bot.user) or message.author.bot:
                 return
             currentDateTime = datetime.datetime.now()
             data = dbQuery.leaderboard(message.guild.id, message.author.id)
