@@ -49,9 +49,16 @@ class Leaderboard(commands.Cog):
                 userID = int(user.id)
                 userDisplay = str(user)
             data = dbQuery.leaderboard(ctx.guild.id, userID)
-            await ctx.send(embed=embed.make_embed(userDisplay, f"**Level:** {data[3]}\n**XP:** {data[4]}\n**Messages:** {data[6]}"))
+            await ctx.send(embed=embed.make_embed(userDisplay, f"**Level:** {data[3]}\n**XP:** {data[4]}\n**Messages:** {data[6]}\n[Online](http://applesauce.site/leaderboard.php?guild={ctx.guild.id})"))
         except:
             await ctx.send(embed=embed.make_error_embed("User unavailable."))
+
+    # leaderboard (command)
+    @commands.check(commandchecks.isAllowed)
+    @commands.command(name="leaderboard", description="Displays link to leaderboard.", usage="leaderboard", aliases=['levels'])
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def leaderboard(self, ctx):
+        await ctx.send(f"Leaderboard: http://applesauce.site/leaderboard.php?guild={ctx.guild.id}")
 
 def setup(bot):
     bot.add_cog(Leaderboard(bot))
