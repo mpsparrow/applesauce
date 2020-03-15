@@ -10,7 +10,7 @@ import time
 import random
 import math
 from discord.ext.commands import has_permissions
-from util import dbQuery, dbInsert
+from util import dbQuery, dbInsert, commandchecks, embed
 
 
 class Leaderboard(commands.Cog):
@@ -35,6 +35,23 @@ class Leaderboard(commands.Cog):
         except:
             author = str(message.author)
             dbInsert.leaderboard(message.guild.id, message.author.id, author, 1, random.randint(15, 25), datetime.datetime.now(), 1)
+
+    # rank (command)
+    @commands.check(commandchecks.isAllowed)
+    @commands.command(name="rank", description="Displays current rank.", usage="rank <user>", aliases=['xp'])
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def rank(self, ctx, *, user: discord.Member = None):
+        try:
+            if not user:
+                userID = int(ctx.author.id)
+                userDisplay = str(ctx.author)
+            else:
+                userID = int(user.id)
+                userDisplay = str(user)
+            data = dbQuery.leaderboard(ctx.guild.id, userID)
+            await ctx.send(embed=embed.make_embed(userDisplay, f"**Level:** {data[3]}\n**XP:** {data[4]}\n**Messages:** {data[6]}"))
+        except:
+            await ctx.send(embed=embed.make_error_embed("User unavailable."))
 
 def setup(bot):
     bot.add_cog(Leaderboard(bot))
