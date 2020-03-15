@@ -27,14 +27,14 @@ class Leaderboard(commands.Cog):
             lastDateTime = data[5] + datetime.timedelta(seconds=60)
             if lastDateTime < currentDateTime:
                 points = random.randint(15, 25) + data[4]
-                level = math.floor(0.08 * math.sqrt(points))
+                level = math.floor(0.08 * math.sqrt(points)) + 1
                 author = str(message.author)
                 dbInsert.leaderboard(data[0], data[1], author, level, points, currentDateTime, data[6] + 1)
             else:
                 return
         except:
             author = str(message.author)
-            dbInsert.leaderboard(message.guild.id, message.author.id, author, 0, random.randint(15, 25), datetime.datetime.now(), 1)
+            dbInsert.leaderboard(message.guild.id, message.author.id, author, 1, random.randint(15, 25), datetime.datetime.now(), 1)
 
 def setup(bot):
     bot.add_cog(Leaderboard(bot))
