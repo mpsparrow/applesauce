@@ -18,6 +18,7 @@ def ignore():
     cursor = cnx.cursor()
     cursor.execute("""CREATE TABLE `ignore` (
         `guild_id` BIGINT NOT NULL,
+        `guild_name` VARCHAR(50) NOT NULL,
         `member_id` BIGINT NOT NULL, 
         `is_ignored` BOOLEAN NOT NULL,
         primary key (guild_id, member_id)
@@ -76,11 +77,13 @@ def leaderboard():
     cursor = cnx.cursor()
     cursor.execute("""CREATE TABLE `leaderboard` (
         `guild_id` BIGINT NOT NULL,
+        `guild_name` VARCHAR(50) NOT NULL,
         `member_id` BIGINT NOT NULL,
         `member_name` VARCHAR(50),
         `level` INT,
         `points` BIGINT,
+        `next_level` BIGINT,
         `last_added` DATETIME,
-        `count` BIGINT,
+        `message_count` BIGINT,
         primary key (guild_id, member_id)
         )""")

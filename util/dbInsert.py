@@ -14,14 +14,17 @@ def prefix(guildID: int, pref: str):
     dbConnect.commit(query, values)
 
 # Inserts into ignore table
-def ignore(guildID: int, member: str, ignored: bool):
+def ignore(guildID: int, guild_name: str, member: str, ignored: bool):
     try: dbTables.ignore()
     except: pass
 
     query = f"""INSERT INTO `ignore` (
-        guild_id, member_id, is_ignored
-    ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_ignored = VALUES(is_ignored)"""
-    values = (guildID, member, ignored)
+        guild_id, guild_name, member_id, is_ignored
+    ) VALUES (%s, %s, %s, %s) 
+    ON DUPLICATE KEY UPDATE 
+    is_ignored = VALUES(is_ignored),
+    guild_name = VALUES(guild_name)"""
+    values = (guildID, guild_name, member, ignored)
     dbConnect.commit(query, values)
 
 # Inserts into commands table
@@ -119,12 +122,20 @@ def archiveToggle(guildID: int, toggle: bool):
     values = (guildID, toggle)
     dbConnect.commit(query, values)
 
-def leaderboard(guildID: int, memberID: int, member_name: str, level: int, points: int, last_added, count: int):
+def leaderboard(guild_id: int, guild_name: str, member_id: int, member_name: str, level: int, points: int, next_level: int, last_added, message_count: int):
     try: dbTables.archive()
     except: pass
 
     query = f"""INSERT INTO `leaderboard` (
-        guild_id, member_id, member_name, level, points, last_added, count
-    ) VALUES (%s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE member_name = VALUES(member_name), level = VALUES(level), points = VALUES(points), last_added = VALUES(last_added), count = VALUES(count)"""
-    values = (guildID, memberID, member_name, level, points, last_added, count)
+        guild_id, guild_name, member_id, member_name, level, points, next_level, last_added, message_count
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) 
+        ON DUPLICATE KEY UPDATE 
+        guild_name = VALUES(guild_name), 
+        member_name = VALUES(member_name), 
+        level = VALUES(level), 
+        points = VALUES(points), 
+        next_level = VALUES(next_level),
+        last_added = VALUES(last_added),
+        message_count = VALUES(message_count)"""
+    values = (guild_id, guild_name, member_id, member_name, level, points, next_level, last_added, message_count)
     dbConnect.commit(query, values)

@@ -15,7 +15,7 @@ class Ignore(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def ignore(self, ctx, member : discord.Member):
         try:
-            dbInsert.ignore(ctx.guild.id, member.id, True)
+            dbInsert.ignore(ctx.guild.id, ctx.guild.name, member.id, True)
             await ctx.message.add_reaction("✅")
         except:
             await ctx.message.add_reaction("❌")
@@ -25,7 +25,7 @@ class Ignore(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def unignore(self, ctx, member : discord.Member):
         try:
-            dbInsert.ignore(ctx.guild.id, member.id, False)
+            dbInsert.ignore(ctx.guild.id, ctx.guild.name, member.id, False)
             await ctx.message.add_reaction("✅")
         except:
             await ctx.message.add_reaction("❌")

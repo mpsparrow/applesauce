@@ -24,17 +24,20 @@ class Leaderboard(commands.Cog):
                 return
             currentDateTime = datetime.datetime.now()
             data = dbQuery.leaderboard(message.guild.id, message.author.id)
-            lastDateTime = data[5] + datetime.timedelta(seconds=60)
+            lastDateTime = data[7] + datetime.timedelta(seconds=60)
             if lastDateTime < currentDateTime:
-                points = random.randint(15, 25) + data[4]
+                points = random.randint(15, 25) + data[5]
                 level = math.floor(0.08 * math.sqrt(points)) + 1
+                x = level + 1
+                nextlevel = math.floor((((625*(x**2))/4)-((625*x)/2)+(625/4)) - points)
                 author = str(message.author)
-                dbInsert.leaderboard(data[0], data[1], author, level, points, currentDateTime, data[6] + 1)
+                dbInsert.leaderboard(data[0], message.guild.name, data[2], author, level, points, nextlevel, currentDateTime, data[8] + 1)
             else:
                 return
         except:
             author = str(message.author)
-            dbInsert.leaderboard(message.guild.id, message.author.id, author, 1, random.randint(15, 25), datetime.datetime.now(), 1)
+            randomValue = random.randint(15, 25)
+            dbInsert.leaderboard(message.guild.id, message.guild.name, message.author.id, author, 1, randomValue, 156 - randomValue, datetime.datetime.now(), 1)
 
     # rank (command)
     @commands.check(commandchecks.isAllowed)
@@ -49,7 +52,7 @@ class Leaderboard(commands.Cog):
                 userID = int(user.id)
                 userDisplay = str(user)
             data = dbQuery.leaderboard(ctx.guild.id, userID)
-            await ctx.send(embed=embed.make_embed(userDisplay, f"**Level:** {data[3]}\n**XP:** {data[4]}\n**Messages:** {data[6]}\n[Online](http://applesauce.site/leaderboard.php?guild={ctx.guild.id})"))
+            await ctx.send(embed=embed.make_embed(userDisplay, f"**Level:** {data[4]}\n**Total XP:** {data[5]}\n**XP for Next Level:** {data[6]}\n**Messages:** {data[8]}\n[Online](http://applesauce.site/leaderboard.php?guild={ctx.guild.id})"))
         except:
             await ctx.send(embed=embed.make_error_embed("User unavailable."))
 
