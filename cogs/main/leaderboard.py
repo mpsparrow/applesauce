@@ -63,9 +63,10 @@ class Leaderboard(commands.Cog):
             emb = discord.Embed(description=f"Rank Info", color=userColor)
             emb.set_author(name=userDisplay, icon_url=f'https://cdn.discordapp.com/avatars/{userID}/{userAvatar}.png', url=f'https://applesauce.site/member.php?member={userID}')
             emb.add_field(name='Level', value=data[4], inline=False)
-            emb.add_field(name='Next Level XP', value=data[6], inline=False)
+            emb.add_field(name='XP Needed for Next Level', value=data[6], inline=False)
             emb.add_field(name='Total XP', value=data[5], inline=False)
             emb.add_field(name='Message Count', value=data[8], inline=False)
+            emb.set_footer(text=f'Click name for profile.')
             await ctx.send(embed=emb)
         except:
             await ctx.send(embed=embed.make_error_embed("User unavailable."))
