@@ -48,11 +48,25 @@ class Leaderboard(commands.Cog):
             if not user:
                 userID = int(ctx.author.id)
                 userDisplay = str(ctx.author)
+                userAvatar = ctx.author.avatar
+                userColor = ctx.author.color
             else:
                 userID = int(user.id)
                 userDisplay = str(user)
+                userAvatar = user.avatar
+                userColor = user.color
             data = dbQuery.leaderboard(ctx.guild.id, userID)
-            await ctx.send(embed=embed.make_embed(userDisplay, f"**Level:** {data[4]}\n**Total XP:** {data[5]}\n**XP for Next Level:** {data[6]}\n**Messages:** {data[8]}\n[Online](http://applesauce.site/leaderboard.php?guild={ctx.guild.id})"))
+
+            if data[4] == "":
+                await ctx.send(embed=embed.make_error_embed("User unavailable."))
+
+            emb = discord.Embed(description=f"Rank Info", color=userColor)
+            emb.set_author(name=userDisplay, icon_url=f'https://cdn.discordapp.com/avatars/{userID}/{userAvatar}.png', url=f'https://applesauce.site/member.php?member={userID}')
+            emb.add_field(name='Level', value=data[4], inline=False)
+            emb.add_field(name='Next Level XP', value=data[6], inline=False)
+            emb.add_field(name='Total XP', value=data[5], inline=False)
+            emb.add_field(name='Message Count', value=data[8], inline=False)
+            await ctx.send(embed=emb)
         except:
             await ctx.send(embed=embed.make_error_embed("User unavailable."))
 
