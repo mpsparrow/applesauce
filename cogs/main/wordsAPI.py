@@ -10,7 +10,7 @@ import requests
 import json
 
 
-class wordsAPI(commands.Cog):
+class wordsAPI(commands.Cog, name="Words"):
     def __init__(self, bot):
         self.bot = bot
 

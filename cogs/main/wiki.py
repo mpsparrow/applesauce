@@ -17,7 +17,7 @@ class Wiki(commands.Cog):
     # wikipedia (command)
     @commands.check(commandchecks.isAllowed)
     @commands.command(name="wikipedia", description="Queries Wikipedia and returns summary and link to the page.", usage="wikipedia <query>", aliases=['wiki'])
-    @commands.cooldown(1, 10, commands.BucketType.guild)
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     async def wikipedia(self, ctx, *, lookup: str):
         loading = await ctx.send('Searching for article....') # loading message
         url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{lookup}"
