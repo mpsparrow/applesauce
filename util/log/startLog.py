@@ -1,31 +1,62 @@
-'''
-Start log functions.
-'''
+"""
+Start log quick functions.
+"""
 import log
 from util import config
 
-# Gets start log file name from config.
 def getFile():
+    """
+    Get name of log file from mainConfig.ini.
+    """
     conf = config.readINI("mainConfig.ini")
     return str(conf[logs][start])
 
 def log(msg: str):
+    """
+    No tag log function.
+    :param str msg: Message to log
+    """
     log.write(getFile(), msg, tag="")
 
 def error(msg: str):
-    log.write(getFile(), msg, tag="[error]")
+    """
+    [ERROR] tag log function.
+    :param str msg: Message to log
+    """
+    log.write(getFile(), msg, tag="[ERROR]")
 
 def warn(msg: str):
-    log.write(getFile(), msg, tag="[warn]")
+    """
+    [WARN] tag log function.
+    :param str msg: Message to log
+    """
+    log.write(getFile(), msg, tag="[WARN]")
 
 def info(msg: str):
-    log.write(getFile(), msg, tag="[info]")
+    """
+    [INFO] tag log function.
+    :param str msg: Message to log
+    """
+    log.write(getFile(), msg, tag="[INFO]")
 
-def pasS(msg: str):
-    log.write(getFile(), msg, tag="[pass]")
+def proceed(msg: str):
+    """
+    [PASS] tag log function.
+    :param str msg: Message to log
+    """
+    log.write(getFile(), msg, tag="[PASS]")
 
 def skip(msg: str):
-    log.write(getFile(), msg, tag="[skip]")
+    """
+    [SKIP] tag log function.
+    :param str msg: Message to log
+    """
+    log.write(getFile(), msg, tag="[SKIP]")
 
 def custom(msg: str, tag: str):
+    """
+    Custom tag log function.
+    :param str msg: Message to log
+    :param str tag: Tag name (i.e tag="foo" produces [FOO])
+    """
     log.write(getFile(), msg, tag=f"[{tag}]")

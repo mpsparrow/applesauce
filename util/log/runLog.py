@@ -1,28 +1,55 @@
-'''
-Run log functions.
-'''
+"""
+Run log quick functions.
+"""
 import log
 from util import config
 
-# Gets run log file name from config.
 def getFile():
+    """
+    Get name of log file from mainConfig.ini.
+    """
     conf = config.readINI("mainConfig.ini")
     return str(conf[logs][run])
 
 def log(msg: str):
+    """
+    No tag log function.
+    :param str msg: Message to log
+    """
     log.write(getFile(), msg, tag="")
 
 def error(msg: str):
-    log.write(getFile(), msg, tag="[error]")
+    """
+    [ERROR] tag log function.
+    :param str msg: Message to log
+    """
+    log.write(getFile(), msg, tag="[ERROR]")
 
 def warn(msg: str):
-    log.write(getFile(), msg, tag="[warn]")
+    """
+    [WARN] tag log function.
+    :param str msg: Message to log
+    """
+    log.write(getFile(), msg, tag="[WARN]")
 
 def info(msg: str):
-    log.write(getFile(), msg, tag="[info]")
+    """
+    [INFO] tag log function.
+    :param str msg: Message to log
+    """
+    log.write(getFile(), msg, tag="[INFO]")
 
 def admin(msg: str):
-    log.write(getFile(), msg, tag="[admin]")
+    """
+    [ADMIN] tag log function.
+    :param str msg: Message to log
+    """
+    log.write(getFile(), msg, tag="[ADMIN]")
 
 def custom(msg: str, tag: str):
+    """
+    Custom tag log function.
+    :param str msg: Message to log
+    :param str tag: Tag name (i.e tag="foo" produces [FOO])
+    """
     log.write(getFile(), msg, tag=f"[{tag}]")
