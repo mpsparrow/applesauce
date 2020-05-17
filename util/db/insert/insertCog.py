@@ -1,6 +1,3 @@
-"""
-Database insertion functions for cogs
-"""
 from util.db import commit
 
 def loaded(name: str, loaded: bool):
