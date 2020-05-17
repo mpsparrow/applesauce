@@ -38,17 +38,6 @@ def commands(guildID: int, name: str, enabled: bool):
     values = (guildID, name, enabled)
     dbConnect.commit(query, values)
 
-# Inserts into cogs table
-def cogs(name: str, enabled: bool, loaded: bool):
-    try: dbTables.cogs()
-    except: pass
-
-    query = f"""INSERT INTO `cogs` (
-        cog_name, is_enabled, is_loaded
-    ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled), is_loaded = VALUES(is_loaded)"""
-    values = (name, enabled, loaded)
-    dbConnect.commit(query, values)
-
 # Inserts into config table
 def config(guildID: int, name: str, value: str):
     try: dbTables.config()
