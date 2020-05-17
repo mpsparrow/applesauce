@@ -1,4 +1,4 @@
-from util.db import connect
+from util.db import commit
 
 def loaded(name: str, loaded: bool):
     """
@@ -10,7 +10,7 @@ def loaded(name: str, loaded: bool):
         cog_name, is_loaded
     ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_loaded = VALUES(is_loaded)"""
     values = (name, loaded)
-    connect.commit(query, values)
+    commit.commit(query, values)
 
 def enabled(name: str, enabled: bool):
     """
@@ -22,4 +22,4 @@ def enabled(name: str, enabled: bool):
         cog_name, is_enabled
     ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
     values = (name, enabled)
-    connect.commit(query, values)
+    commit.commit(query, values)
