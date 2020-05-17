@@ -1,89 +1,127 @@
-# Creation of database tables.
-from util import dbConnect
+"""
+Database table creation functions
+"""
+from util.db import query
+from util.log import runLog
+from util import exceptions
 
-
-# Prefix table for per guild prefix keeping
 def prefix():
-    cnx = dbConnect.connect()
-    cursor = cnx.cursor()
-    cursor.execute("""CREATE TABLE `prefix` (
-        `guild_id` BIGINT NOT NULL,
-        `prefix` CHAR(50) NOT NULL,
-        primary key (guild_id)
-        )""")
+    """
+    Creates 'prefix' database table.
+    """
+    try:
+        table = """CREATE TABLE `prefix` (
+                `guild_id` BIGINT NOT NULL,
+                `prefix` CHAR(50) NOT NULL,
+                primary key (guild_id)
+                )"""
+        query.query(table)
+    except dbQueryFail:
+        runLog.error("Unable to create 'prefix' db table or table already exists. dbQueryFail (tables.prefix)")
+        raise dbTableCreationFail
 
-# Ignore table for per guild ignoring of users
 def ignore():
-    cnx = dbConnect.connect()
-    cursor = cnx.cursor()
-    cursor.execute("""CREATE TABLE `ignore` (
-        `guild_id` BIGINT NOT NULL,
-        `guild_name` VARCHAR(50) NOT NULL,
-        `member_id` BIGINT NOT NULL, 
-        `is_ignored` BOOLEAN NOT NULL,
-        primary key (guild_id, member_id)
-        )""")
+    """
+    Creates 'ignore' database table.
+    """
+    try:
+        table = """CREATE TABLE `ignore` (
+                `guild_id` BIGINT NOT NULL,
+                `guild_name` VARCHAR(50) NOT NULL,
+                `member_id` BIGINT NOT NULL, 
+                `is_ignored` BOOLEAN NOT NULL,
+                primary key (guild_id, member_id)
+                )"""
+        query.query(table)
+    except dbQueryFail:
+        runLog.error("Unable to create 'ignore' db table or table already exists. dbQueryFail (tables.ignore)")
+        raise dbTableCreationFail
 
-# Commands table for per guild command enable/disable
 def commands():
-    cnx = dbConnect.connect()
-    cursor = cnx.cursor()
-    cursor.execute("""CREATE TABLE `commands` (
-        `guild_id` BIGINT NOT NULL,
-        `command_name` VARCHAR(30) NOT NULL, 
-        `is_enabled` BOOLEAN NOT NULL,
-        `times_used` BIGINT,
-        primary key (guild_id, command_name)
-        )""")
+    """
+    Creates 'commands' database table.
+    """
+    try:
+        table = """CREATE TABLE `commands` (
+                `guild_id` BIGINT NOT NULL,
+                `command_name` VARCHAR(30) NOT NULL, 
+                `is_enabled` BOOLEAN NOT NULL,
+                `times_used` BIGINT,
+                primary key (guild_id, command_name)
+                )"""
+        query.query(table)
+    except dbQueryFail:
+        runLog.error("Unable to create 'commands' db table or table already exists. dbQueryFail (tables.commands)")
+        raise dbTableCreationFail
 
-# Cogs table for which cogs to load and skip
 def cogs():
-    cnx = dbConnect.connect()
-    cursor = cnx.cursor()
-    cursor.execute("""CREATE TABLE `cogs` (
-        `cog_name` VARCHAR(50) NOT NULL,
-        `is_enabled` BOOLEAN NOT NULL,
-        `is_loaded` BOOLEAN NOT NULL,
-        primary key (cog_name)
-        )""")
+    """
+    Creates 'cogs' database table.
+    """
+    try:
+        table = """CREATE TABLE `cogs` (
+                `cog_name` VARCHAR(50) NOT NULL,
+                `is_enabled` BOOLEAN,
+                `is_loaded` BOOLEAN,
+                primary key (cog_name)
+                )"""
+        query.query(table)
+    except dbQueryFail:
+        runLog.error("Unable to create 'cogs' db table or table already exists. dbQueryFail (tables.cogs)")
+        raise dbTableCreationFail
 
-# Configuration table for per guild settings
 def config():
-    cnx = dbConnect.connect()
-    cursor = cnx.cursor()
-    cursor.execute("""CREATE TABLE `config` (
-        `guild_id` BIGINT NOT NULL,
-        `option_name` VARCHAR(50) NOT NULL,
-        `value` LONGTEXT NOT NULL,
-        primary key (guild_id, option_name)
-        )""")
+    """
+    Creates 'config' database table.
+    """
+    try:
+        table = """CREATE TABLE `config` (
+                `guild_id` BIGINT NOT NULL,
+                `option_name` VARCHAR(50) NOT NULL,
+                `value` LONGTEXT NOT NULL,
+                primary key (guild_id, option_name)
+                )"""
+        query.query(table)
+    except dbQueryFail:
+        runLog.error("Unable to create 'config' db table or table already exists. dbQueryFail (tables.config)")
+        raise dbTableCreationFail
 
-# Archiving table for per guild archiving settings
 def archive():
-    cnx = dbConnect.connect()
-    cursor = cnx.cursor()
-    cursor.execute("""CREATE TABLE `archive` (
-        `guild_id` BIGINT NOT NULL,
-        `channel` BIGINT,
-        `role` BIGINT,
-        `pins` BOOLEAN,
-        `toggle` BOOLEAN,
-        primary key (guild_id)
-        )""")
+    """
+    Creates 'archive' database table.
+    """
+    try:
+        table = """CREATE TABLE `archive` (
+                `guild_id` BIGINT NOT NULL,
+                `channel` BIGINT,
+                `role` BIGINT,
+                `pins` BOOLEAN,
+                `toggle` BOOLEAN,
+                primary key (guild_id)
+                )"""
+        query.query(table)
+    except dbQueryFail:
+        runLog.error("Unable to create 'archive' db table or table already exists. dbQueryFail (tables.archive)")
+        raise dbTableCreationFail
 
-# Leaderboard table
 def leaderboard():
-    cnx = dbConnect.connect()
-    cursor = cnx.cursor()
-    cursor.execute("""CREATE TABLE `leaderboard` (
-        `guild_id` BIGINT NOT NULL,
-        `guild_name` VARCHAR(50) NOT NULL,
-        `member_id` BIGINT NOT NULL,
-        `member_name` VARCHAR(50),
-        `level` INT,
-        `points` BIGINT,
-        `next_level` BIGINT,
-        `last_added` DATETIME,
-        `message_count` BIGINT,
-        primary key (guild_id, member_id)
-        )""")
+    """
+    Creates 'leaderboard' database table.
+    """
+    try:
+        table = """CREATE TABLE `leaderboard` (
+                `guild_id` BIGINT NOT NULL,
+                `guild_name` VARCHAR(50) NOT NULL,
+                `member_id` BIGINT NOT NULL,
+                `member_name` VARCHAR(50),
+                `level` INT,
+                `points` BIGINT,
+                `next_level` BIGINT,
+                `last_added` DATETIME,
+                `message_count` BIGINT,
+                primary key (guild_id, member_id)
+                )"""
+        query.query(table)
+    except dbQueryFail:
+        runLog.error("Unable to create 'leaderboard' db table or table already exists. dbQueryFail (tables.leaderboard)")
+        raise dbTableCreationFail
