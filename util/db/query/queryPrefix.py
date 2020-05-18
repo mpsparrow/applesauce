@@ -21,7 +21,7 @@ def prefix(guildID: int):
             return i[0]
     except dbQueryFail:
         try:
-            conf = config.read('mainConfig.ini')
+            conf = config.readINI('mainConfig.ini')
             return conf['main']['prefix']
         except configReadError:
             runLog.error(f"Unable to get prefix {guildID} (queryPrefix.prefix)")
