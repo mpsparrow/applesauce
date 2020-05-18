@@ -100,12 +100,12 @@ async def on_ready():
                     try:
                         bot.load_extension(f'cogs.main.{cog[:-3]}')
                         insertCog.loaded(cog[:-3], True)
-                        startLog.proceed(f'{cog}')
+                        startLog.proceed(f'{cog}', console=True)
                         countSuccess += 1
                     except Exception as e:
                         insertCog.loaded(cog[:-3], False)
-                        startLog.error(f'{cog}')
-                        startLog.error(f'{e}')
+                        startLog.error(f'{cog}', console=True)
+                        startLog.error(f'{e}', console=True)
                         countFail += 1
                 else:
                     insertCog.cog(cog[:-3], False, False)
