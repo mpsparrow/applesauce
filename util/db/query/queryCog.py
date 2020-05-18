@@ -14,11 +14,11 @@ def loaded(name: str):
     :raises CogNotFound: if unable to find cog in db
     """
     try:
-        query = f"""SELECT is_loaded 
+        q = f"""SELECT is_loaded 
                 FROM `cogs` 
                 WHERE cog_name = %s"""
         values = (name)
-        data = query.queryV(query, values)
+        data = query.queryV(q, values)
     except exceptions.dbQueryFail:
         runLog.error("Failed to check for is_loaded cog. dbQueryFail (queryCog.loaded)")
         raise exceptions.CogNotFound
@@ -37,11 +37,11 @@ def enabled(name: str):
     :raises CogNotFound: if unable to find cog in db
     """
     try:
-        query = f"""SELECT is_enabled 
+        q = f"""SELECT is_enabled 
                 FROM `cogs` 
                 WHERE cog_name = %s"""
         values = (name)
-        data = query.queryV(query, values)
+        data = query.queryV(q, values)
     except exceptions.dbQueryFail:
         runLog.error("Failed to check for is_enabled cog. dbQueryFail (queryCog.enabled)")
         raise exceptions.CogNotFound
