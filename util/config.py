@@ -9,35 +9,52 @@ def readINI(filename: str):
     Read ini file
     :param str filename: ini file name
     :return: parsable ini
+    :raises configReadError: if it fails to read or access ini file
     """
-    config = configparser.ConfigParser()
-    config.read(filename)
-    return config
+    try:
+        conf = configparser.ConfigParser()
+        conf.read(filename)
+    except:
+        raise configReadError
+    else:
+        return conf
 
-def dumpINI(filename: str, write):
+def dumpINI(write):
     """
     Write to ini file
-    :param str filename: ini file name
     :param write: contents to write to ini file
+    :raises configWriteError: if it fails to write to ini file
     """
-    config = configparser.ConfigParser()
-    config.write(write)
+    try:
+        conf = configparser.ConfigParser()
+        conf.write(write)
+    except:
+        raise configWriteError
 
 def readJSON(filename: str):
     """
     Read json file
     :param str filename: json file name
     :return: parsable json
+    :raises configReadError: if it fails to read or access json file
     """
-    with open(filename, 'r') as jsondata:
-        data = json.load(jsondata)
-    return data
+    try:
+        with open(filename, 'r') as jsondata:
+            data = json.load(jsondata)
+    except:
+        raise configReadError
+    else:
+        return data
 
 def dumpJSON(filename: str, data):
     """
     Write to json file
     :param str filename: json file name
     :param write: contents to write to json file
+    :raises configWriteError: if it fails to write to json file
     """
-    with open(filename, 'w') as jsondata:
-        json.dump(data, jsondata, indent=4)
+    try:
+        with open(filename, 'w') as jsondata:
+            json.dump(data, jsondata, indent=4)
+    except:
+        raise configWriteError
