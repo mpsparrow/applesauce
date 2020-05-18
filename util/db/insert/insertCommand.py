@@ -17,7 +17,7 @@ def command(guildID: int, name: str, enabled: bool):
             guild_id, command_name, is_enabled
         ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
         values = (guildID, name, enabled)
-        commit.commit(query, values)
+        commit.commitV(query, values)
     except exceptions.dbCommitFail:
         runLog.error(f"Error adding/updating {name} command. dbCommitFail (insertCommand.command)")
 
@@ -32,6 +32,6 @@ def count(guildID: int, name: str):
             SET times_used = IFNULL(times_used, 0) + 1
             WHERE guild_id = %s AND command_name = %s AND is_enabled = 1"""
         values = (guildID, name)
-        commit.commit(query, values)
+        commit.commitV(query, values)
     except exceptions.dbCommitFail:
         runLog.error(f"Error counting {name} command. dbCommitFail (insertCommand.count)")
