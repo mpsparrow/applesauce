@@ -83,50 +83,51 @@ def checks():
             qData = query.queryV(q, values)
             print(qData)
             if len(qData) == 0:
-                raise exceptions.dbTableNotFound
-        except exceptions.dbTableNotFound:
-            if table == "prefix":
-                try:
-                    tables.prefix()
-                except exceptions.dbTableCreationFail:
-                    startLog.error("Unable to create 'prefix' db table or table already exists. dbTableCreationFail (tables.prefix)")
-                    return False
-            elif table == "ignore":
-                try:
-                    tables.ignore()
-                except exceptions.dbTableCreationFail:
-                    startLog.error("Unable to create 'ignore' db table or table already exists. dbTableCreationFail (tables.ignore)")
-                    return False
-            elif table == "commands":
-                try:
-                    tables.commands()
-                except exceptions.dbTableCreationFail:
-                    startLog.error("Unable to create 'commands' db table or table already exists. dbTableCreationFail (tables.commands)")
-                    return False
-            elif table == "cogs":
-                try:
-                    tables.cogs()
-                except exceptions.dbTableCreationFail:
-                    startLog.error("Unable to create 'cogs' db table or table already exists. dbTableCreationFail (tables.cogs)")
-                    return False
-            elif table == "config":
-                try:
-                    tables.config()
-                except exceptions.dbTableCreationFail:
-                    startLog.error("Unable to create 'config' db table or table already exists. dbTableCreationFail (tables.config)")
-                    return False
-            elif table == "archive":
-                try:
-                    tables.archive()
-                except exceptions.dbTableCreationFail:
-                    startLog.error("Unable to create 'archive' db table or table already exists. dbTableCreationFail (tables.archive)")
-                    return False
-            elif table == "leaderboard":
-                try:
-                    tables.leaderboard()
-                except exceptions.dbTableCreationFail:
-                    startLog.error("Unable to create 'leaderboard' db table or table already exists. dbTableCreationFail (tables.leaderboard)")
-                    return False
-            startLog.info(f"'{table}' db table created")
-        finally:
-            startLog.proceed(f"{table} found")   
+                if table == "prefix":
+                    try:
+                        tables.prefix()
+                    except exceptions.dbTableCreationFail:
+                        startLog.error("Unable to create 'prefix' db table or table already exists. dbTableCreationFail (tables.prefix)")
+                        return False
+                elif table == "ignore":
+                    try:
+                        tables.ignore()
+                    except exceptions.dbTableCreationFail:
+                        startLog.error("Unable to create 'ignore' db table or table already exists. dbTableCreationFail (tables.ignore)")
+                        return False
+                elif table == "commands":
+                    try:
+                        tables.commands()
+                    except exceptions.dbTableCreationFail:
+                        startLog.error("Unable to create 'commands' db table or table already exists. dbTableCreationFail (tables.commands)")
+                        return False
+                elif table == "cogs":
+                    try:
+                        tables.cogs()
+                    except exceptions.dbTableCreationFail:
+                        startLog.error("Unable to create 'cogs' db table or table already exists. dbTableCreationFail (tables.cogs)")
+                        return False
+                elif table == "config":
+                    try:
+                        tables.config()
+                    except exceptions.dbTableCreationFail:
+                        startLog.error("Unable to create 'config' db table or table already exists. dbTableCreationFail (tables.config)")
+                        return False
+                elif table == "archive":
+                    try:
+                        tables.archive()
+                    except exceptions.dbTableCreationFail:
+                        startLog.error("Unable to create 'archive' db table or table already exists. dbTableCreationFail (tables.archive)")
+                        return False
+                elif table == "leaderboard":
+                    try:
+                        tables.leaderboard()
+                    except exceptions.dbTableCreationFail:
+                        startLog.error("Unable to create 'leaderboard' db table or table already exists. dbTableCreationFail (tables.leaderboard)")
+                        return False
+                startLog.info(f"'{table}' db table created")
+            else: 
+                startLog.proceed(f"{table} found")  
+        except:
+            startLog.error("db checking failed")
+            return False      
