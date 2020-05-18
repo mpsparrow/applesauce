@@ -1,7 +1,7 @@
 """
 Start log quick functions.
 """
-from util.log import log
+from util.log import log as l
 from util import config
 
 def getFile():
@@ -16,42 +16,42 @@ def log(msg: str):
     No tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="")
+    l.write(getFile(), msg, tag="")
 
 def error(msg: str):
     """
     [ERROR] tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="[ERROR]")
+    l.write(getFile(), msg, tag="[ERROR]")
 
 def warn(msg: str):
     """
     [WARN] tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="[WARN]")
+    l.write(getFile(), msg, tag="[WARN]")
 
 def info(msg: str):
     """
     [INFO] tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="[INFO]")
+    l.write(getFile(), msg, tag="[INFO]")
 
 def proceed(msg: str):
     """
     [PASS] tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="[PASS]")
+    l.write(getFile(), msg, tag="[PASS]")
 
 def skip(msg: str):
     """
     [SKIP] tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="[SKIP]")
+    l.write(getFile(), msg, tag="[SKIP]")
 
 def custom(msg: str, thistag="", thisstart=""):
     """
@@ -59,4 +59,4 @@ def custom(msg: str, thistag="", thisstart=""):
     :param str msg: Message to log
     :param str tag: Tag name (i.e tag="[foo]" produces [FOO])
     """
-    log.write(getFile(), msg, tag=thistag, start=thisstart)
+    l.write(getFile(), msg, tag=thistag, start=thisstart)

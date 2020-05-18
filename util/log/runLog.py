@@ -1,7 +1,7 @@
 """
 Run log quick functions.
 """
-from util.log import log
+from util.log import log as l
 from util import config
 
 def getFile():
@@ -16,35 +16,35 @@ def log(msg: str):
     No tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="")
+    l.write(getFile(), msg, tag="")
 
 def error(msg: str):
     """
     [ERROR] tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="[ERROR]")
+    l.write(getFile(), msg, tag="[ERROR]")
 
 def warn(msg: str):
     """
     [WARN] tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="[WARN]")
+    l.write(getFile(), msg, tag="[WARN]")
 
 def info(msg: str):
     """
     [INFO] tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="[INFO]")
+    l.write(getFile(), msg, tag="[INFO]")
 
 def admin(msg: str):
     """
     [ADMIN] tag log function.
     :param str msg: Message to log
     """
-    log.write(getFile(), msg, tag="[ADMIN]")
+    l.write(getFile(), msg, tag="[ADMIN]")
 
 def custom(msg: str, tag: str):
     """
@@ -52,4 +52,4 @@ def custom(msg: str, tag: str):
     :param str msg: Message to log
     :param str tag: Tag name (i.e tag="foo" produces [FOO])
     """
-    log.write(getFile(), msg, tag=f"[{tag}]")
+    l.write(getFile(), msg, tag=f"[{tag}]")
