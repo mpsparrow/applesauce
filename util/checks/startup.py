@@ -71,8 +71,8 @@ def checks():
         startLog.proceed("database connected")
 
     # database table check and creation
-    tables = ["prefix", "ignore", "commands", "cogs", "config", "archive", "leaderboard"]
-    for table in tables:
+    dbTables = ["prefix", "ignore", "commands", "cogs", "config", "archive", "leaderboard"]
+    for table in dbTables:
         try:
             q = f"""SELECT * 
                     FROM information_schema.tables
