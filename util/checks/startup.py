@@ -5,7 +5,7 @@ from util import config
 from util.log import startLog
 from util.db import query, tables, connect
 
-def startUpChecks():
+def checks():
     """
     Runs through pile of startup checks and returns True if they all pass.
     """

@@ -1,7 +1,7 @@
 """
 Start log quick functions.
 """
-import log
+from util.log import log
 from util import config
 
 def getFile():
@@ -53,10 +53,10 @@ def skip(msg: str):
     """
     log.write(getFile(), msg, tag="[SKIP]")
 
-def custom(msg: str, tag: str):
+def custom(msg: str, thistag="", thisstart=""):
     """
     Custom tag log function.
     :param str msg: Message to log
-    :param str tag: Tag name (i.e tag="foo" produces [FOO])
+    :param str tag: Tag name (i.e tag="[foo]" produces [FOO])
     """
-    log.write(getFile(), msg, tag=f"[{tag}]")
+    log.write(getFile(), msg, tag=thistag}, start=thisstart)

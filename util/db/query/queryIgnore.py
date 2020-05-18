@@ -4,7 +4,7 @@ Database query functions for ignore
 import query
 from util.log import runLog
 
-def ignore(guildID: int, memberID: int):
+def status(guildID: int, memberID: int):
     """
     Checks if user is ignored in specific guild
     :param int guildID: ID of guild
@@ -15,9 +15,10 @@ def ignore(guildID: int, memberID: int):
     try:
         query = f"""SELECT is_ignored 
                 FROM `ignore` 
-                WHERE guild_id = {guildID} 
-                AND member_id = {memberID}"""
-        data = query.query(query)
+                WHERE guild_id = %s 
+                AND member_id = %s"""
+        values = (guildID, memberID)
+        data = query.queryV(query, values)
     except dbQueryFail:
         runLog.error("Failed to check for ignored user. dbQueryFail (queryIgnore.ignore)")
         return True # return True so it disallows the action since an error occured
