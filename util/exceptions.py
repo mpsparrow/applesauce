@@ -8,55 +8,55 @@ class ApplesauceError(Exception):
     """
     pass
 
-class dbConnectionFail(ApplesauceError):
+class dbConnectionFail(Exception):
     """
     Raised when database connection fails
     """
     pass
 
-class dbCommitFail(ApplesauceError):
+class dbCommitFail(Exception):
     """
     Raised when database commit fails
     """
     pass
 
-class dbQueryFail(ApplesauceError):
+class dbQueryFail(Exception):
     """
     Raised when database query fails
     """
     pass
 
-class dbTableCreationFail(ApplesauceError):
+class dbTableCreationFail(Exception):
     """
     Raised when database table is unable to be created
     """
     pass
 
-class configReadError(ApplesauceError):
+class configReadError(Exception):
     """
     Raised when there is an error reading a config file
     """
     pass
 
-class configWriteError(ApplesauceError):
+class configWriteError(Exception):
     """
     Raised when there is an error writing to a config file
     """
     pass
 
-class CogNotFound(ApplesauceError):
+class CogNotFound(Exception):
     """
     Raised when cog is not found in db
     """
     pass
 
-class CogInsertFail(ApplesauceError):
+class CogInsertFail(Exception):
     """
     Raised when cog fails to be inserted into db
     """
     pass
 
-class PrefixError(ApplesauceError):
+class PrefixError(Exception):
     """
     Raised if unable to get a prefix
     """
