@@ -1,7 +1,7 @@
 """
 Run log quick functions.
 """
-import log
+from util.log import log
 from util import config
 
 def getFile():
