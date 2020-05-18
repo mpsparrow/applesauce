@@ -1,7 +1,7 @@
 """
 Database query functions for ignore
 """
-import query
+from util.db.query import query
 from util.log import runLog
 
 def status(guildID: int, memberID: int):

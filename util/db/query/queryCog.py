@@ -1,7 +1,7 @@
 """
 Database query functions for cogs
 """
-from util.db import query
+from util.db.query import query
 from util.log import runLog
 from util import exceptions
 
