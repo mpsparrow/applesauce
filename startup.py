@@ -50,37 +50,37 @@ async def on_ready():
     # wipes all logs
     log.wipe(conf['logs']['start'])
     log.wipe(conf['logs']['run'])
-    startLog.info('Running Checks')
+    startLog.info('Running Checks', console=True)
 
     # runs startup checks that are in startupchecks.py
     if startup.checks() is False:
-        startLog.error("Something isn't configured correctly for startup")
-        startLog.error("Startup aborted")
+        startLog.error("Something isn't configured correctly for startup", console=True)
+        startLog.error("Startup aborted", console=True)
     else:
         # writes startup information to startup-log.txt
-        startLog.custom(f'Starting {botName}', "[info]", "\n")
-        startLog.info(f'discord.py {discord.__version__}')
-        startLog.info(f'Python {sys.version[:6]}')
+        startLog.custom(f'Starting {botName}', "[info]", "\n", console=True)
+        startLog.info(f'discord.py {discord.__version__}', console=True)
+        startLog.info(f'Python {sys.version[:6]}', console=True)
 
         # Requires Cogs loading
         # Any file in /cogs/required is considered a required cog
         # These files must ALL be loaded in order for the bot to continue initializing
-        startLog.custom('Initializing Required Cogs', "[info]", "\n")
+        startLog.custom('Initializing Required Cogs', "[info]", "\n", console=True)
         for required in os.listdir('./cogs/required'):
             if required.endswith('.py'):
                 try:
                     bot.load_extension(f'cogs.required.{required[:-3]}')
-                    startLog.proceed(f'{required}')
+                    startLog.proceed(f'{required}', console=True)
                 except Exception as e:
-                    startLog.error(f'{required}')
-                    startLog.error(f'{e}')
-                    startLog.error('Startup aborted')
+                    startLog.error(f'{required}', console=True)
+                    startLog.error(f'{e}', console=True)
+                    startLog.error('Startup aborted', console=True)
                     return
 
         # Main loading
         # Any file in /cogs/main is considered a cog
         # These files are attempted to be loaded. If a file errors then it is skipped and initializing continues
-        startLog.custom('Initializing Cogs', "[info]", "\n")
+        startLog.custom('Initializing Cogs', "[info]", "\n", console=True)
         countSuccess = 0
         countFail = 0
         countSkip = 0
@@ -93,7 +93,7 @@ async def on_ready():
                         insertCog.cog(cog[:-3], False, False)
                         value = False
                     except exceptions.CogInsertFail:
-                        startLog.error(f'{cog} CogInsertFail')
+                        startLog.error(f'{cog} CogInsertFail', console=True)
                         continue
 
                 if value:
@@ -112,9 +112,9 @@ async def on_ready():
                     startLog.skip(f'{cog}')
                     countSkip += 1
 
-        startLog.info(f'Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n')
-        startLog.info(f'{botName} is ready to rumble!')
-        startLog.info(f'Initialized in {int((time.time() - startTime)*1000)}ms')
+        startLog.info(f'Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n', console=True)
+        startLog.info(f'{botName} is ready to rumble!', console=True)
+        startLog.info(f'Initialized in {int((time.time() - startTime)*1000)}ms', console=True)
 
 # Starts bot with Discord token from mainConfig.ini
 bot.run(conf['main']['discordToken'])

@@ -81,7 +81,7 @@ def checks():
                     LIMIT 1;"""
             values = (database, table)
             qData = query.queryV(q, values)
-            print(qData)
+            
             if len(qData) == 0:
                 if table == "prefix":
                     try:

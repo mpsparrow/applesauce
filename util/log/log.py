@@ -3,7 +3,7 @@ Main log functions.
 '''
 import datetime
 
-def write(filename: str, msg: str, tag="", start="", showdate=True):
+def write(filename: str, msg: str, tag="", start="", showdate=True, console=False):
     """
     Write to selected log file.
     :param str filename: txt file name
@@ -14,12 +14,18 @@ def write(filename: str, msg: str, tag="", start="", showdate=True):
     :type start: str or None
     :param showdate: Show date in front of log msg (default True)
     :type showdate: bool or None
+    :param console: log in console
+    :type console: bool or None
     """
     log = open(f'logs/{filename}','a+')
     if showdate:
         log.write(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {msg}\n")
+        if console:
+            print(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {msg}\n")
     else:
         log.write(f"{start}{tag.upper()} {msg}\n")
+        if console:
+            print(f"{start}{tag.upper()} {msg}\n")
     log.close()
 
 def wipe(filename: str):

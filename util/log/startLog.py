@@ -11,59 +11,59 @@ def getFile():
     conf = config.readINI("mainConfig.ini")
     return str(conf["logs"]["start"])
 
-def log(msg: str):
+def log(msg: str, console=False):
     """
     No tag log function.
     :param str msg: Message to log
+    :param console: log in console
     """
-    l.write(getFile(), msg, tag="")
-    print(msg)
+    l.write(getFile(), msg, tag="", console=console)
 
-def error(msg: str):
+def error(msg: str, console=False):
     """
     [ERROR] tag log function.
     :param str msg: Message to log
+    :param console: log in console
     """
-    l.write(getFile(), msg, tag="[ERROR]")
-    print(msg)
+    l.write(getFile(), msg, tag="[ERROR]", console=console)
 
-def warn(msg: str):
+def warn(msg: str, console=False):
     """
     [WARN] tag log function.
     :param str msg: Message to log
+    :param console: log in console
     """
-    l.write(getFile(), msg, tag="[WARN]")
-    print(msg)
+    l.write(getFile(), msg, tag="[WARN]", console=console)
 
-def info(msg: str):
+def info(msg: str, console=False):
     """
     [INFO] tag log function.
     :param str msg: Message to log
+    :param console: log in console
     """
-    l.write(getFile(), msg, tag="[INFO]")
-    print(msg)
+    l.write(getFile(), msg, tag="[INFO]", console=console)
 
-def proceed(msg: str):
+def proceed(msg: str, console=False):
     """
     [PASS] tag log function.
     :param str msg: Message to log
+    :param console: log in console
     """
-    l.write(getFile(), msg, tag="[PASS]")
-    print(msg)
+    l.write(getFile(), msg, tag="[PASS]", console=console)
 
-def skip(msg: str):
+def skip(msg: str, console=False):
     """
     [SKIP] tag log function.
     :param str msg: Message to log
+    :param console: log in console
     """
-    l.write(getFile(), msg, tag="[SKIP]")
-    print(msg)
+    l.write(getFile(), msg, tag="[SKIP]", console=console)
 
-def custom(msg: str, thistag="", thisstart=""):
+def custom(msg: str, thistag="", thisstart="", console=False):
     """
     Custom tag log function.
     :param str msg: Message to log
     :param str tag: Tag name (i.e tag="[foo]" produces [FOO])
+    :param console: log in console
     """
-    l.write(getFile(), msg, tag=thistag, start=thisstart)
-    print(msg)
+    l.write(getFile(), msg, tag=thistag, start=thisstart, console=console)
