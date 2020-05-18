@@ -1,7 +1,7 @@
 """
 Database committing
 """
-import connect
+from util.db import connect
 from util.log import runLog
 from util import exceptions
 
