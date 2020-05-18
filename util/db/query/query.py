@@ -5,7 +5,7 @@ from util.db import connect
 from util.log import runLog
 from util import exceptions
 
-def query(q: str):
+def queryX(q: str):
     """
     Commits a query to the database
     :param str q: mySQL query

@@ -15,7 +15,7 @@ def prefix():
                 `prefix` CHAR(50) NOT NULL,
                 primary key (guild_id)
                 )"""
-        query.query(table)
+        query.queryX(table)
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
 
@@ -31,7 +31,7 @@ def ignore():
                 `is_ignored` BOOLEAN NOT NULL,
                 primary key (guild_id, member_id)
                 )"""
-        query.query(table)
+        query.queryX(table)
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
 
@@ -47,7 +47,7 @@ def commands():
                 `times_used` BIGINT,
                 primary key (guild_id, command_name)
                 )"""
-        query.query(table)
+        query.queryX(table)
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
 
@@ -62,7 +62,7 @@ def cogs():
                 `is_loaded` BOOLEAN,
                 primary key (cog_name)
                 )"""
-        query.query(table)
+        query.queryX(table)
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
 
@@ -77,7 +77,7 @@ def config():
                 `value` LONGTEXT NOT NULL,
                 primary key (guild_id, option_name)
                 )"""
-        query.query(table)
+        query.queryX(table)
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
 
@@ -94,7 +94,7 @@ def archive():
                 `toggle` BOOLEAN,
                 primary key (guild_id)
                 )"""
-        query.query(table)
+        query.queryX(table)
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
 
@@ -115,6 +115,6 @@ def leaderboard():
                 `message_count` BIGINT,
                 primary key (guild_id, member_id)
                 )"""
-        query.query(table)
+        query.queryX(table)
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
