@@ -3,7 +3,7 @@
 [![discord.py](https://img.shields.io/badge/discord.py-1.3.3-blue.svg)](https://github.com/Rapptz/discord.py)
 [![CodeFactor](https://www.codefactor.io/repository/github/mpsparrow/applesauce/badge)](https://www.codefactor.io/repository/github/mpsparrow/applesauce)
 
-Applesauce is a lightweight Discord bot framework aimed at acting like a cog management system for [discord.py](https://github.com/Rapptz/discord.py). The framework provides all the fundamentals of a bot. Cogs can be loaded to add functionality. The framework is fully customizable across Discord servers.
+Applesauce is a lightweight Discord bot framework that provides a cog management system for [discord.py](https://github.com/Rapptz/discord.py). The framework provides all the fundamentals of a bot. Cogs can be loaded to add functionality. The framework is fully customizable across Discord servers.
 
 ### Warning
 This is very much so in beta at the moment....
