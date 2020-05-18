@@ -20,7 +20,7 @@ def prefix(guildID: int):
         for i in data:
             return i[0]
     except dbQueryFail:
-        try
+        try:
             conf = config.read('mainConfig.ini')
             return conf['main']['prefix']
         except configReadError:
