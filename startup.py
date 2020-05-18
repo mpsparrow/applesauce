@@ -18,6 +18,7 @@ from util.checks import startup
 from util.log import startLog, log
 from util.db.query import queryPrefix, queryCog
 from util.db.insert import insertCog
+from util import config
 
 # gets prefix for bot
 def get_prefix(bot, message):
