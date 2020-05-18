@@ -9,7 +9,7 @@ def getFile():
     Get name of log file from mainConfig.ini.
     """
     conf = config.readINI("mainConfig.ini")
-    return str(conf[logs][start])
+    return str(conf["logs"]["start"])
 
 def log(msg: str):
     """
