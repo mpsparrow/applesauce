@@ -70,20 +70,20 @@ class cogManage(commands.Cog, name="Cog Management"):
         try:
             # Attempt to load cog.
             self.bot.load_extension(f'cogs.main.{name}')
-        except ExtensionNotFound:
+        except commands.ExtensionNotFound:
             # The cog could not be found.
             runLog.error(f"Cog '{name}' was not found. ExtensionNotFound (cogManage.load)")
             await ctx.message.add_reaction("❌")
-        except ExtensionAlreadyLoaded:
+        except commands.ExtensionAlreadyLoaded:
             # The cog was already loaded.
             runLog.warn(f"Cog '{name}' was already loaded. ExtensionAlreadyLoaded (cogManage.load)")
             await ctx.message.add_reaction("✅")
-        except NoEntryPointError:
+        except commands.NoEntryPointError:
             # The cog does not have a setup function.
             runLog.error(f"Cog '{name}' has no setup function. NoEntryPointError (cogManage.load)")
             insertCog.loaded(name, False) # Set cog state to not loaded in database.
             await ctx.message.add_reaction("⚠️")
-        except ExtensionFailed:
+        except commands.ExtensionFailed:
             # The cog setup function has an execution error.
             runLog.error(f"Cog '{name}' has an execution error. ExtensionFailed (cogManage.load)")
             insertCog.loaded(name, False) # Set cog state to not loaded in database.
@@ -104,7 +104,7 @@ class cogManage(commands.Cog, name="Cog Management"):
         try:
             # Attempt to unload cog.
             self.bot.unload_extension(f'cogs.main.{name}')
-        except ExtensionNotLoaded:
+        except commands.ExtensionNotLoaded:
             # The cog was not found or unloaded.
             runLog.error(f"Cog '{name}' was unable to be unloaded and/or found. ExtensionNotLoaded (cogManage.unload)")
             await ctx.message.add_reaction("❌")
@@ -124,21 +124,21 @@ class cogManage(commands.Cog, name="Cog Management"):
         try:
             # Attempt to reload cog.
             self.bot.reload_extension(f'cogs.main.{name}')
-        except ExtensionNotLoaded:
+        except commands.ExtensionNotLoaded:
             # The cog was not reloaded.
             runLog.error(f"Cog '{name}' was unable to be reloaded. ExtensionNotLoaded (cogManage.reload)")
             insertCog.loaded(name, False) # Set cog state to not loaded in database.
             await ctx.message.add_reaction("⚠️")
-        except ExtensionNotFound:
+        except commands.ExtensionNotFound:
             # The cog could not be found.
             runLog.warn(f"Cog '{name}' was not found. ExtensionNotFound (cogManage.reload)")
             await ctx.message.add_reaction("❌")
-        except NoEntryPointError:
+        except commands.NoEntryPointError:
             # The cog does not have a setup function.
             runLog.error(f"Cog '{name}' has no setup function. NoEntryPointError (cogManage.reload)")
             insertCog.loaded(name, False) # Set cog state to not loaded in database.
             await ctx.message.add_reaction("⚠️")
-        except ExtensionFailed:
+        except commands.ExtensionFailed:
             # The cog setup function has an execution error.
             runLog.error(f"Cog '{name}' has an execution error. ExtensionFailed (cogManage.reload)")
             insertCog.loaded(name, False) # Set cog state to not loaded in database.
