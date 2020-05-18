@@ -79,7 +79,9 @@ def checks():
                     AND table_name = %s 
                     LIMIT 1;"""
             values = (database, table)
-            query.queryV(q, values)
+            qData = query.queryV(q, values)
+            if len(qData) == 0:
+                raise dbQueryFail
         except dbQueryFail:
             if table == "prefix":
                 try:
