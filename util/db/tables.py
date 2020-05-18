@@ -3,7 +3,7 @@ Database table creation functions
 """
 from util.db import query
 from util.log import runLog
-from util.exceptions import dbTableCreationFail
+from util import exceptions
 
 def prefix():
     """
@@ -16,8 +16,8 @@ def prefix():
                 primary key (guild_id)
                 )"""
         query.query(table)
-    except dbQueryFail:
-        raise dbTableCreationFail
+    except exceptions.dbQueryFail:
+        raise exceptions.dbTableCreationFail
 
 def ignore():
     """
@@ -32,8 +32,8 @@ def ignore():
                 primary key (guild_id, member_id)
                 )"""
         query.query(table)
-    except dbQueryFail:
-        raise dbTableCreationFail
+    except exceptions.dbQueryFail:
+        raise exceptions.dbTableCreationFail
 
 def commands():
     """
@@ -48,8 +48,8 @@ def commands():
                 primary key (guild_id, command_name)
                 )"""
         query.query(table)
-    except dbQueryFail:
-        raise dbTableCreationFail
+    except exceptions.dbQueryFail:
+        raise exceptions.dbTableCreationFail
 
 def cogs():
     """
@@ -63,8 +63,8 @@ def cogs():
                 primary key (cog_name)
                 )"""
         query.query(table)
-    except dbQueryFail:
-        raise dbTableCreationFail
+    except exceptions.dbQueryFail:
+        raise exceptions.dbTableCreationFail
 
 def config():
     """
@@ -78,8 +78,8 @@ def config():
                 primary key (guild_id, option_name)
                 )"""
         query.query(table)
-    except dbQueryFail:
-        raise dbTableCreationFail
+    except exceptions.dbQueryFail:
+        raise exceptions.dbTableCreationFail
 
 def archive():
     """
@@ -95,8 +95,8 @@ def archive():
                 primary key (guild_id)
                 )"""
         query.query(table)
-    except dbQueryFail:
-        raise dbTableCreationFail
+    except exceptions.dbQueryFail:
+        raise exceptions.dbTableCreationFail
 
 def leaderboard():
     """
@@ -116,5 +116,5 @@ def leaderboard():
                 primary key (guild_id, member_id)
                 )"""
         query.query(table)
-    except dbQueryFail:
-        raise dbTableCreationFail
+    except exceptions.dbQueryFail:
+        raise exceptions.dbTableCreationFail

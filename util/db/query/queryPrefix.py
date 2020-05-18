@@ -3,7 +3,7 @@ Database query functions for prefix
 """
 from util.db.query import query
 from util.log import runLog
-from util.exceptions import PrefixError
+from util import exceptions
 from util import config
 
 def prefix(guildID: int):
@@ -20,10 +20,10 @@ def prefix(guildID: int):
         data = query.queryV(q, values)
         for i in data:
             return i[0]
-    except dbQueryFail:
+    except exceptions.dbQueryFail:
         try:
             conf = config.readINI('mainConfig.ini')
             return conf['main']['prefix']
-        except configReadError:
+        except exceptions.configReadError:
             runLog.error(f"Unable to get prefix {guildID} (queryPrefix.prefix)")
-            raise PrefixError
+            raise exceptions.PrefixError

@@ -18,7 +18,7 @@ from util.checks import startup
 from util.log import startLog, log
 from util.db.query import queryPrefix, queryCog
 from util.db.insert import insertCog
-from util import config
+from util import config, exceptions
 
 # gets prefix for bot
 def get_prefix(bot, message):
@@ -28,7 +28,7 @@ def get_prefix(bot, message):
     """
     try:
         return queryPrefix.prefix(message.guild.id)  # returns prefix
-    except PrefixError:
+    except exceptions.PrefixError:
         pass
 
 conf = config.readINI('mainConfig.ini')  # loads config
@@ -88,11 +88,11 @@ async def on_ready():
             if cog.endswith('.py'):
                 try:
                     value = queryCog.enabled(cog[:-3])
-                except CogNotFound:
+                except exceptions.CogNotFound:
                     try:
                         insertCog.cog(cog[:-3], False, False)
                         value = False
-                    except CogInsertFail:
+                    except exceptions.CogInsertFail:
                         startLog.error(f'{cog} CogInsertFail')
                         continue
 

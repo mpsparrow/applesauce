@@ -3,7 +3,7 @@ Database querying
 """
 from util.db import connect
 from util.log import runLog
-from util.exceptions import dbQueryFail
+from util import exceptions
 
 def query(q: str):
     """
@@ -14,8 +14,8 @@ def query(q: str):
     """
     try:
         cnx = connect.connect()
-    except dbConnectionFail:
-        raise dbQueryFail
+    except exceptions.dbConnectionFail:
+        raise exceptions.dbQueryFail
     else:
         try:
             cursor = cnx.cursor()
@@ -24,7 +24,7 @@ def query(q: str):
         except Exception as e:
             runLog.error("Query failed. (commit.query)")
             runLog.error(e)
-            raise dbQueryFail
+            raise exceptions.dbQueryFail
             cursor.close()
             cnx.close()
         else:
@@ -42,8 +42,8 @@ def queryV(q: str, values: tuple):
     """
     try:
         cnx = connect.connect()
-    except dbConnectionFail:
-        raise dbQueryFail
+    except exceptions.dbConnectionFail:
+        raise exceptions.dbQueryFail
     else:
         try:
             cursor = cnx.cursor()
@@ -52,7 +52,7 @@ def queryV(q: str, values: tuple):
         except Exception as e:
             runLog.error("Query failed. (query.queryV)")
             runLog.error(e)
-            raise dbQueryFail
+            raise exceptions.dbQueryFail
             cursor.close()
             cnx.close()
         else:

@@ -3,7 +3,7 @@ Database committing
 """
 from util.db import connect
 from util.log import runLog
-from util.exceptions import dbCommitFail
+from util import exceptions
 
 def commit(query: str, values: tuple):
     """
@@ -14,8 +14,8 @@ def commit(query: str, values: tuple):
     """
     try:
         cnx = connect.connect()
-    except dbConnectionFail:
-        raise dbCommitFail
+    except exceptions.dbConnectionFail:
+        raise exceptions.dbCommitFail
     else:
         try:
             cursor = cnx.cursor()
@@ -24,7 +24,7 @@ def commit(query: str, values: tuple):
         except Exception as e:
             runLog.error("Query failed to commit. (commit.commit)")
             runLog.error(e)
-            raise dbCommitFail
+            raise exceptions.dbCommitFail
         finally:
             cursor.close()
             cnx.close()

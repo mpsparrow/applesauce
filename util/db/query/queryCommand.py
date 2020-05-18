@@ -3,6 +3,7 @@ Database query functions for commands
 """
 from util.db.query import query
 from util.log import runLog
+from util import exceptions
 
 def status(guildID: int, name: str):
     """
@@ -19,7 +20,7 @@ def status(guildID: int, name: str):
                 AND command_name = %s"""
         values = (guildID, name)
         data = query.queryV(query, values)
-    except dbQueryFail:
+    except exceptions.dbQueryFail:
         runLog.error("Failed to check for command status. dbQueryFail (queryCommand.enabled)")
         return False # return False so it disallows the action since an error occured
     else:

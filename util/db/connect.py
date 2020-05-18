@@ -4,7 +4,7 @@ Database connection
 import mysql.connector as mysql
 from mysql.connector import errorcode
 from util.log import runLog
-from util.exceptions import dbConnectionFail
+from util import exceptions
 from util import config
 
 def connect():
@@ -29,6 +29,6 @@ def connect():
         else:
             runLog.error("Database error. (connect.connect)")
             runLog.error(e)
-        raise dbConnectionFail
+        raise exceptions.dbConnectionFail
     else:
         return cnx

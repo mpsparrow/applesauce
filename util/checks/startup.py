@@ -5,7 +5,7 @@ from util import config
 from util.log import startLog
 from util.db import tables, connect
 from util.db.query import query
-from util.exceptions import dbQueryFail
+from util import exceptions
 
 def checks():
     """
@@ -16,7 +16,7 @@ def checks():
     try:
         conf = config.readINI("mainConfig.ini")
         startLog.proceed("mainConfig.ini found")
-    except configReadError:
+    except exceptions.configReadError:
         startLog.error("mainConfig.ini missing or unable to load configReadError")
         return False
 
@@ -62,7 +62,7 @@ def checks():
     try:
         cnx = connect.connect()
         cursor = cnx.cursor()
-    except dbConnectionFail:
+    except exceptions.dbConnectionFail:
         startLog.error("unable to connect to database")
         return False
     else:
@@ -82,48 +82,48 @@ def checks():
             values = (database, table)
             qData = query.queryV(q, values)
             if len(qData) == 0:
-                raise dbQueryFail
-        except dbQueryFail:
+                raise exceptions.dbQueryFail
+        except exceptions.dbQueryFail:
             if table == "prefix":
                 try:
                     tables.prefix()
-                except dbTableCreationFail:
+                except exceptions.dbTableCreationFail:
                     startLog.error("Unable to create 'prefix' db table or table already exists. dbTableCreationFail (tables.prefix)")
                     return False
             elif table == "ignore":
                 try:
                     tables.ignore()
-                except dbTableCreationFail:
+                except exceptions.dbTableCreationFail:
                     startLog.error("Unable to create 'ignore' db table or table already exists. dbTableCreationFail (tables.ignore)")
                     return False
             elif table == "commands":
                 try:
                     tables.commands()
-                except dbTableCreationFail:
+                except exceptions.dbTableCreationFail:
                     startLog.error("Unable to create 'commands' db table or table already exists. dbTableCreationFail (tables.commands)")
                     return False
             elif table == "cogs":
                 try:
                     tables.cogs()
-                except dbTableCreationFail:
+                except exceptions.dbTableCreationFail:
                     startLog.error("Unable to create 'cogs' db table or table already exists. dbTableCreationFail (tables.cogs)")
                     return False
             elif table == "config":
                 try:
                     tables.config()
-                except dbTableCreationFail:
+                except exceptions.dbTableCreationFail:
                     startLog.error("Unable to create 'config' db table or table already exists. dbTableCreationFail (tables.config)")
                     return False
             elif table == "archive":
                 try:
                     tables.archive()
-                except dbTableCreationFail:
+                except exceptions.dbTableCreationFail:
                     startLog.error("Unable to create 'archive' db table or table already exists. dbTableCreationFail (tables.archive)")
                     return False
             elif table == "leaderboard":
                 try:
                     tables.leaderboard()
-                except dbTableCreationFail:
+                except exceptions.dbTableCreationFail:
                     startLog.error("Unable to create 'leaderboard' db table or table already exists. dbTableCreationFail (tables.leaderboard)")
                     return False
             startLog.info(f"'{table}' db table created")

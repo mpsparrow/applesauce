@@ -3,6 +3,7 @@ Database insertion functions for commands
 """
 from util.db import commit
 from util.log import runLog
+from util import exceptions
 
 def command(guildID: int, name: str, enabled: bool):
     """
@@ -17,7 +18,7 @@ def command(guildID: int, name: str, enabled: bool):
         ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
         values = (guildID, name, enabled)
         commit.commit(query, values)
-    except dbCommitFail:
+    except exceptions.dbCommitFail:
         runLog.error(f"Error adding/updating {name} command. dbCommitFail (insertCommand.command)")
 
 def count(guildID: int, name: str):
@@ -32,5 +33,5 @@ def count(guildID: int, name: str):
             WHERE guild_id = %s AND command_name = %s AND is_enabled = 1"""
         values = (guildID, name)
         commit.commit(query, values)
-    except dbCommitFail:
+    except exceptions.dbCommitFail:
         runLog.error(f"Error counting {name} command. dbCommitFail (insertCommand.count)")

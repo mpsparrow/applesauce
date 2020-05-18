@@ -3,7 +3,7 @@ Config read/write functions for INI and JSON
 """
 import json
 import configparser
-from util.exceptions import configReadError, configWriteError
+from util import exceptions
 
 def readINI(filename: str):
     """
@@ -16,7 +16,7 @@ def readINI(filename: str):
         conf = configparser.ConfigParser()
         conf.read(filename)
     except:
-        raise configReadError
+        raise exceptions.configReadError
     else:
         return conf
 
@@ -30,7 +30,7 @@ def dumpINI(write):
         conf = configparser.ConfigParser()
         conf.write(write)
     except:
-        raise configWriteError
+        raise exceptions.configWriteError
 
 def readJSON(filename: str):
     """
@@ -43,7 +43,7 @@ def readJSON(filename: str):
         with open(filename, 'r') as jsondata:
             data = json.load(jsondata)
     except:
-        raise configReadError
+        raise exceptions.configReadError
     else:
         return data
 
@@ -58,4 +58,4 @@ def dumpJSON(filename: str, data):
         with open(filename, 'w') as jsondata:
             json.dump(data, jsondata, indent=4)
     except:
-        raise configWriteError
+        raise exceptions.configWriteError

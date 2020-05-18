@@ -3,7 +3,7 @@ Database insertion functions for cogs
 """
 from util.db import commit
 from util.log import runLog
-from util.exceptions import CogInsertFail
+from util import exceptions
 
 def cog(name: str, is_enabled: bool, is_loaded: bool):
     """
@@ -19,9 +19,9 @@ def cog(name: str, is_enabled: bool, is_loaded: bool):
         ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled), is_loaded = VALUES(is_loaded)"""
         values = (name, is_enabled, is_loaded)
         commit.commit(query, values)
-    except dbCommitFail:
+    except exceptions.dbCommitFail:
         runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCog.loaded)")
-        raise CogInsertFail
+        raise exceptions.CogInsertFail
 
 def loaded(name: str, is_loaded: bool):
     """
@@ -36,9 +36,9 @@ def loaded(name: str, is_loaded: bool):
         ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_loaded = VALUES(is_loaded)"""
         values = (name, is_loaded)
         commit.commit(query, values)
-    except dbCommitFail:
+    except exceptions.dbCommitFail:
         runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCog.loaded)")
-        raise CogInsertFail
+        raise exceptions.CogInsertFail
 
 def enabled(name: str, is_enabled: bool):
     """
@@ -53,6 +53,6 @@ def enabled(name: str, is_enabled: bool):
         ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
         values = (name, is_enabled)
         commit.commit(query, values)
-    except dbCommitFail:
+    except exceptions.dbCommitFail:
         runLog.error(f"Error setting {name} cog is_enabled. dbCommitFail (insertCog.enabled)")
-        raise CogInsertFail
+        raise exceptions.CogInsertFail

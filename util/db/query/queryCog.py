@@ -3,7 +3,7 @@ Database query functions for cogs
 """
 from util.db.query import query
 from util.log import runLog
-from util.exceptions import CogNotFound
+from util import exceptions
 
 def loaded(name: str):
     """
@@ -19,9 +19,9 @@ def loaded(name: str):
                 WHERE cog_name = %s"""
         values = (name)
         data = query.queryV(query, values)
-    except dbQueryFail:
+    except exceptions.dbQueryFail:
         runLog.error("Failed to check for is_loaded cog. dbQueryFail (queryCog.loaded)")
-        raise CogNotFound
+        raise exceptions.CogNotFound
     else:
         if len(data) == 0:
             return False
@@ -42,9 +42,9 @@ def enabled(name: str):
                 WHERE cog_name = %s"""
         values = (name)
         data = query.queryV(query, values)
-    except dbQueryFail:
+    except exceptions.dbQueryFail:
         runLog.error("Failed to check for is_enabled cog. dbQueryFail (queryCog.enabled)")
-        raise CogNotFound
+        raise exceptions.CogNotFound
     else:
         if len(data) == 0:
             return False

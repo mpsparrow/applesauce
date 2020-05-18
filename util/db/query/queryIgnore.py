@@ -3,6 +3,7 @@ Database query functions for ignore
 """
 from util.db.query import query
 from util.log import runLog
+from util import exceptions
 
 def status(guildID: int, memberID: int):
     """
@@ -19,7 +20,7 @@ def status(guildID: int, memberID: int):
                 AND member_id = %s"""
         values = (guildID, memberID)
         data = query.queryV(query, values)
-    except dbQueryFail:
+    except exceptions.dbQueryFail:
         runLog.error("Failed to check for ignored user. dbQueryFail (queryIgnore.ignore)")
         return True # return True so it disallows the action since an error occured
     else:
