@@ -5,6 +5,7 @@ from util import config
 from util.log import startLog
 from util.db import tables, connect
 from util.db.query import query
+from util import exceptions
 
 def checks():
     """
