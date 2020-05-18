@@ -25,7 +25,10 @@ def get_prefix(bot, message):
     Gets prefix for specific guild
     :return: Prefix to use
     """
-    return queryPrefix.prefix(message.guild.id)  # returns prefix
+    try:
+        return queryPrefix.prefix(message.guild.id)  # returns prefix
+    except PrefixError:
+        pass
 
 conf = config.readINI('mainConfig.ini')  # loads config
 botName = conf['main']['botname']  # gets bots name from config

@@ -54,3 +54,10 @@ class CogInsertFail(ApplesauceError):
     """
     Raised when cog fails to be inserted into db
     """
+    pass
+
+class PrefixError(ApplesauceError):
+    """
+    Raised if unable to get a prefix
+    """
+    pass
