@@ -82,7 +82,7 @@ def checks():
             values = (database, table)
             qData = query.queryV(q, values)
             print(qData)
-            if len(qData) == 1:
+            if len(qData) == 0:
                 raise exceptions.dbQueryFail
         except exceptions.dbQueryFail:
             if table == "prefix":

@@ -3,8 +3,6 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-from util import logger, dbInsert
-
 
 class cogCmds(commands.Cog):
     def __init__(self, bot):
