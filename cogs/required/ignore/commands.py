@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
+from util.log import runLog
 
 class cogCmds(commands.Cog):
     def __init__(self, bot):
@@ -18,11 +19,11 @@ class cogCmds(commands.Cog):
         try:
             if str(cmd) in allCmd:
                 dbInsert.commands(ctx.guild.id, cmd, False)
-                logger.normRun(f"Successfully disabled command: {cmd}")
+                runLog.log(f"Successfully disabled command: {cmd}")
                 await ctx.message.add_reaction("✅")
             else:
-                logger.warnRun(f"Commend doesn't exist: {cmd}")
-                await ctx.message.add_reaction("❌")
+                runLog.error(f"Commend doesn't exist: {cmd}")
+                await ctx.message.add_reaction("⚠️")
         except Exception as e:
             logger.errorRun(f"Failed to disable command: {cmd}")
             logger.normRun(e)
