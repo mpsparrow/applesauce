@@ -21,11 +21,11 @@ def write(filename: str, msg: str, tag="", start="", showdate=True, console=Fals
     if showdate:
         log.write(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {msg}\n")
         if console:
-            print(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {msg}\n")
+            print(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {msg}")
     else:
         log.write(f"{start}{tag.upper()} {msg}\n")
         if console:
-            print(f"{start}{tag.upper()} {msg}\n")
+            print(f"{start}{tag.upper()} {msg}")
     log.close()
 
 def wipe(filename: str):
