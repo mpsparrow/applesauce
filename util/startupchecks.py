@@ -29,6 +29,7 @@ def startUpChecks():
 
     # default prefix in mainConfig.ini
     try:
+        prefix = conf["main"]["prefix"]
     except:
         startLog.error("prefix not found in mainConfig.ini")
         return False
