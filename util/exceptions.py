@@ -43,3 +43,14 @@ class configWriteError(ApplesauceError):
     Raised when there is an error writing to a config file
     """
     pass
+
+class CogNotFound(ApplesauceError):
+    """
+    Raised when cog is not found in db
+    """
+    pass
+
+class CogInsertFail(ApplesauceError):
+    """
+    Raised when cog fails to be inserted into db
+    """

@@ -45,7 +45,7 @@ async def on_ready():
 
     # wipes all logs
     log.wipe(conf['logs']['start'])
-    logger.wipe(conf['logs']['run'])
+    log.wipe(conf['logs']['run'])
     startLog.info('Running Checks')
 
     # runs startup checks that are in startupchecks.py
@@ -83,27 +83,28 @@ async def on_ready():
         for cog in os.listdir(f'./cogs/main'):
             if cog.endswith('.py'):
                 try:
-                    value = queryCog.load(cog[:-3])
-                    if value != True and value != False:
-                        dbInsert.cogs(cog[:-3], False, False)
+                    value = queryCog.enabled(cog[:-3])
+                except CogNotFound:
+                    try:
+                        insertCog.cog(cog[:-3], False, False)
                         value = False
-                except:
-                    value = False
-                    pass
+                    except CogInsertFail:
+                        startLog.error(f'{cog} CogInsertFail')
+                        continue
 
                 if value:
                     try:
                         bot.load_extension(f'cogs.main.{cog[:-3]}')
-                        dbInsert.cogs(cog[:-3], True, True)
+                        insertCog.loaded(cog[:-3], True)
                         startLog.proceed(f'{cog}')
                         countSuccess += 1
                     except Exception as e:
-                        dbInsert.cogs(cog[:-3], True, False)
+                        insertCog.loaded(cog[:-3], False)
                         startLog.error(f'{cog}')
                         startLog.error(f'{e}')
                         countFail += 1
                 else:
-                    dbInsert.cogs(cog[:-3], False, False)
+                    insertCog.cog(cog[:-3], False, False)
                     startLog.skip(f'{cog}')
                     countSkip += 1
 
