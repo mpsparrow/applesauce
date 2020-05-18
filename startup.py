@@ -25,11 +25,9 @@ def get_prefix(bot, message):
     """
     Gets prefix for specific guild
     :return: Prefix to use
+    :rtype: str
     """
-    try:
-        return queryPrefix.prefix(message.guild.id)  # returns prefix
-    except exceptions.PrefixError:
-        pass
+    return queryPrefix.prefix(message.guild.id)
 
 conf = config.readINI('mainConfig.ini')  # loads config
 botName = conf['main']['botname']  # gets bots name from config
@@ -39,6 +37,9 @@ bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 @bot.command(name='startupLog', description='prints startup-log.txt', usage='outputLog', aliases=['outlog', 'output', 'oplog', 'log'])
 @commands.is_owner()
 async def startupLog(ctx):
+    """
+    Command to display start log
+    """
     # sends startup-log.txt
     await ctx.send(f"```{log.read(conf['logs']['start'])}```")
 
@@ -109,7 +110,7 @@ async def on_ready():
                         countFail += 1
                 else:
                     insertCog.cog(cog[:-3], False, False)
-                    startLog.skip(f'{cog}')
+                    startLog.skip(f'{cog}', console=True)
                     countSkip += 1
 
         startLog.info(f'Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n', console=True)
