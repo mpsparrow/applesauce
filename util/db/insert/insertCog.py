@@ -18,7 +18,7 @@ def cog(name: str, is_enabled: bool, is_loaded: bool):
             cog_name, is_enabled, is_loaded
         ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled), is_loaded = VALUES(is_loaded)"""
         values = (name, is_enabled, is_loaded)
-        commit.commit(query, values)
+        commit.commitV(query, values)
     except exceptions.dbCommitFail:
         runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCog.loaded)")
         raise exceptions.CogInsertFail
@@ -35,7 +35,7 @@ def loaded(name: str, is_loaded: bool):
             cog_name, is_loaded
         ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_loaded = VALUES(is_loaded)"""
         values = (name, is_loaded)
-        commit.commit(query, values)
+        commit.commitV(query, values)
     except exceptions.dbCommitFail:
         runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCog.loaded)")
         raise exceptions.CogInsertFail
@@ -52,7 +52,7 @@ def enabled(name: str, is_enabled: bool):
             cog_name, is_enabled
         ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
         values = (name, is_enabled)
-        commit.commit(query, values)
+        commit.commitV(query, values)
     except exceptions.dbCommitFail:
         runLog.error(f"Error setting {name} cog is_enabled. dbCommitFail (insertCog.enabled)")
         raise exceptions.CogInsertFail
