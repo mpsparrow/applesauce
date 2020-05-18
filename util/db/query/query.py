@@ -5,10 +5,10 @@ from util.db import connect
 from util.log import runLog
 from util import exceptions
 
-def query(query: str):
+def query(q: str):
     """
     Commits a query to the database
-    :param str query: mySQL query
+    :param str q: mySQL query
     :return: query data using fetchall()
     :raises dbQueryFail: if query fails to return result
     """
@@ -19,7 +19,7 @@ def query(query: str):
     else:
         try:
             cursor = cnx.cursor()
-            cursor.execute(query)
+            cursor.execute(q)
             dbData = cursor.fetchall()
         except Exception as e:
             runLog.error("Query failed. (commit.query)")
@@ -32,10 +32,10 @@ def query(query: str):
             cnx.close()
             return dbData
 
-def queryV(query: str, values: tuple):
+def queryV(q: str, values: tuple):
     """
     Commits a query to the database
-    :param str query: mySQL query
+    :param str q: mySQL query
     :param tuple values: query values
     :return: query data using fetchall()
     :raises dbQueryFail: if query fails to return result
@@ -47,7 +47,7 @@ def queryV(query: str, values: tuple):
     else:
         try:
             cursor = cnx.cursor()
-            cursor.execute(query, values)
+            cursor.execute(q, values)
             dbData = cursor.fetchall()
         except Exception as e:
             runLog.error("Query failed. (query.queryV)")
