@@ -59,4 +59,4 @@ def custom(msg: str, thistag="", thisstart=""):
     :param str msg: Message to log
     :param str tag: Tag name (i.e tag="[foo]" produces [FOO])
     """
-    log.write(getFile(), msg, tag=thistag}, start=thisstart)
+    log.write(getFile(), msg, tag=thistag, start=thisstart)
