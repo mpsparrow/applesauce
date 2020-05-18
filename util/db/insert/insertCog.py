@@ -3,7 +3,7 @@ Database insertion functions for cogs
 """
 from util.db import commit
 from util.log import runLog
-from util import exceptions
+from util.exceptions import CogInsertFail
 
 def cog(name: str, is_enabled: bool, is_loaded: bool):
     """

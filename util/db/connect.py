@@ -4,7 +4,8 @@ Database connection
 import mysql.connector as mysql
 from mysql.connector import errorcode
 from util.log import runLog
-from util import config, exceptions
+from util.exceptions import dbConnectionFail
+from util import config
 
 def connect():
     """

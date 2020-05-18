@@ -3,7 +3,7 @@ Database query functions for cogs
 """
 from util.db.query import query
 from util.log import runLog
-from util import exceptions
+from util.exceptions import CogNotFound
 
 def loaded(name: str):
     """

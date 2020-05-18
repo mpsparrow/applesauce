@@ -3,7 +3,7 @@ Database querying
 """
 from util.db import connect
 from util.log import runLog
-from util import exceptions
+from util.exceptions import dbQueryFail
 
 def query(q: str):
     """

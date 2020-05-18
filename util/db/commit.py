@@ -3,7 +3,7 @@ Database committing
 """
 from util.db import connect
 from util.log import runLog
-from util import exceptions
+from util.exceptions import dbCommitFail
 
 def commit(query: str, values: tuple):
     """

@@ -3,7 +3,7 @@ Database table creation functions
 """
 from util.db import query
 from util.log import runLog
-from util import exceptions
+from util.exceptions import dbTableCreationFail
 
 def prefix():
     """

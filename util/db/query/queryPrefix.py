@@ -3,7 +3,8 @@ Database query functions for prefix
 """
 from util.db.query import query
 from util.log import runLog
-from util import exceptions, config
+from util.exceptions import PrefixError
+from util import config
 
 def prefix(guildID: int):
     """
