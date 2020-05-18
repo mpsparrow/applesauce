@@ -14,9 +14,7 @@ def loaded(name: str):
     :raises CogNotFound: if unable to find cog in db
     """
     try:
-        q = f"""SELECT is_loaded 
-                FROM `cogs` 
-                WHERE cog_name = {name}"""
+        q = f"""SELECT is_loaded FROM `cogs` WHERE cog_name = {name}"""
         data = query.query(q)
     except exceptions.dbQueryFail:
         runLog.error("Failed to check for is_loaded cog. dbQueryFail (queryCog.loaded)")
@@ -36,9 +34,7 @@ def enabled(name: str):
     :raises CogNotFound: if unable to find cog in db
     """
     try:
-        q = f"""SELECT is_enabled 
-                FROM `cogs` 
-                WHERE cog_name = {name}"""
+        q = f"""SELECT is_enabled FROM `cogs` WHERE cog_name = {name}"""
         data = query.query(q)
     except exceptions.dbQueryFail:
         runLog.error("Failed to check for is_enabled cog. dbQueryFail (queryCog.enabled)")

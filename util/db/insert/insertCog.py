@@ -32,8 +32,8 @@ def loaded(name: str, is_loaded: bool):
     """
     try:
         query = f"""INSERT INTO `cogs` (
-            cog_name, is_loaded
-        ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_loaded = VALUES(is_loaded)"""
+                cog_name, is_loaded
+                ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_loaded = VALUES(is_loaded)"""
         values = (name, is_loaded)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
