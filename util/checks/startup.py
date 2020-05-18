@@ -3,7 +3,8 @@ Checks to run through on startup of bot
 """
 from util import config
 from util.log import startLog
-from util.db import query, tables, connect
+from util.db import tables, connect
+from util.db.query import query
 
 def checks():
     """
@@ -74,10 +75,11 @@ def checks():
         try:
             q = f"""SELECT * 
                     FROM information_schema.tables
-                    WHERE table_schema = '{database}'
-                    AND table_name = '{table}'
+                    WHERE table_schema = %s 
+                    AND table_name = %s 
                     LIMIT 1;"""
-            query.query(q)
+            values = (database, table)
+            query.queryV(q, values)
         except dbQueryFail:
             if table == "prefix":
                 try:
