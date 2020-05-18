@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from util.log import runLog
-from util.insert import insertCog
+from util.db.insert import insertCog
 
 class cogManage(commands.Cog, name="Cog Management"):
     """
