@@ -17,6 +17,7 @@ def log(msg: str):
     :param str msg: Message to log
     """
     l.write(getFile(), msg, tag="")
+    print(msg)
 
 def error(msg: str):
     """
@@ -24,6 +25,7 @@ def error(msg: str):
     :param str msg: Message to log
     """
     l.write(getFile(), msg, tag="[ERROR]")
+    print(msg)
 
 def warn(msg: str):
     """
@@ -31,6 +33,7 @@ def warn(msg: str):
     :param str msg: Message to log
     """
     l.write(getFile(), msg, tag="[WARN]")
+    print(msg)
 
 def info(msg: str):
     """
@@ -38,6 +41,7 @@ def info(msg: str):
     :param str msg: Message to log
     """
     l.write(getFile(), msg, tag="[INFO]")
+    print(msg)
 
 def proceed(msg: str):
     """
@@ -45,6 +49,7 @@ def proceed(msg: str):
     :param str msg: Message to log
     """
     l.write(getFile(), msg, tag="[PASS]")
+    print(msg)
 
 def skip(msg: str):
     """
@@ -52,6 +57,7 @@ def skip(msg: str):
     :param str msg: Message to log
     """
     l.write(getFile(), msg, tag="[SKIP]")
+    print(msg)
 
 def custom(msg: str, thistag="", thisstart=""):
     """
@@ -60,3 +66,4 @@ def custom(msg: str, thistag="", thisstart=""):
     :param str tag: Tag name (i.e tag="[foo]" produces [FOO])
     """
     l.write(getFile(), msg, tag=thistag, start=thisstart)
+    print(msg)

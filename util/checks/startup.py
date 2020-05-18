@@ -81,6 +81,7 @@ def checks():
                     LIMIT 1;"""
             values = (database, table)
             qData = query.queryV(q, values)
+            print(qData)
             if len(qData) == 0:
                 raise exceptions.dbQueryFail
         except exceptions.dbQueryFail:
