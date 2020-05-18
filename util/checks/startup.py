@@ -83,8 +83,8 @@ def checks():
             qData = query.queryV(q, values)
             print(qData)
             if len(qData) == 0:
-                raise exceptions.dbQueryFail
-        except exceptions.dbQueryFail:
+                raise exceptions.dbTableNotFound
+        except exceptions.dbTableNotFound:
             if table == "prefix":
                 try:
                     tables.prefix()

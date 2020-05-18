@@ -66,6 +66,22 @@ class dbTableCreationFail(Exception):
         else:
             return 'dbTableCreationFail has been raised'
 
+class dbTableNotFound(Exception):
+    """
+    Raised when database table is unable to be created
+    """
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return 'dbTableNotFound, {0} '.format(self.message)
+        else:
+            return 'dbTableNotFound has been raised'
+
 class configReadError(Exception):
     """
     Raised when there is an error reading a config file
