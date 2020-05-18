@@ -17,7 +17,6 @@ def prefix():
                 )"""
         query.query(table)
     except dbQueryFail:
-        runLog.error("Unable to create 'prefix' db table or table already exists. dbQueryFail (tables.prefix)")
         raise dbTableCreationFail
 
 def ignore():
@@ -34,7 +33,6 @@ def ignore():
                 )"""
         query.query(table)
     except dbQueryFail:
-        runLog.error("Unable to create 'ignore' db table or table already exists. dbQueryFail (tables.ignore)")
         raise dbTableCreationFail
 
 def commands():
@@ -51,7 +49,6 @@ def commands():
                 )"""
         query.query(table)
     except dbQueryFail:
-        runLog.error("Unable to create 'commands' db table or table already exists. dbQueryFail (tables.commands)")
         raise dbTableCreationFail
 
 def cogs():
@@ -67,7 +64,6 @@ def cogs():
                 )"""
         query.query(table)
     except dbQueryFail:
-        runLog.error("Unable to create 'cogs' db table or table already exists. dbQueryFail (tables.cogs)")
         raise dbTableCreationFail
 
 def config():
@@ -83,7 +79,6 @@ def config():
                 )"""
         query.query(table)
     except dbQueryFail:
-        runLog.error("Unable to create 'config' db table or table already exists. dbQueryFail (tables.config)")
         raise dbTableCreationFail
 
 def archive():
@@ -101,7 +96,6 @@ def archive():
                 )"""
         query.query(table)
     except dbQueryFail:
-        runLog.error("Unable to create 'archive' db table or table already exists. dbQueryFail (tables.archive)")
         raise dbTableCreationFail
 
 def leaderboard():
@@ -123,5 +117,4 @@ def leaderboard():
                 )"""
         query.query(table)
     except dbQueryFail:
-        runLog.error("Unable to create 'leaderboard' db table or table already exists. dbQueryFail (tables.leaderboard)")
         raise dbTableCreationFail

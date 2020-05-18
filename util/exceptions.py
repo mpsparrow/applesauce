@@ -31,3 +31,15 @@ class dbTableCreationFail(ApplesauceError):
     Raised when database table is unable to be created
     """
     pass
+
+class configReadError(ApplesauceError):
+    """
+    Raised when there is an error reading a config file
+    """
+    pass
+
+class configWriteError(ApplesauceError):
+    """
+    Raised when there is an error writing to a config file
+    """
+    pass

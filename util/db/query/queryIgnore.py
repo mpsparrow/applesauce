@@ -1,0 +1,28 @@
+"""
+Database query functions for ignore
+"""
+import query
+from util.log import runLog
+
+def ignore(guildID: int, memberID: int):
+    """
+    Checks if user is ignored in specific guild
+    :param int guildID: ID of guild
+    :param int memberID: ID of member
+    :return: True if ignored
+    :rtype: bool
+    """
+    try:
+        query = f"""SELECT is_ignored 
+                FROM `ignore` 
+                WHERE guild_id = {guildID} 
+                AND member_id = {memberID}"""
+        data = query.query(query)
+    except dbQueryFail:
+        runLog.error("Failed to check for ignored user. dbQueryFail (queryIgnore.ignore)")
+        return True # return True so it disallows the action since an error occured
+    else:
+        if len(data) == 0:
+            return False
+        for i in data:
+            return bool(i[0])
