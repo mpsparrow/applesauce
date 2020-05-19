@@ -20,7 +20,6 @@ from util.db.query import queryPrefix, queryCog
 from util.db.insert import insertCog
 from util import config, exceptions
 
-# gets prefix for bot
 def get_prefix(bot, message):
     """
     Gets prefix for specific guild
@@ -33,14 +32,12 @@ conf = config.readINI('mainConfig.ini')  # loads config
 botName = conf['main']['botname']  # gets bots name from config
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
-# startupLog (command)
-@bot.command(name='startupLog', description='prints startup-log.txt', usage='outputLog', aliases=['outlog', 'output', 'oplog', 'log'])
+@bot.command(name='startupLog', description='prints startup-log.txt', usage='log', aliases=['outlog', 'output', 'oplog', 'log'])
 @commands.is_owner()
 async def startupLog(ctx):
     """
     Command to display start log
     """
-    # sends startup-log.txt
     await ctx.send(f"```{log.read(conf['logs']['start'])}```")
 
 # on startup
