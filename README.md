@@ -9,12 +9,13 @@ Applesauce is a lightweight Discord bot framework that provides a cog management
 This is very much so in beta at the moment....
 
 ## Install
-### Linux
-1. `git clone -b master https://github.com/mpsparrow/applesauce`
+Make sure Python 3.4+ is running properly and pip is installed.
+1. `git clone -b master https://github.com/mpsparrow/applesauce` or ![download](https://github.com/mpsparrow/applesauce/archive/master.zip) and unzip 
 2. `pip install -r requirements.txt`
 3. open `mainConfig.ini` and add your Discord token
-4. run `python startup.py`
+4. create a mySQL database and put the information into `mainConfig.ini` under `mySQL`
+5. run `python startup.py`
 
 ## Development
-- `master` somewhat tested release
-- `untested` unstable code
+- `master` stable release code
+- `untested` unstable pre-release code and testing
