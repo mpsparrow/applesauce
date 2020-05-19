@@ -15,9 +15,8 @@ def prefix(guildID: int):
     :raises PrefixError: if unable to get a prefix
     """
     try:
-        q = f"""SELECT prefix FROM `prefix` WHERE guild_id = %s"""
-        values = (guildID)
-        data = query.queryV(q, values)
+        q = f"""SELECT prefix FROM `prefix` WHERE guild_id = {guildID}"""
+        data = query.query(q)
         for i in data:
             return i[0]
     except exceptions.dbQueryFail:
