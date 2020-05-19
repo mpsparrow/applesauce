@@ -1,5 +1,4 @@
 *.json
-*.txt
+*.log
 *.ini
-*.md
 __pycache__
