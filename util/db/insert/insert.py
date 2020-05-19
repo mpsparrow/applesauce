@@ -1,18 +1,6 @@
 # Insert functions for database.
 from util import dbConnect, dbTables
 
-
-# Inserts into prefix table
-def prefix(guildID: int, pref: str):
-    try: dbTables.prefix()
-    except: pass
-
-    query = f"""INSERT INTO `prefix` (
-        guild_id, prefix
-    ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE prefix = VALUES(prefix)"""
-    values = (guildID, pref)
-    dbConnect.commit(query, values)
-
 # Inserts into ignore table
 def ignore(guildID: int, guild_name: str, member: str, ignored: bool):
     try: dbTables.ignore()
