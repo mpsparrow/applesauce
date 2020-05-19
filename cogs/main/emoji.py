@@ -5,7 +5,7 @@ Description: Pile of commands to display emojis
 
 import discord
 from discord.ext import commands
-from util import commandchecks
+from util.checks import command
 import random
 
 
@@ -14,7 +14,7 @@ class Emoji(commands.Cog):
         self.bot = bot
 
     # emoji (group)
-    @commands.check(commandchecks.isAllowed)
+    @commands.check(command.isAllowed)
     @commands.group(name="emoji", description="Makes the bot print emojis.", usage="emoji <emoji-name>", aliases=['e'])
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def emoji(self, ctx):

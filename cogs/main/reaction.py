@@ -5,7 +5,8 @@ Description: Emoji reactions
 
 import discord
 from discord.ext import commands
-from util import commandchecks, dbConnect, dbQuery
+from util import dbConnect, dbQuery
+from util.checks import command
 
 
 class Reaction(commands.Cog):
