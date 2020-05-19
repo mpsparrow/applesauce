@@ -19,7 +19,7 @@ def write(filename: str, msg: str, tag="", start="", showdate=True, console=Fals
     :type console: bool or None
     """
     conf = config.readINI("mainConfig.ini")
-    enableConsole = bool(conf["logs"]["consoleLog"])
+    enableConsole = conf["logs"].getboolean("consoleLog")
     print(enableConsole)
     log = open(f'logs/{filename}','a+')
     if showdate:
