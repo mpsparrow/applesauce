@@ -2,6 +2,7 @@
 Main log functions.
 '''
 import datetime
+from util import config
 
 def write(filename: str, msg: str, tag="", start="", showdate=True, console=False):
     """
@@ -17,14 +18,16 @@ def write(filename: str, msg: str, tag="", start="", showdate=True, console=Fals
     :param console: log in console
     :type console: bool or None
     """
+    conf = config.readINI("mainConfig.ini")
+    enableConsole = bool(conf["logs"]["consoleLog"])
     log = open(f'logs/{filename}','a+')
     if showdate:
         log.write(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {msg}\n")
-        if console:
+        if console and enableConsole:
             print(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {msg}")
     else:
         log.write(f"{start}{tag.upper()} {msg}\n")
-        if console:
+        if console and enableConsole:
             print(f"{start}{tag.upper()} {msg}")
     log.close()
 
