@@ -20,7 +20,6 @@ def write(filename: str, msg: str, tag="", start="", showdate=True, console=Fals
     """
     conf = config.readINI("mainConfig.ini")
     enableConsole = conf["logs"].getboolean("consoleLog")
-    print(enableConsole)
     log = open(f'logs/{filename}','a+')
     if showdate:
         log.write(f"{start}[{datetime.datetime.now().strftime('%d.%m.%Y %H:%M:%S')}]{tag.upper()} {msg}\n")
