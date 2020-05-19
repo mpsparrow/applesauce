@@ -23,7 +23,6 @@ class cogManage(commands.Cog, name="Cog Management"):
         Command group for cog management.
         :param ctx:
         """
-        pass
 
     @cog.command(name="enable", description="Enable loading of cog on bot startup.", usage="cog enable <cog name>", aliases=["e"])
     async def enable(self, ctx, name):
