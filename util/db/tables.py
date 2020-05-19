@@ -42,10 +42,11 @@ def commands():
     try:
         table = """CREATE TABLE `commands` (
                 `guild_id` BIGINT NOT NULL,
+                `cog_name` VARCHAR(30) NOT NULL,
                 `command_name` VARCHAR(30) NOT NULL, 
                 `is_enabled` BOOLEAN NOT NULL,
                 `times_used` BIGINT,
-                primary key (guild_id, command_name)
+                primary key (guild_id, cog_name, command_name)
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
