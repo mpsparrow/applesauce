@@ -45,6 +45,10 @@ async def startupLog(ctx):
 async def on_ready():
     startTime = time.time()
 
+    # makes sure logs folder exists
+    if not os.path.exists("logs"):
+        os.mkdir("logs")
+
     # wipes all logs
     log.wipe(conf['logs']['start'])
     log.wipe(conf['logs']['run'])
