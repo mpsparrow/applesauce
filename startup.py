@@ -32,38 +32,19 @@ conf = config.readINI('mainConfig.ini')  # loads config
 botName = conf['main']['botname']  # gets bots name from config
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
-@bot.command(name="log", 
-            help="Displays the startup log.",
-            aliases=["startupLog"], 
-            cog_name="Debug")
-@commands.is_owner()
-async def startupLog(ctx):
-    """
-    Command to display start log.
-    """
-    await ctx.send(f"```{log.read(conf['logs']['start'])}```")
 
-# ping (command)
-@bot.command(name="ping", 
-                help="Pings the bot.", 
-                cog_name="Debug")
-@commands.cooldown(1, 5, commands.BucketType.user)
-async def ping(ctx):
-    """
-    Command to ping the bot.
-    """
-    await ctx.send('pong!')
-
-# on startup
 @bot.event
 async def on_ready():
+    startupLog.info("Booting...\n", console=True)
+
+    # starts timer to keep track of startup time
     startTime = time.time()
 
-    # makes sure logs folder exists
+    # makes sure logs folder is created
     if not os.path.exists("logs"):
         os.mkdir("logs")
 
-    # wipes all logs
+    # wipes startup and running log
     log.wipe(conf['logs']['start'])
     log.wipe(conf['logs']['run'])
     startLog.info('Running Checks', console=True)

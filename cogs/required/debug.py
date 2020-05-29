@@ -10,17 +10,36 @@ class Debug(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # debug (command)
-    @commands.command(name="debug", description="Version and debug information.", usage="debug")
+    @commands.command(name="log", help="Displays the startup log.", aliases=["startupLog"])
+    @commands.is_owner()
+    async def startupLog(self, ctx):
+        """
+        Command to display start log.
+        """
+        await ctx.send(f"```{log.read(conf['logs']['start'])}```")
+
+    @commands.command(name="ping", help="Pings the bot.")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def ping(self, ctx):
+        """
+        Command to ping the bot.
+        """
+        await ctx.send('pong!')
+
+    @commands.command(name="debug", help="Versions and other debug information.")
     @commands.is_owner()
     async def debug(self, ctx):
+        """
+        Command to display versions and other debug information.
+        """
         embed=discord.Embed(title='Debug', color=0xc1c100)
-        embed.add_field(name='discord.py version', value=f'{discord.__version__}', inline=False)
-        embed.add_field(name='python version', value=f'{sys.version}', inline=False)
+        embed.add_field(name="discord.py", value=discord.__version__, inline=False)
+        embed.add_field(name="python", value=sys.version, inline=False)
+        embed.add_field(name="OS", value=sys.platform, inline=False)
         await ctx.send(embed=embed)
 
     # guildid (command)
-    @commands.command(name="guildid", description="Gets guild ID.", usage="guildid")
+    @commands.command(name="guildid", help="Gets guild ID.", usage="guildid")
     @commands.is_owner()
     async def guildid(self, ctx):
         await ctx.send(f'Guild id: {ctx.guild.id}')
