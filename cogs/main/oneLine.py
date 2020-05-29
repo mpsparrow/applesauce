@@ -34,13 +34,6 @@ class oneLine(commands.Cog):
     async def ddos(self, ctx, *, name):
         await ctx.send(f'{name} is being DDoSed')
 
-    # ping (command)
-    @commands.check(command.isAllowed)
-    @commands.command(name="ping", description="pong", usage="ping")
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def ping(self, ctx):
-        await ctx.send('pong!')
-
     # rate (command)
     @commands.check(command.isAllowed)
     @commands.command(name="rate", description="Random integer rating out of 10.", usage="rate", aliases=['rating'])

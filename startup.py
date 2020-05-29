@@ -32,13 +32,27 @@ conf = config.readINI('mainConfig.ini')  # loads config
 botName = conf['main']['botname']  # gets bots name from config
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
-@bot.command(name='startupLog', description='prints startup-log.txt', usage='log', aliases=['outlog', 'output', 'oplog', 'log'])
+@bot.command(name="startupLog", 
+            help="Displays the startup log.",
+            aliases=['log'], 
+            cog_name="Framework")
 @commands.is_owner()
 async def startupLog(ctx):
     """
-    Command to display start log
+    Command to display start log.
     """
     await ctx.send(f"```{log.read(conf['logs']['start'])}```")
+
+# ping (command)
+@commands.command(name="ping", 
+                help="Pings the bot.", 
+                cog_name="Framework")
+@commands.cooldown(1, 5, commands.BucketType.user)
+async def ping(ctx):
+    """
+    Command to ping the bot.
+    """
+    await ctx.send('pong!')
 
 # on startup
 @bot.event
