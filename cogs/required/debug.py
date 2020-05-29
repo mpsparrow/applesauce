@@ -5,6 +5,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 import sys
 from util.log import log
+from util import config
 
 
 class Debug(commands.Cog):
@@ -17,6 +18,7 @@ class Debug(commands.Cog):
         """
         Command to display start log.
         """
+        conf = config.readINI('mainConfig.ini')
         await ctx.send(f"```{log.read(conf['logs']['start'])}```")
 
     @commands.command(name="ping", help="Pings the bot.")
