@@ -35,7 +35,7 @@ bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
 @bot.event
 async def on_ready():
-    startupLog.info("Booting...\n", console=True)
+    startLog.info("Booting...\n", console=True)
 
     # starts timer to keep track of startup time
     startTime = time.time()
