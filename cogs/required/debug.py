@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 import sys
+from util.log import log
 
 
 class Debug(commands.Cog):
