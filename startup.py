@@ -34,7 +34,7 @@ bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
 @bot.command(name="log", 
             help="Displays the startup log.",
-            aliases=["log", "startupLog"], 
+            aliases=["startupLog"], 
             cog_name="Debug")
 @commands.is_owner()
 async def startupLog(ctx):
