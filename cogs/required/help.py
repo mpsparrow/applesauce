@@ -26,13 +26,23 @@ class SetupHelp(commands.MinimalHelpCommand):
 
     async def send_cog_help(self, cog):
         if queryCogGuild.status(self.context.guild.id, cog.qualified_name):
-            await self.context.send("Cog help")
+            embed = emb.make(cog.name, cog.description)
+
+            for cmd in sorted(cog.commands):
+                embed.add_field(name=cmd.name, value=cmd.description, inline=False)
+                
+            await self.context.send(embed=embed)
         else:
             await self.context.send(embed=emb.make_error("Cog not found.")) 
 
     async def send_group_help(self, group):
         if queryCogGuild.status(self.context.guild.id, group.cog_name):
-            await self.context.send("Group help")
+            embed = emb.make(group.name, group.description)
+
+            for cmd in sorted(group.commands):
+                embed.add_field(name=cmd.name, value=cmd.description, inline=False)
+                
+            await self.context.send(embed=embed)
         else:
             await self.context.send(embed=emb.make_error("Command not found.")) 
 
