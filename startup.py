@@ -30,7 +30,8 @@ def get_prefix(bot, message):
         return queryPrefix.prefix(message.guild.id)
     except:
         conf = config.readINI('mainConfig.ini')
-        return conf['main']['prefix']
+        print("MADE IT HERE")
+        return str(conf['main']['prefix'])
 
 conf = config.readINI('mainConfig.ini')  # loads config
 botName = conf['main']['botname']  # gets bots name from config
