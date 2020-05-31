@@ -28,26 +28,36 @@ class SetupHelp(commands.MinimalHelpCommand):
         await self.context.send(embed=emb.make_error("Sub-command not found."))
 
     async def send_cog_help(self, cog):
-        await self.context.send("Cog help")
+        if queryCogGuild.status(self.context.guild.id, cog.qualified_name):
+            await self.context.send("Cog help")
+        else:
+            await self.context.send(embed=emb.make_error("Command not found.")) 
 
     async def send_group_help(self, group):
-        await self.context.send("Group help")
-        
-    async def send_command_help(self, command):
-        embed = emb.make(command.name, command.description)
-
-        if len(command.full_parent_name) == 0:
-            embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.name}`", inline=False)
+        if queryCogGuild.status(self.context.guild.id, group.cog_name):
+            await self.context.send("Group help")
         else:
-            embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.full_parent_name} {command.name}`", inline=False)
+            await self.context.send(embed=emb.make_error("Command not found.")) 
 
-        if len(command.aliases) > 0:
-            aliasStr = ""
-            for alias in command.aliases:
-                aliasStr += f"`{alias}`, "
-            embed.add_field(name="Aliases", value=f"{aliasStr[:-2]}", inline=False)
-        embed.set_footer(text=f"Cog: {command.cog.qualified_name}")
-        await self.context.send(embed=embed)
+    async def send_command_help(self, command):
+        if queryCogGuild.status(self.context.guild.id, command.cog_name):
+            embed = emb.make(command.name, command.description)
+
+            if len(command.full_parent_name) == 0:
+                embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.name}`", inline=False)
+            else:
+                embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.full_parent_name} {command.name}`", inline=False)
+
+            if len(command.aliases) > 0:
+                aliasStr = ""
+                for alias in command.aliases:
+                    aliasStr += f"`{alias}`, "
+                embed.add_field(name="Aliases", value=f"{aliasStr[:-2]}", inline=False)
+
+            embed.set_footer(text=f"Cog: {command.cog_name}")
+            await self.context.send(embed=embed)
+        else:
+            await self.context.send(embed=emb.make_error("Command not found.")) 
 
     async def send_bot_help(self, mapping):
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command/cog>`")
