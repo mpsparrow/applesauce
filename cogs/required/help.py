@@ -40,7 +40,7 @@ class SetupHelp(commands.MinimalHelpCommand):
             try:
                 await cmd.can_run(self.context)
                 print(cmd.cog_name)
-                if queryCogGuild.status(self.context.guild.id, cmd.cog_name):
+                if queryCogGuild.status(self.context.guild.id, str(cmd.cog_name)):
                     cmds.append(str(cmd))
             except:
                 pass
@@ -49,6 +49,9 @@ class SetupHelp(commands.MinimalHelpCommand):
         for cmd in sorted(cmds):
             if (" " not in str(cmd)):
                 cmdString += f"`{cmd}`, "
+
+        if len(cmdString) == 0:
+            cmdStrong = "No Commands Enabled"
 
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command>`")
         embed.add_field(name="Commands", value=cmdString[:-2], inline=False)
