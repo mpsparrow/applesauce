@@ -43,13 +43,12 @@ class SetupHelp(commands.MinimalHelpCommand):
             cmdString = ""
             if queryCogGuild.status(self.context.guild.id, x):
                 for y in set(self.context.bot.walk_commands()):
-                    if (y.cog_name == x):
+                    if (y.cog_name == x) and (" " not in str(y)):
                         cmdString += f"`{y}`, "
 
                 if len(cmdString) > 0:
                     embed.add_field(name=x, value=cmdString[:-2], inline=False)
-
-        # embed.set_footer(f"use `{queryPrefix.prefix(self.context.guild.id)}settings` for admin settings")
+                    
         await self.context.send(embed=embed)
 
 def setup(bot):
