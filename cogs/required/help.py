@@ -47,7 +47,7 @@ class SetupHelp(commands.MinimalHelpCommand):
                         cmdString += f"`{y}`, "
 
                 if len(cmdString) > 0:
-                    embed.add_field(name=f"{x} - {x.description}", value=cmdString[:-2], inline=False)
+                    embed.add_field(name=x, value=cmdString[:-2], inline=False)
 
         await self.context.send(embed=embed)
 
