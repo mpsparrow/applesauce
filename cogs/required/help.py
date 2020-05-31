@@ -41,7 +41,7 @@ class SetupHelp(commands.MinimalHelpCommand):
 
         for x in self.context.bot.cogs:
             cmdString = ""
-            if not(queryCogGuild.status(self.context.guild.id, y)):
+            if not(queryCogGuild.status(self.context.guild.id, x)):
                 for y in set(self.context.bot.walk_commands()):
                     if (y.cog_name == x):
                         cmdString += f"`{y}`, "
