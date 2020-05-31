@@ -39,14 +39,11 @@ class SetupHelp(commands.MinimalHelpCommand):
 
         for x in self.context.bot.cogs:
             print(x)
-            cmdString = ""
+            cmdString = "1  "
             for y in set(self.context.bot.walk_commands()):
                 if (y.cog_name == x):
                     print(y)
                     cmdString += f"`{y}`, "
-
-            if len(cmdString) == 0:
-                cmdStrong = "No Commands Enabled  "
 
             embed.add_field(name=x, value=cmdString[:-2], inline=False)
 
