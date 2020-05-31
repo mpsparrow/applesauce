@@ -78,8 +78,8 @@ def checks():
                     FROM information_schema.tables
                     WHERE table_schema = %s 
                     AND table_name = %s 
-                    LIMIT 1;"""
-            values = (database, table)
+                    LIMIT %s;"""
+            values = (database, table, 1)
             qData = query.queryV(q, values)
 
             if len(qData) == 0:
