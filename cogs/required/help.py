@@ -46,7 +46,7 @@ class SetupHelp(commands.MinimalHelpCommand):
 
         cmdString = ""
         for cmd in cmds:
-            if (" " not in cmd):
+            if (" " not in str(cmd)):
                 cmdString += f"`{cmd}`, "
 
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command>`")
