@@ -12,9 +12,11 @@ def isAllowed(ctx):
     :rtype: bool
     """
     try:
+        print("1")
         guildID = ctx.guild.id
         cogName = ctx.command.cog
         author = ctx.message.author.id
+        print("2")
         value = queryCogGuild.status(guildID, cogName)
         print(value)
         value2 = not(queryIgnore.status(guildID, author)
