@@ -25,8 +25,6 @@ def query(q: str):
             runLog.error("Query failed. (commit.query)")
             runLog.error(e)
             raise exceptions.dbQueryFail
-            cursor.close()
-            cnx.close()
         else:
             cursor.close()
             cnx.close()
@@ -53,8 +51,6 @@ def queryV(q: str, values: tuple):
             runLog.error("Query failed. (query.queryV)")
             runLog.error(e)
             raise exceptions.dbQueryFail
-            cursor.close()
-            cnx.close()
         else:
             cursor.close()
             cnx.close()
