@@ -8,13 +8,10 @@ class Help(commands.Cog):
     """
     Cog for help command.
     """
-
     def __init__(self, bot):
         self._original_help_command = bot.help_command
         bot.help_command = SetupHelp()
         bot.help_command.cog = self
-
-    
 
 
 class SetupHelp(commands.MinimalHelpCommand):
@@ -31,7 +28,7 @@ class SetupHelp(commands.MinimalHelpCommand):
         if queryCogGuild.status(self.context.guild.id, cog.qualified_name):
             await self.context.send("Cog help")
         else:
-            await self.context.send(embed=emb.make_error("Command not found.")) 
+            await self.context.send(embed=emb.make_error("Cog not found.")) 
 
     async def send_group_help(self, group):
         if queryCogGuild.status(self.context.guild.id, group.cog_name):
