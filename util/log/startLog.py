@@ -59,6 +59,14 @@ def skip(msg: str, console=False):
     """
     l.write(getFile(), msg, tag="[SKIP]", console=console)
 
+def debug(msg: str, console=False):
+    """
+    [DEBUG] tag log function.
+    :param str msg: Message to log
+    :param console: log in console
+    """
+    l.write(getFile(), msg, tag="[DEBUG]", console=console)
+
 def custom(msg: str, thistag="", thisstart="", console=False):
     """
     Custom tag log function.

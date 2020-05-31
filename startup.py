@@ -56,8 +56,8 @@ async def on_ready():
     else:
         # writes startup information to startup-log.txt
         startLog.custom(f'Starting {botName}', "[info]", "\n", console=True)
-        startLog.info(f'discord.py {discord.__version__}', console=True)
-        startLog.info(f'Python {sys.version[:6]}', console=True)
+        startLog.debug(f'discord.py {discord.__version__}', console=True)
+        startLog.debug(f'Python {sys.version[:6]}', console=True)
 
         # Requires Cogs loading
         # Any file in /cogs/required is considered a required cog
