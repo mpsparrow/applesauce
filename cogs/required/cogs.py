@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from util.log import runLog
-from util.db.insert import insertCog
+from util.db.insert import insertCogList
 
 class cogManage(commands.Cog, name="Cog Management"):
     """
@@ -32,7 +32,7 @@ class cogManage(commands.Cog, name="Cog Management"):
         :param str name: Cog name
         """
         try:
-            insertCog.enabled(name, True) # update status
+            insertCogList.enabled(name, True) # update status
         except CogStateError:
             # The cog state was unable to be changed.
             runLog.error(f"Cog '{name}' failed to change startup state. CogStateError (cogManage.enable)")
@@ -49,7 +49,7 @@ class cogManage(commands.Cog, name="Cog Management"):
         :param str name: Cog name
         """
         try:
-            insertCog.enabled(name, False) # update status
+            insertCogList.enabled(name, False) # update status
         except CogStateError:
             # The cog state was unable to be changed.
             runLog.error(f"Cog '{name}' failed to change startup state. CogStateError (cogManage.disable)")
@@ -80,16 +80,16 @@ class cogManage(commands.Cog, name="Cog Management"):
         except commands.NoEntryPointError:
             # The cog does not have a setup function.
             runLog.error(f"Cog '{name}' has no setup function. NoEntryPointError (cogManage.load)")
-            insertCog.loaded(name, False) # Set cog state to not loaded in database.
+            insertCogList.loaded(name, False) # Set cog state to not loaded in database.
             await ctx.message.add_reaction("⚠️")
         except commands.ExtensionFailed:
             # The cog setup function has an execution error.
             runLog.error(f"Cog '{name}' has an execution error. ExtensionFailed (cogManage.load)")
-            insertCog.loaded(name, False) # Set cog state to not loaded in database.
+            insertCogList.loaded(name, False) # Set cog state to not loaded in database.
             await ctx.message.add_reaction("⚠️")
         else:
             runLog.log(f"Cog '{name}' loaded. (cogManage.load)")
-            insertCog.loaded(name, True) # Set cog state to loaded in database.
+            insertCogList.loaded(name, True) # Set cog state to loaded in database.
             await ctx.message.add_reaction("✅")
 
     @cog.command(name="unload", description="Unload cog while bot is running.", usage="cog unload <cog name>", aliases=["u"])
@@ -109,7 +109,7 @@ class cogManage(commands.Cog, name="Cog Management"):
             await ctx.message.add_reaction("❌")
         else:
             runLog.log(f"Cog '{name}' unloaded. (cogManage.unload)")
-            insertCog.loaded(name, False) # Set cog state to not loaded in database.
+            insertCogList.loaded(name, False) # Set cog state to not loaded in database.
             await ctx.message.add_reaction("✅")   
 
     @cog.command(name="reload", description="Reload cog while bot is running.", usage="cog reload <cog name>", aliases=["r"])
@@ -126,7 +126,7 @@ class cogManage(commands.Cog, name="Cog Management"):
         except commands.ExtensionNotLoaded:
             # The cog was not reloaded.
             runLog.error(f"Cog '{name}' was unable to be reloaded. ExtensionNotLoaded (cogManage.reload)")
-            insertCog.loaded(name, False) # Set cog state to not loaded in database.
+            insertCogList.loaded(name, False) # Set cog state to not loaded in database.
             await ctx.message.add_reaction("⚠️")
         except commands.ExtensionNotFound:
             # The cog could not be found.
@@ -135,16 +135,16 @@ class cogManage(commands.Cog, name="Cog Management"):
         except commands.NoEntryPointError:
             # The cog does not have a setup function.
             runLog.error(f"Cog '{name}' has no setup function. NoEntryPointError (cogManage.reload)")
-            insertCog.loaded(name, False) # Set cog state to not loaded in database.
+            insertCogList.loaded(name, False) # Set cog state to not loaded in database.
             await ctx.message.add_reaction("⚠️")
         except commands.ExtensionFailed:
             # The cog setup function has an execution error.
             runLog.error(f"Cog '{name}' has an execution error. ExtensionFailed (cogManage.reload)")
-            insertCog.loaded(name, False) # Set cog state to not loaded in database.
+            insertCogList.loaded(name, False) # Set cog state to not loaded in database.
             await ctx.message.add_reaction("⚠️")
         else:
             runLog.info(f"Cog '{name}' reloaded. (cogManage.reload)")
-            insertCog.loaded(name, True) # Set cog state to loaded in database.
+            insertCogList.loaded(name, True) # Set cog state to loaded in database.
             await ctx.message.add_reaction("✅")           
 
 def setup(bot):

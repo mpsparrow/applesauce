@@ -71,7 +71,7 @@ def checks():
         startLog.proceed("database connected", console=True)
 
     # database table check and creation
-    dbTables = ["prefix", "ignore", "commands", "cogs", "config", "archive", "leaderboard"]
+    dbTables = ["prefix", "ignore", "cogs_list", "cogs_guild", "config", "archive", "leaderboard"]
     for table in dbTables:
         try:
             q = f"""SELECT * 
@@ -95,17 +95,17 @@ def checks():
                     except exceptions.dbTableCreationFail:
                         startLog.error("Unable to create 'ignore' db table or table already exists. dbTableCreationFail (tables.ignore)", console=True)
                         return False
-                elif table == "commands":
+                elif table == "cogs_list":
                     try:
-                        tables.commands()
+                        tables.cogsList()
                     except exceptions.dbTableCreationFail:
-                        startLog.error("Unable to create 'commands' db table or table already exists. dbTableCreationFail (tables.commands)", console=True)
+                        startLog.error("Unable to create 'cogs_list' db table or table already exists. dbTableCreationFail (tables.cogsList)", console=True)
                         return False
-                elif table == "cogs":
+                elif table == "cogs_guild":
                     try:
-                        tables.cogs()
+                        tables.cogsGuild()
                     except exceptions.dbTableCreationFail:
-                        startLog.error("Unable to create 'cogs' db table or table already exists. dbTableCreationFail (tables.cogs)", console=True)
+                        startLog.error("Unable to create 'cogs_guild' db table or table already exists. dbTableCreationFail (tables.cogsGuild)", console=True)
                         return False
                 elif table == "config":
                     try:

@@ -16,8 +16,8 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from util.checks import startup
 from util.log import startLog, log
-from util.db.query import queryPrefix, queryCog
-from util.db.insert import insertCog
+from util.db.query import queryPrefix, queryCogList
+from util.db.insert import insertCogList
 from util import config, exceptions
 
 def get_prefix(bot, message):
@@ -84,10 +84,10 @@ async def on_ready():
         for cog in os.listdir(f'./cogs/main'):
             if cog.endswith('.py'):
                 try:
-                    value = queryCog.enabled(cog[:-3])
+                    value = queryCogList.enabled(cog[:-3])
                 except exceptions.CogNotFound:
                     try:
-                        insertCog.cog(cog[:-3], False, False)
+                        insertCogList.cog(cog[:-3], False, False)
                         value = False
                     except exceptions.CogInsertFail:
                         startLog.error(f'{cog} CogInsertFail', console=True)
@@ -96,16 +96,16 @@ async def on_ready():
                 if value:
                     try:
                         bot.load_extension(f'cogs.main.{cog[:-3]}')
-                        insertCog.loaded(cog[:-3], True)
+                        insertCogList.loaded(cog[:-3], True)
                         startLog.proceed(f'{cog}', console=True)
                         countSuccess += 1
                     except Exception as e:
-                        insertCog.loaded(cog[:-3], False)
+                        insertCogList.loaded(cog[:-3], False)
                         startLog.error(f'{cog}', console=True)
                         startLog.error(f'{e}', console=True)
                         countFail += 1
                 else:
-                    insertCog.cog(cog[:-3], False, False)
+                    insertCogList.cog(cog[:-3], False, False)
                     startLog.skip(f'{cog}', console=True)
                     countSkip += 1
 

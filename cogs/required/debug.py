@@ -9,6 +9,10 @@ from util import config
 
 
 class Debug(commands.Cog):
+    """
+    Cog containing debugging commands.
+    """
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -45,18 +49,27 @@ class Debug(commands.Cog):
     @commands.command(name="guildid", help="Gets guild ID.", usage="guildid")
     @commands.is_owner()
     async def guildid(self, ctx):
+        """
+        Command to display guild ID.
+        """
         await ctx.send(f'Guild id: {ctx.guild.id}')
 
     # latency (command)
     @commands.command(name="latency", description="Gets latency to server.", usage="latency")
     @commands.is_owner()
     async def latency(self, ctx):
+        """
+        Command to display latency.
+        """
         await ctx.send(str(round(self.bot.latency * 1000)) + 'ms')
 
     # close (command)
     @commands.command(name="close", description="Shuts down bot.", usage="close", aliases=['shutdown', 'restart', 'kill'])
     @commands.is_owner()
     async def close(self, ctx):
+        """
+        Command to shutdown bot.
+        """
         await ctx.send("shutting down....")
         await self.bot.close()
 

@@ -35,33 +35,31 @@ def ignore():
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
 
-def commands():
+def cogsList():
     """
-    Creates 'commands' database table.
+    Creates 'cogs_list' database table (for keeping of main cog states).
     """
     try:
-        table = """CREATE TABLE `commands` (
-                `guild_id` BIGINT NOT NULL,
-                `cog_name` VARCHAR(30) NOT NULL,
-                `command_name` VARCHAR(30) NOT NULL, 
-                `is_enabled` BOOLEAN NOT NULL,
-                `times_used` BIGINT,
-                primary key (guild_id, cog_name, command_name)
+        table = """CREATE TABLE `cogs_list` (
+                `cog_name` VARCHAR(50) NOT NULL,
+                `is_enabled` BOOLEAN,
+                `is_loaded` BOOLEAN,
+                primary key (cog_name)
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
 
-def cogs():
+def cogsGuild():
     """
-    Creates 'cogs' database table.
+    Creates 'cogs_guild' database table (for each guild).
     """
     try:
-        table = """CREATE TABLE `cogs` (
-                `cog_name` VARCHAR(50) NOT NULL,
-                `is_enabled` BOOLEAN,
-                `is_loaded` BOOLEAN,
-                primary key (cog_name)
+        table = """CREATE TABLE `cogs_guild` (
+                `guild_id` BIGINT NOT NULL,
+                `cog_name` VARCHAR(30) NOT NULL,
+                `is_enabled` BOOLEAN NOT NULL,
+                primary key (guild_id, cog_name)
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:

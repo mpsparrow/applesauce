@@ -14,13 +14,13 @@ def cog(name: str, is_enabled: bool, is_loaded: bool):
     :raises raise CogInsertFail: if fails to insert/update cog info in db
     """
     try:
-        query = f"""INSERT INTO `cogs` (
+        query = f"""INSERT INTO `cogs_list` (
             cog_name, is_enabled, is_loaded
         ) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled), is_loaded = VALUES(is_loaded)"""
         values = (name, is_enabled, is_loaded)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
-        runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCog.loaded)")
+        runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCogList.loaded)")
         raise exceptions.CogInsertFail
 
 def loaded(name: str, is_loaded: bool):
@@ -31,13 +31,13 @@ def loaded(name: str, is_loaded: bool):
     :raises raise CogInsertFail: if fails to insert/update cog info in db
     """
     try:
-        query = f"""INSERT INTO `cogs` (
+        query = f"""INSERT INTO `cogs_list` (
                 cog_name, is_loaded
                 ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_loaded = VALUES(is_loaded)"""
         values = (name, is_loaded)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
-        runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCog.loaded)")
+        runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCogList.loaded)")
         raise exceptions.CogInsertFail
 
 def enabled(name: str, is_enabled: bool):
@@ -48,11 +48,11 @@ def enabled(name: str, is_enabled: bool):
     :raises raise CogInsertFail: if fails to insert/update cog info in db
     """
     try:
-        query = f"""INSERT INTO `cogs` (
+        query = f"""INSERT INTO `cogs_list` (
             cog_name, is_enabled
         ) VALUES (%s, %s) ON DUPLICATE KEY UPDATE is_enabled = VALUES(is_enabled)"""
         values = (name, is_enabled)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
-        runLog.error(f"Error setting {name} cog is_enabled. dbCommitFail (insertCog.enabled)")
+        runLog.error(f"Error setting {name} cog is_enabled. dbCommitFail (insertCogList.enabled)")
         raise exceptions.CogInsertFail

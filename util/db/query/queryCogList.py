@@ -14,10 +14,10 @@ def loaded(name: str):
     :raises CogNotFound: if unable to find cog in db
     """
     try:
-        q = f"""SELECT is_loaded FROM `cogs` WHERE cog_name = '{name}'"""
+        q = f"""SELECT is_loaded FROM `cogs_list` WHERE cog_name = '{name}'"""
         data = query.query(q)
     except exceptions.dbQueryFail:
-        runLog.error("Failed to check for is_loaded cog. dbQueryFail (queryCog.loaded)")
+        runLog.error("Failed to check for is_loaded cog. dbQueryFail (queryCogList.loaded)")
         raise exceptions.CogNotFound
     else:
         if len(data) == 0:
@@ -34,10 +34,10 @@ def enabled(name: str):
     :raises CogNotFound: if unable to find cog in db
     """
     try:
-        q = f"""SELECT is_enabled FROM `cogs` WHERE cog_name = '{name}'"""
+        q = f"""SELECT is_enabled FROM `cogs_list` WHERE cog_name = '{name}'"""
         data = query.query(q)
     except exceptions.dbQueryFail:
-        runLog.error("Failed to check for is_enabled cog. dbQueryFail (queryCog.enabled)")
+        runLog.error("Failed to check for is_enabled cog. dbQueryFail (queryCogList.enabled)")
         raise exceptions.CogNotFound
     else:
         if len(data) == 0:
