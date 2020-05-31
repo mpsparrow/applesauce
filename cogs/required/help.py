@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from util import embed as emb
-from util.db.query import queryPrefix
+from util.db.query import queryPrefix, queryCogGuild
 
 class Help(commands.Cog):
     """
@@ -39,13 +39,14 @@ class SetupHelp(commands.MinimalHelpCommand):
         for cmd in set(self.context.bot.walk_commands()):
             try:
                 await cmd.can_run(self.context)
-                if not(cmd.hidden):
-                    cmds.append(cmd)
+                print(cmd.cog_name)
+                if queryCogGuild.status(self.context.guild.id, cmd.cog_name):
+                    cmds.append(str(cmd))
             except:
                 pass
 
         cmdString = ""
-        for cmd in cmds:
+        for cmd in sorted(cmds):
             if (" " not in str(cmd)):
                 cmdString += f"`{cmd}`, "
 
