@@ -5,7 +5,7 @@ import random
 
 class oneLine(commands.Cog):
     """
-    Cog containing simple 'one-line' commands.
+    Simple 'one-line' commands.
     """
 
     def __init__(self, bot):

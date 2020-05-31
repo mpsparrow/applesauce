@@ -6,7 +6,7 @@ from util.db.insert import insertCogList
 
 class cogManage(commands.Cog):
     """
-    Cog containing main owner commands for controlling cogs.
+    Owner commands for controlling cogs.
     """
     
     def __init__(self, bot):
