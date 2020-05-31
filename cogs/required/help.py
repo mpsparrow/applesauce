@@ -3,9 +3,8 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from util import embed
 
-class Help(commands.Cog):
+class HelpCMD(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
         self._original_help_command = bot.help_command
         bot.help_command = Help()
         bot.help_command.cog = self
@@ -30,4 +29,4 @@ class SetupHelp(commands.MinimalHelpCommand):
         await self.context.send(embed=embed.make_error_embed("bot help"))
 
 def setup(bot):
-    bot.add_cog(Help(bot))
+    bot.add_cog(HelpCMD(bot))
