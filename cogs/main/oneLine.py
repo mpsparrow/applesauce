@@ -3,7 +3,7 @@ from discord.ext import commands
 from util.checks import command
 import random
 
-class oneLine(commands.Cog, description="Simple 'one-line' Commands"):
+class oneLine(commands.Cog):
     """
     Cog containing simple 'one-line' commands.
     """

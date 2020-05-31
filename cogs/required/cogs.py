@@ -4,7 +4,7 @@ from discord.ext.commands import has_permissions
 from util.log import runLog
 from util.db.insert import insertCogList
 
-class cogManage(commands.Cog, description="Cog Management (owner)"):
+class cogManage(commands.Cog):
     """
     Cog containing main owner commands for controlling cogs.
     """
