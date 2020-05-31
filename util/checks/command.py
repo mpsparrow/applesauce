@@ -16,6 +16,7 @@ def isAllowed(ctx):
         runLog.info("1")
         guildID = ctx.guild.id
         cogName = ctx.command.cog
+        print(cogName)
         author = ctx.message.author.id
         runLog.info("2")
         value = queryCogGuild.status(guildID, cogName)
