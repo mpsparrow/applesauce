@@ -12,7 +12,7 @@ class oneLine(commands.Cog):
         self.bot = bot
 
     @commands.check(command.isAllowed)
-    @commands.command(name="chance", help="Random integer between 0 and 100 (displayed as percent)")
+    @commands.command(name="chance", description="Random integer between 0 and 100 (displayed as percent)")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def chance(self, ctx):
         """
@@ -22,7 +22,7 @@ class oneLine(commands.Cog):
         await ctx.send(f'{random.randint(0, 100)}% chance')
 
     @commands.check(command.isAllowed)
-    @commands.command(name="coin", help="Flips a coin and returns heads or tails.")
+    @commands.command(name="coin", description="Flips a coin and returns heads or tails.")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def coin(self, ctx):
         """
@@ -32,7 +32,7 @@ class oneLine(commands.Cog):
         await ctx.send(random.choice(['Heads', 'Tails']))
         
     @commands.check(command.isAllowed)
-    @commands.command(name="ddos", help="You ever wanted to DDoS something? Well today is your lucky day!")
+    @commands.command(name="ddos", description="You ever wanted to DDoS something? Well today is your lucky day!")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def ddos(self, ctx, *, name):
         """
@@ -43,7 +43,7 @@ class oneLine(commands.Cog):
         await ctx.send(f"DDoSing {name}")
 
     @commands.check(command.isAllowed)
-    @commands.command(name="rate", help="Random integer rating out of 10.", aliases=['rating'])
+    @commands.command(name="rate", description="Random integer rating out of 10.", aliases=['rating'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def rate(self, ctx):
         """
