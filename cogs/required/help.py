@@ -35,9 +35,9 @@ class SetupHelp(commands.MinimalHelpCommand):
         
     async def send_command_help(self, command):
         embed = emb.make(command.name, command.help)
-        # embed.add_field(name="Usage", value=f"{queryPrefix.prefix(self.context.guild.id)}{command.full_parent_name} {command.name}", inline=False)
+        embed.add_field(name="Usage", value=f"{queryPrefix.prefix(self.context.guild.id)}{command.full_parent_name} {command.name}", inline=False)
         embed.add_field(name="Aliases", value=f"{command.aliases}", inline=False)
-        embed.set_footer(text=f"Cog: {command.cog.name}")
+        # embed.set_footer(text=f"Cog: {command.cog.name}")
         await self.context.send(embed=embed)
 
     async def send_bot_help(self, mapping):
