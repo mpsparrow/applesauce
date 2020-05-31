@@ -20,7 +20,7 @@ def isAllowed(ctx):
         runLog.info("2")
         value = queryCogGuild.status(guildID, cogName)
         print(value)
-        value2 = not(queryIgnore.status(guildID, author)
+        value2 = not(queryIgnore.status(guildID, author))
         print(value2)
     except Exception:
         runLog.error("isAllowed error (checks.command)")
