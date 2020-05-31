@@ -38,13 +38,16 @@ class SetupHelp(commands.MinimalHelpCommand):
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command>`")
 
         for x in self.context.bot.cogs:
+            print(x)
             cmdString = ""
             for y in set(self.context.bot.walk_commands()):
+                print(y)
                 if (y.cog_name == x):
                     cmdString += f"`{y}`, "
 
             if len(cmdString) == 0:
                 cmdStrong = "No Commands Enabled  "
+                
             embed.add_field(name=x, value=cmdString[:-2], inline=False)
 
         await self.context.send(embed=embed)
