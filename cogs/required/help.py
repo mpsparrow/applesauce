@@ -40,7 +40,9 @@ class SetupHelp(commands.MinimalHelpCommand):
             try:
                 await cmd.can_run(self.context)
                 print(cmd.cog_name)
-                if queryCogGuild.status(self.context.guild.id, str(cmd.cog_name)):
+                x = queryCogGuild.status(self.context.guild.id, cmd.cog_name)
+                print(x)
+                if x:
                     cmds.append(str(cmd))
             except:
                 pass
