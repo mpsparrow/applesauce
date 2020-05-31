@@ -17,12 +17,18 @@ def prefix(guildID: int):
     try:
         q = f"""SELECT prefix FROM `prefix` WHERE guild_id = {guildID}"""
         data = query.query(q)
-        for i in data:
-            return i[0]
+
+        if len(data) > 0:
+            for i in data:
+                return i[0]
+        else:
+            try:
+                conf = config.readINI('mainConfig.ini')
+                return conf['main']['prefix']
+            except exceptions.configReadError:
+                runLog.error(f"Unable to get prefix {guildID} (queryPrefix.prefix)")
+                raise exceptions.PrefixError
     except exceptions.dbQueryFail:
-        try:
-            conf = config.readINI('mainConfig.ini')
-            return conf['main']['prefix']
-        except exceptions.configReadError:
-            runLog.error(f"Unable to get prefix {guildID} (queryPrefix.prefix)")
-            raise exceptions.PrefixError
+        runLog.error(f"Unable to get prefix {guildID} (queryPrefix.prefix)")
+        raise exceptions.PrefixError
+        

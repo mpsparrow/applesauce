@@ -26,12 +26,7 @@ def get_prefix(bot, message):
     :return: Prefix to use
     :rtype: str
     """
-    try:
-        return queryPrefix.prefix(message.guild.id)
-    except:
-        conf = config.readINI('mainConfig.ini')
-        print("MADE IT HERE")
-        return str(conf['main']['prefix'])
+    return queryPrefix.prefix(message.guild.id)
 
 conf = config.readINI('mainConfig.ini')  # loads config
 botName = conf['main']['botname']  # gets bots name from config
