@@ -49,7 +49,7 @@ class SetupHelp(commands.MinimalHelpCommand):
                 if len(cmdString) > 0:
                     embed.add_field(name=x, value=cmdString[:-2], inline=False)
 
-        embed.set_footer(f"use `{queryPrefix.prefix(self.context.guild.id)}settings` for admin settings")
+        # embed.set_footer(f"use `{queryPrefix.prefix(self.context.guild.id)}settings` for admin settings")
         await self.context.send(embed=embed)
 
 def setup(bot):
