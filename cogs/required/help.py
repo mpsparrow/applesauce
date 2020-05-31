@@ -38,7 +38,7 @@ class SetupHelp(commands.MinimalHelpCommand):
         cmds = []
         for cmd in self.context.bot.walk_commands():
             print(cmd)
-            if not(cmd.hidden) and not(' ' in cmd):
+            if not(cmd.hidden):
                 cmds.append(cmd)
 
         cmdString = ""
