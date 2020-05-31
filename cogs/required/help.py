@@ -14,6 +14,8 @@ class Help(commands.Cog):
         bot.help_command = SetupHelp()
         bot.help_command.cog = self
 
+    
+
 
 class SetupHelp(commands.MinimalHelpCommand):
     """
@@ -38,15 +40,16 @@ class SetupHelp(commands.MinimalHelpCommand):
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command>`")
 
         for x in self.context.bot.cogs:
-            print(x)
-            cmdString = "1  "
-            for y in set(self.context.bot.walk_commands()):
-                if (y.cog_name == x):
-                    print(y)
-                    cmdString += f"`{y}`, "
+            cmdString = ""
+            if not(queryCogGuild.status(ctx.context.guild.id, y)):
+                for y in set(self.context.bot.walk_commands()):
+                    if (y.cog_name == x):
+                        cmdString += f"`{y}`, "
 
-            embed.add_field(name=x, value=cmdString[:-2], inline=False)
+                if len(cmdString) > 0:
+                    embed.add_field(name=x, value=cmdString[:-2], inline=False)
 
+        embed.set_footer(f"use `{queryPrefix.prefix(self.context.guild.id)}settings` for admin settings")
         await self.context.send(embed=embed)
 
 def setup(bot):
