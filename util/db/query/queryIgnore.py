@@ -14,12 +14,12 @@ def status(guildID: int, memberID: int):
     :rtype: bool
     """
     try:
-        query = f"""SELECT is_ignored 
+        q = f"""SELECT is_ignored 
                 FROM `ignore` 
                 WHERE guild_id = %s 
                 AND member_id = %s"""
         values = (guildID, memberID)
-        data = query.queryV(query, values)
+        data = query.queryV(q, values)
     except exceptions.dbQueryFail:
         runLog.error("Failed to check for ignored user. dbQueryFail (queryIgnore.ignore)")
         return True # return True so it disallows the action since an error occured
