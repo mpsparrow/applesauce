@@ -37,20 +37,20 @@ class SetupHelp(commands.MinimalHelpCommand):
         embed = emb.make(command.name, command.description)
 
         if len(command.full_parent_name) == 0:
-            embed.add_field(name="Usage", value=f"{queryPrefix.prefix(self.context.guild.id)}{command.name}", inline=False)
+            embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.name}`", inline=False)
         else:
-            embed.add_field(name="Usage", value=f"{queryPrefix.prefix(self.context.guild.id)}{command.full_parent_name} {command.name}", inline=False)
+            embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.full_parent_name} {command.name}`", inline=False)
 
         if len(command.aliases) > 0:
             aliasStr = ""
             for alias in command.aliases:
-                aliasStr += f"`{alias}, "
+                aliasStr += f"`{alias}`, "
             embed.add_field(name="Aliases", value=f"{aliasStr[:-2]}", inline=False)
         embed.set_footer(text=f"Cog: {command.cog.qualified_name}")
         await self.context.send(embed=embed)
 
     async def send_bot_help(self, mapping):
-        embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command>`")
+        embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command/cog>`")
 
         for x in self.context.bot.cogs:
             cmdString = ""
