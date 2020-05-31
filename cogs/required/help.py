@@ -5,6 +5,7 @@ from util import embed
 
 class Help(commands.Cog):
     def __init__(self, bot):
+        self.bot = bot
         self._original_help_command = bot.help_command
         bot.help_command = Help()
         bot.help_command.cog = self
