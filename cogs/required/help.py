@@ -36,14 +36,13 @@ class SetupHelp(commands.MinimalHelpCommand):
 
     async def send_bot_help(self, mapping):
         cmds = []
-        for cmd in self.context.bot.walk_commands():
-            x = cmd.split(" ")
-            if not(cmd.hidden) and (len(x) == 1):
+        for cmd in set(self.context.bot.walk_commands()):
+            if not(cmd.hidden):
                 print(cmd)
                 cmds.append(cmd)
 
         cmdString = ""
-        for cmd in set(cmds):
+        for cmd in cmds:
             cmdString += f"`{cmd}`, "
 
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command>`")
