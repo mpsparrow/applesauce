@@ -38,10 +38,10 @@ class SetupHelp(commands.MinimalHelpCommand):
         cmds_desc = ''
         for y in self.context.bot.walk_commands():
             if not y.cog_name and not y.hidden:
-                cmds_desc += ('{} - {}'.format(y.name,y.help)+'\n')
+                cmds_desc += y.name + ", "
 
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command>`")
-        embed.add_field(name="Commands", value=cmds_desc[0:len(cmds_desc)-1], inline=False)
+        embed.add_field(name="Commands", value=cmds_desc[:-2], inline=False)
         await self.context.send(embed=embed)
 
 def setup(bot):
