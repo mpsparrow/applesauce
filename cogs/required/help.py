@@ -26,7 +26,7 @@ class SetupHelp(commands.MinimalHelpCommand):
 
     async def send_cog_help(self, cog):
         if queryCogGuild.status(self.context.guild.id, cog.qualified_name):
-            embed = emb.make(cog.name, cog.description)
+            embed = emb.make(cog.qualified_name, cog.description)
 
             for cmd in sorted(cog.commands):
                 embed.add_field(name=cmd.name, value=cmd.description, inline=False)
