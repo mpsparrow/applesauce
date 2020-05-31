@@ -2,7 +2,7 @@
 Bot Name: Applesauce
 Created By: Matthew
 Version: v2.0
-Last Updated: May 18, 2020
+Last Updated: May 31, 2020
 Created On: October 12, 2019
 
 Please read license.txt for license information

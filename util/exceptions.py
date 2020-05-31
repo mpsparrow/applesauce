@@ -15,8 +15,7 @@ class dbConnectionFail(Exception):
     def __str__(self):
         if self.message:
             return 'dbConnectionFail, {0} '.format(self.message)
-        else:
-            return 'dbConnectionFail has been raised'
+        return 'dbConnectionFail has been raised'
 
 class dbCommitFail(Exception):
     """
@@ -31,8 +30,7 @@ class dbCommitFail(Exception):
     def __str__(self):
         if self.message:
             return 'dbCommitFail, {0} '.format(self.message)
-        else:
-            return 'dbCommitFail has been raised'
+        return 'dbCommitFail has been raised'
 
 class dbQueryFail(Exception):
     """
@@ -47,8 +45,7 @@ class dbQueryFail(Exception):
     def __str__(self):
         if self.message:
             return 'dbQueryFail, {0} '.format(self.message)
-        else:
-            return 'dbQueryFail has been raised'
+        return 'dbQueryFail has been raised'
 
 class dbTableCreationFail(Exception):
     """
@@ -63,8 +60,7 @@ class dbTableCreationFail(Exception):
     def __str__(self):
         if self.message:
             return 'dbTableCreationFail, {0} '.format(self.message)
-        else:
-            return 'dbTableCreationFail has been raised'
+        return 'dbTableCreationFail has been raised'
 
 class configReadError(Exception):
     """
@@ -79,8 +75,7 @@ class configReadError(Exception):
     def __str__(self):
         if self.message:
             return 'configReadError, {0} '.format(self.message)
-        else:
-            return 'configReadError has been raised'
+        return 'configReadError has been raised'
 
 class configWriteError(Exception):
     """
@@ -95,8 +90,7 @@ class configWriteError(Exception):
     def __str__(self):
         if self.message:
             return 'configWriteError, {0} '.format(self.message)
-        else:
-            return 'configWriteError has been raised'
+        return 'configWriteError has been raised'
 
 class CogNotFound(Exception):
     """
@@ -111,8 +105,7 @@ class CogNotFound(Exception):
     def __str__(self):
         if self.message:
             return 'CogNotFound, {0} '.format(self.message)
-        else:
-            return 'CogNotFound has been raised'
+        return 'CogNotFound has been raised'
 
 class CogInsertFail(Exception):
     """
@@ -127,8 +120,7 @@ class CogInsertFail(Exception):
     def __str__(self):
         if self.message:
             return 'CogInsertFail, {0} '.format(self.message)
-        else:
-            return 'CogInsertFail has been raised'
+        return 'CogInsertFail has been raised'
 
 class PrefixError(Exception):
     """
@@ -143,5 +135,4 @@ class PrefixError(Exception):
     def __str__(self):
         if self.message:
             return 'PrefixError, {0} '.format(self.message)
-        else:
-            return 'PrefixError has been raised'
+        return 'PrefixError has been raised'
