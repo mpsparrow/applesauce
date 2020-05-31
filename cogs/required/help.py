@@ -35,28 +35,18 @@ class SetupHelp(commands.MinimalHelpCommand):
         await self.context.send("command help")
 
     async def send_bot_help(self, mapping):
-        cmds = []
-        for cmd in set(self.context.bot.walk_commands()):
-            try:
-                await cmd.can_run(self.context)
-                print(cmd.cog_name)
-                x = queryCogGuild.status(self.context.guild.id, cmd.cog_name)
-                print(x)
-                if x:
-                    cmds.append(str(cmd))
-            except:
-                pass
-
-        cmdString = ""
-        for cmd in sorted(cmds):
-            if (" " not in str(cmd)):
-                cmdString += f"`{cmd}`, "
-
-        if len(cmdString) == 0:
-            cmdStrong = "No Commands Enabled"
-
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command>`")
-        embed.add_field(name="Commands", value=cmdString[:-2], inline=False)
+
+        for x in self.context.bot.cogs:
+            cmdString = ""
+            for y in set(self.context.bot.walk_commands()):
+                if (y.cog_name == x):
+                    cmdString += f"`{y}`, "
+
+            if len(cmdString) == 0:
+                cmdStrong = "No Commands Enabled  "
+            embed.add_field(name=x, value=cmdString[:-2], inline=False)
+
         await self.context.send(embed=embed)
 
 def setup(bot):
