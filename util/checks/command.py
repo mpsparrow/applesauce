@@ -13,9 +13,9 @@ def isAllowed(ctx):
     """
     try:
         guildID = ctx.guild.id
-        cogName = ctx.command.cog.qualified_name
+        cogName = ctx.command.cog.name
         author = ctx.message.author.id
-        value = queryCogGuild.status(guildID, cogName) # and not(queryIgnore.status(guildID, author))
+        value = queryCogGuild.status(guildID, cogName) and not(queryIgnore.status(guildID, author))
     except Exception:
         runLog.error("isAllowed error (checks.command)")
         return False
