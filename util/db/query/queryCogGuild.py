@@ -14,12 +14,12 @@ def status(guildID: int, cogName: str):
     :rtype: bool
     """
     try:
-        query = f"""SELECT is_enabled 
+        q = f"""SELECT is_enabled 
                 FROM `cogs_guild` 
                 WHERE guild_id = %s 
                 AND cog_name = %s"""
         values = (guildID, cogName)
-        data = query.queryV(query, values)
+        data = query.queryV(q, values)
     except exceptions.dbQueryFail:
         runLog.error("Failed to check for cog status. dbQueryFail (queryCogGuild.enabled)")
         return False # return False so it disallows the action since an error occured
