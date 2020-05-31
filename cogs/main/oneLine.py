@@ -14,7 +14,6 @@ class oneLine(commands.Cog):
         self.bot = bot
 
     # chance (command)
-    @commands.check(command.isAllowed)
     @commands.command(name="chance", description="Random integer between 0 and 100 (displayed as percent)", usage="chance")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def chance(self, ctx):

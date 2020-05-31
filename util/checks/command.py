@@ -5,6 +5,7 @@ from util.db.query import queryIgnore, queryCogGuild
 from util.log import runLog
 
 def isAllowed(ctx):
+    runLog.info("test")
     """
     Authorizes commands. Checks if author is ignored on guild. Checks if cog is enabled on guild.
     :param ctx: Context
@@ -12,11 +13,11 @@ def isAllowed(ctx):
     :rtype: bool
     """
     try:
-        print("1")
+        runLog.info("1")
         guildID = ctx.guild.id
         cogName = ctx.command.cog
         author = ctx.message.author.id
-        print("2")
+        runLog.info("2")
         value = queryCogGuild.status(guildID, cogName)
         print(value)
         value2 = not(queryIgnore.status(guildID, author)
