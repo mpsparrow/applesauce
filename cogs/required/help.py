@@ -34,7 +34,10 @@ class SetupHelp(commands.MinimalHelpCommand):
         await self.context.send("Group help")
         
     async def send_command_help(self, command):
-        await self.context.send("command help")
+        embed = emb.make(command.name, command.help)
+        embed.add_field(name="Usage", value=command.usage, inline=False)
+        embed.set_footer(text=f"Cog: {command.cog}")
+        await self.context.send(embed=embed)
 
     async def send_bot_help(self, mapping):
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command>`")
