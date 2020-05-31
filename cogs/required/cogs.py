@@ -4,16 +4,12 @@ from discord.ext.commands import has_permissions
 from util.log import runLog
 from util.db.insert import insertCogList
 
-class cogManage(commands.Cog, name="Cog Management"):
+class cogManage(commands.Cog, name="Cog Management (owner)"):
     """
     Cog containing main owner commands for controlling cogs.
     """
     
     def __init__(self, bot):
-        """
-        Constructor
-        :param bot:
-        """
         self.bot = bot
 
     @commands.group(name="cog", description="Controlling cogs at owner level.", usage="cog <action> <cog name>", aliases=["c"])
