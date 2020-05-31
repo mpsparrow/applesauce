@@ -7,11 +7,10 @@ class oneLine(commands.Cog, name="Simple 'one-line' Commands"):
     """
     Cog containing simple 'one-line' commands.
     """
-    
+
     def __init__(self, bot):
         self.bot = bot
 
-    # chance (command)
     @commands.check(command.isAllowed)
     @commands.command(name="chance", help="Random integer between 0 and 100 (displayed as percent)")
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -22,7 +21,6 @@ class oneLine(commands.Cog, name="Simple 'one-line' Commands"):
         """
         await ctx.send(f'{random.randint(0, 100)}% chance')
 
-    # coin (command)
     @commands.check(command.isAllowed)
     @commands.command(name="coin", help="Flips a coin and returns heads or tails.")
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -33,7 +31,6 @@ class oneLine(commands.Cog, name="Simple 'one-line' Commands"):
         """
         await ctx.send(random.choice(['Heads', 'Tails']))
         
-    # DDOS (command)
     @commands.check(command.isAllowed)
     @commands.command(name="ddos", help="You ever wanted to DDoS something? Well today is your lucky day!")
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -45,7 +42,6 @@ class oneLine(commands.Cog, name="Simple 'one-line' Commands"):
         """
         await ctx.send(f"DDoSing {name}")
 
-    # rate (command)
     @commands.check(command.isAllowed)
     @commands.command(name="rate", help="Random integer rating out of 10.", aliases=['rating'])
     @commands.cooldown(1, 5, commands.BucketType.user)
