@@ -36,7 +36,7 @@ class SetupHelp(commands.MinimalHelpCommand):
     async def send_command_help(self, command):
         embed = emb.make(command.name, command.help)
         embed.add_field(name="Usage", value=f"{queryPrefix.prefix(self.context.guild.id)}{command.full_parent_name} {command.name}", inline=False)
-        embed.add_field(name="Aliases", value=f"{command.aliases}", inline=False)
+        # embed.add_field(name="Aliases", value=f"{command.aliases}", inline=False)
         embed.set_footer(text=f"Cog: {command.cog.name}")
         await self.context.send(embed=embed)
 
@@ -45,8 +45,7 @@ class SetupHelp(commands.MinimalHelpCommand):
 
         for x in self.context.bot.cogs:
             cmdString = ""
-            if x.enabled:
-                # if queryCogGuild.status(self.context.guild.id, x):
+            if queryCogGuild.status(self.context.guild.id, x):
                 for y in set(self.context.bot.walk_commands()):
                     if (y.cog_name == x) and (" " not in str(y)):
                         cmdString += f"`{y}`, "
