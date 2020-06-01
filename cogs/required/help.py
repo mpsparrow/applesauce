@@ -14,6 +14,8 @@ class Help(commands.Cog):
         bot.help_command.cog = self
 
 
+mainCogs = ["Debug", "cogManage", "cogGuild", "Prefix"]
+
 class SetupHelp(commands.MinimalHelpCommand):
     """
     Main help command.
@@ -25,7 +27,7 @@ class SetupHelp(commands.MinimalHelpCommand):
         await self.context.send(embed=emb.make_error("Sub-command not found."))
 
     async def send_cog_help(self, cog):
-        if queryCogGuild.status(self.context.guild.id, cog.qualified_name):
+        if queryCogGuild.status(self.context.guild.id, cog.qualified_name) or (cog.qualified_name in mainCogs):
             embed = emb.make(cog.qualified_name, cog.description)
 
             for cmd in cog.walk_commands():
@@ -36,7 +38,7 @@ class SetupHelp(commands.MinimalHelpCommand):
             await self.context.send(embed=emb.make_error("Cog not found.")) 
 
     async def send_group_help(self, group):
-        if queryCogGuild.status(self.context.guild.id, group.cog_name):
+        if queryCogGuild.status(self.context.guild.id, group.cog_name) or (group.cog_name in mainCogs):
             embed = emb.make(group.name, group.description)
 
             for cmd in sorted(group.commands):
@@ -47,7 +49,7 @@ class SetupHelp(commands.MinimalHelpCommand):
             await self.context.send(embed=emb.make_error("Command not found.")) 
 
     async def send_command_help(self, command):
-        if queryCogGuild.status(self.context.guild.id, command.cog_name):
+        if queryCogGuild.status(self.context.guild.id, command.cog_name) or (command.cog_name in mainCogs):
             embed = emb.make(command.name, command.description)
 
             if len(command.full_parent_name) == 0:
@@ -71,7 +73,7 @@ class SetupHelp(commands.MinimalHelpCommand):
 
         for x in self.context.bot.cogs:
             cmdString = ""
-            if queryCogGuild.status(self.context.guild.id, x):
+            if queryCogGuild.status(self.context.guild.id, x) or (x in mainCogs):
                 for y in set(self.context.bot.walk_commands()):
                     if (y.cog_name == x) and (" " not in str(y)):
                         cmdString += f"`{y}`, "
