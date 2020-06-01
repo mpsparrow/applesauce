@@ -30,42 +30,62 @@ class SetupHelp(commands.MinimalHelpCommand):
         if queryCogGuild.status(self.context.guild.id, cog.qualified_name) or (cog.qualified_name in mainCogs):
             embed = emb.make(f"Cog: {cog.qualified_name}", cog.description)
 
+            count = 0
+
             for cmd in cog.walk_commands():
-                embed.add_field(name=cmd.name, value=cmd.description, inline=False)
-                
-            await self.context.send(embed=embed)
+                try:
+                    await cmd.can_run(self.context)
+                    embed.add_field(name=cmd.name, value=cmd.description, inline=False)
+                    count += 1
+                except CommandError:
+                    pass
+            
+            if count > 0:
+                await self.context.send(embed=embed)
+            else:
+                await self.context.send(embed=emb.make_error("Cog not found."))
         else:
             await self.context.send(embed=emb.make_error("Cog not found.")) 
 
     async def send_group_help(self, group):
-        if queryCogGuild.status(self.context.guild.id, group.cog_name) or (group.cog_name in mainCogs):
-            embed = emb.make(f"Command Group: {group.qualified_name}", "test")
+        try:
+            await command.can_run(self.context)
 
-            for cmd in group.walk_commands():
-                embed.add_field(name=cmd.name, value=cmd.description, inline=False)
-                
-            await self.context.send(embed=embed)
-        else:
-            await self.context.send(embed=emb.make_error("Group not found.")) 
+            if queryCogGuild.status(self.context.guild.id, group.cog_name) or (group.cog_name in mainCogs):
+                embed = emb.make(f"Command Group: {group.qualified_name}", "test")
+
+                for cmd in group.walk_commands():
+                    embed.add_field(name=cmd.name, value=cmd.description, inline=False)
+                    
+                await self.context.send(embed=embed)
+            else:
+                await self.context.send(embed=emb.make_error("Group not found.")) 
+        except CommandError:
+            await self.context.send(embed=emb.make_error("Group not found."))
 
     async def send_command_help(self, command):
-        if queryCogGuild.status(self.context.guild.id, command.cog_name) or (command.cog_name in mainCogs):
-            embed = emb.make(f"Command: {command.name}", command.description)
+        try:
+            await command.can_run(self.context)
 
-            if len(command.full_parent_name) == 0:
-                embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.name}`", inline=False)
+            if queryCogGuild.status(self.context.guild.id, command.cog_name) or (command.cog_name in mainCogs):
+                embed = emb.make(f"Command: {command.name}", command.description)
+
+                if len(command.full_parent_name) == 0:
+                    embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.name}`", inline=False)
+                else:
+                    embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.full_parent_name} {command.name}`", inline=False)
+
+                if len(command.aliases) > 0:
+                    aliasStr = ""
+                    for alias in command.aliases:
+                        aliasStr += f"`{alias}`, "
+                    embed.add_field(name="Aliases", value=f"{aliasStr[:-2]}", inline=False)
+
+                embed.set_footer(text=f"Cog: {command.cog_name}")
+                await self.context.send(embed=embed)
             else:
-                embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.full_parent_name} {command.name}`", inline=False)
-
-            if len(command.aliases) > 0:
-                aliasStr = ""
-                for alias in command.aliases:
-                    aliasStr += f"`{alias}`, "
-                embed.add_field(name="Aliases", value=f"{aliasStr[:-2]}", inline=False)
-
-            embed.set_footer(text=f"Cog: {command.cog_name}")
-            await self.context.send(embed=embed)
-        else:
+                await self.context.send(embed=emb.make_error("Command not found.")) 
+        except CommandError:
             await self.context.send(embed=emb.make_error("Command not found.")) 
 
     async def send_bot_help(self, mapping):
@@ -79,7 +99,7 @@ class SetupHelp(commands.MinimalHelpCommand):
                         await y.can_run(self.context)
                         if (y.cog_name == x) and (" " not in str(y)):
                             cmdString += f"`{y}`, "
-                    except:
+                    except CommandError:
                         pass
 
                 if len(cmdString) > 0:
