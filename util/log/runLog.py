@@ -25,7 +25,7 @@ def error(msg: str, console=False):
     :param str msg: Message to log
     :param console: log in console
     """
-    l.write(getFile(), msg, tag="[ERROR]", console=console)
+    l.write(getFile(), msg, tag="[ERROR]", console=console, tagcolor="red")
 
 def warn(msg: str, console=False):
     """
@@ -33,7 +33,7 @@ def warn(msg: str, console=False):
     :param str msg: Message to log
     :param console: log in console
     """
-    l.write(getFile(), msg, tag="[WARN]", console=console)
+    l.write(getFile(), msg, tag="[WARN]", console=console, tagcolor="yellow")
 
 def info(msg: str, console=False):
     """
