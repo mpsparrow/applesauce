@@ -32,7 +32,6 @@ def write(filename: str, msg: str, tag="", start="", showdate=True, console=Fals
             if tagcolor is "":
                 print(f"{start}{tag.upper()} {msg}")
             else:
-                print("1")
                 print(f"{start}{colored(tag.upper(), tagcolor)} {msg}")
     log.close()
 
