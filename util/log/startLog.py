@@ -41,7 +41,7 @@ def info(msg: str, console=False):
     :param str msg: Message to log
     :param console: log in console
     """
-    l.write(getFile(), msg, tag="[INFO]", console=console)
+    l.write(getFile(), msg, tag="[INFO]", console=console, tagcolor="cyan")
 
 def proceed(msg: str, console=False):
     """
@@ -57,7 +57,7 @@ def skip(msg: str, console=False):
     :param str msg: Message to log
     :param console: log in console
     """
-    l.write(getFile(), msg, tag="[SKIP]", console=console)
+    l.write(getFile(), msg, tag="[SKIP]", console=console, tagcolor="grey")
 
 def debug(msg: str, console=False):
     """
@@ -65,7 +65,7 @@ def debug(msg: str, console=False):
     :param str msg: Message to log
     :param console: log in console
     """
-    l.write(getFile(), msg, tag="[DEBUG]", console=console)
+    l.write(getFile(), msg, tag="[DEBUG]", console=console,, tagcolor="blue")
 
 def custom(msg: str, thistag="", thisstart="", console=False):
     """
