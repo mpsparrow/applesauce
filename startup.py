@@ -21,10 +21,6 @@ from util.db.insert import insertCogList
 from util import config, exceptions
 
 startLog.info("Booting...\n", console=True)
-started = False
-
-# starts timer to keep track of startup time
-startTime = time.time()
 
 def get_prefix(bot, message):
     """
@@ -41,7 +37,14 @@ bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
 @bot.event
 async def on_ready():
-    if started == False:
+    try:
+        startCount += 1
+    except NameError:
+        startCount = 0
+
+    if startCount == 0:
+        # starts timer to keep track of startup time
+        startTime = time.time()
         # makes sure logs folder is created
         if not os.path.exists("logs"):
             os.mkdir("logs")
@@ -115,7 +118,7 @@ async def on_ready():
             startLog.info(f'Success: {countSuccess}  Failed: {countFail}  Skipped: {countSkip}\n', console=True)
             startLog.info(f'{botName} is ready to rumble!', console=True)
             startLog.info(f'Initialized in {int((time.time() - startTime)*1000)}ms', console=True)
-            started = True
+            startCount += 1
 
 # Starts bot with Discord token from mainConfig.ini
 bot.run(conf['main']['discordToken'])
