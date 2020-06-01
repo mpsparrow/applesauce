@@ -91,6 +91,8 @@ class SetupHelp(commands.MinimalHelpCommand):
     async def send_bot_help(self, mapping):
         embed = emb.make("Help", f"Specify a command/cog to get further information `{queryPrefix.prefix(self.context.guild.id)}help <command/cog>`")
 
+        manageCmdString = ""
+
         for x in self.context.bot.cogs:
             cmdString = ""
             if queryCogGuild.status(self.context.guild.id, x) or (x in mainCogs):
@@ -98,12 +100,18 @@ class SetupHelp(commands.MinimalHelpCommand):
                     try:
                         await y.can_run(self.context)
                         if (y.cog_name == x) and (" " not in str(y)):
-                            cmdString += f"`{y}`, "
+                            if y.cog_name in mainCogs:
+                                manageCmdString += f"`{y}`, "
+                            else:
+                                cmdString += f"`{y}`, "
                     except:
                         pass
 
                 if len(cmdString) > 0:
                     embed.add_field(name=x, value=cmdString[:-2], inline=False)
+
+        if len(manageCmdString) > 0:
+            embed.add_field(name="Manage Commands", value=manageCmdString[:-2], inline=False)
 
         await self.context.send(embed=embed)
 

@@ -1,5 +1,3 @@
-# Prefix cog
-# Prefix changing commands
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
@@ -7,6 +5,9 @@ from util.db.insert import insertPrefix
 from util import exceptions
 
 class Prefix(commands.Cog):
+    """
+    Prefix changing and management.
+    """
     def __init__(self, bot):
         self.bot = bot
 
