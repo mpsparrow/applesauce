@@ -65,7 +65,7 @@ def debug(msg: str, console=False):
     :param str msg: Message to log
     :param console: log in console
     """
-    l.write(getFile(), msg, tag="[DEBUG]", console=console,, tagcolor="blue")
+    l.write(getFile(), msg, tag="[DEBUG]", console=console, tagcolor="blue")
 
 def custom(msg: str, thistag="", thisstart="", console=False):
     """
