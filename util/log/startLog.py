@@ -57,7 +57,7 @@ def skip(msg: str, console=False):
     :param str msg: Message to log
     :param console: log in console
     """
-    l.write(getFile(), msg, tag="[SKIP]", console=console, tagcolor="grey")
+    l.write(getFile(), msg, tag="[SKIP]", console=console, tagcolor="magenta")
 
 def debug(msg: str, console=False):
     """
@@ -67,11 +67,12 @@ def debug(msg: str, console=False):
     """
     l.write(getFile(), msg, tag="[DEBUG]", console=console, tagcolor="blue")
 
-def custom(msg: str, thistag="", thisstart="", console=False):
+def custom(msg: str, thistag="", thisstart="", console=False, tagcolor=""):
     """
     Custom tag log function.
     :param str msg: Message to log
     :param str tag: Tag name (i.e tag="[foo]" produces [FOO])
     :param console: log in console
+    :param str tagcolor: color of tag
     """
-    l.write(getFile(), msg, tag=thistag, start=thisstart, console=console)
+    l.write(getFile(), msg, tag=thistag, start=thisstart, console=console, tagcolor=tagcolor)

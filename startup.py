@@ -45,7 +45,7 @@ async def on_ready():
     if startCount == 0:
         # starts timer to keep track of startup time
         startTime = time.time()
-        
+
         # makes sure logs folder is created
         if not os.path.exists("logs"):
             os.mkdir("logs")
@@ -61,7 +61,7 @@ async def on_ready():
             startLog.error("Startup aborted", console=True)
         else:
             # writes startup information to startup-log.txt
-            startLog.custom(f'Starting {botName}', "[info]", "\n", console=True)
+            startLog.custom(f'Starting {botName}', "[info]", "\n", console=True, tagcolor="cyan")
             startLog.debug(f'discord.py {discord.__version__}', console=True)
             startLog.debug(f'Python {sys.version[:6]}', console=True)
             startLog.debug(f'OS {sys.platform}', console=True)
@@ -69,7 +69,7 @@ async def on_ready():
             # Requires Cogs loading
             # Any file in /cogs/required is considered a required cog
             # These files must ALL be loaded in order for the bot to continue initializing
-            startLog.custom('Initializing Required Cogs', "[info]", "\n", console=True)
+            startLog.custom('Initializing Required Cogs', "[info]", "\n", console=True, tagcolor="cyan")
             for required in os.listdir('./cogs/required'):
                 if required.endswith('.py'):
                     try:
@@ -84,7 +84,7 @@ async def on_ready():
             # Main loading
             # Any file in /cogs/main is considered a cog
             # These files are attempted to be loaded. If a file errors then it is skipped and initializing continues
-            startLog.custom('Initializing Cogs', "[info]", "\n", console=True)
+            startLog.custom('Initializing Cogs', "[info]", "\n", console=True, tagcolor="cyan")
             countSuccess = 0
             countFail = 0
             countSkip = 0
