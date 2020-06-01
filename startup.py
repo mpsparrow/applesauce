@@ -19,6 +19,8 @@ from util.log import startLog, log
 from util.db.query import queryPrefix, queryCogList
 from util.db.insert import insertCogList
 from util import config, exceptions
+from termcolor import colored
+
 
 startLog.info("Booting...\n", console=True)
 
@@ -43,6 +45,9 @@ async def on_ready():
         startCount = 0
 
     if startCount == 0:
+
+        print(colored('hello', 'red'), colored('world', 'green'))
+
         # starts timer to keep track of startup time
         startTime = time.time()
         # makes sure logs folder is created
