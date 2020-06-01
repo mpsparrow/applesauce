@@ -20,6 +20,8 @@ from util.db.query import queryPrefix, queryCogList
 from util.db.insert import insertCogList
 from util import config, exceptions
 
+startLog.info("Booting...\n", console=True)
+
 def get_prefix(bot, message):
     """
     Gets prefix for specific guild
@@ -35,8 +37,6 @@ bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
 @bot.event
 async def on_ready():
-    startLog.info("Booting...\n", console=True)
-
     # starts timer to keep track of startup time
     startTime = time.time()
 

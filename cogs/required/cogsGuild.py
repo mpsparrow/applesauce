@@ -14,7 +14,7 @@ class cogGuild(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.is_owner()
+    @commands.has_permissions(manage_guild=True)
     async def disableCog(self, ctx, cog):
         """
         Disable the use of the cog in specific guild.
@@ -35,7 +35,7 @@ class cogGuild(commands.Cog):
             await ctx.message.add_reaction("❌")
 
     @commands.command()
-    @commands.is_owner()
+    @commands.has_permissions(manage_guild=True)
     async def enableCog(self, ctx, *, cog):
         """
         Enable the use of the cog in specific guild.
