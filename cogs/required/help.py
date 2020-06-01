@@ -111,7 +111,7 @@ class SetupHelp(commands.MinimalHelpCommand):
                     embed.add_field(name=x, value=cmdString[:-2], inline=False)
 
         if len(manageCmdString) > 0:
-            embed.add_field(name="Manage Commands", value=manageCmdString[:-2], inline=False)
+            embed.add_field(name="Management Commands", value=manageCmdString[:-2], inline=False)
 
         await self.context.send(embed=embed)
 

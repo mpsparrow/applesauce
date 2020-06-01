@@ -25,14 +25,6 @@ class Debug(commands.Cog):
         conf = config.readINI('mainConfig.ini')
         await ctx.send(f"```{log.read(conf['logs']['start'])}```")
 
-    @commands.command(name="ping", help="Pings the bot.")
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    async def ping(self, ctx):
-        """
-        Command to ping the bot.
-        """
-        await ctx.send('pong!')
-
     @commands.command(name="debug", help="Versions and other debug information.")
     @commands.is_owner()
     async def debug(self, ctx):

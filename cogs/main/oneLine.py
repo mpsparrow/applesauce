@@ -32,7 +32,7 @@ class oneLine(commands.Cog):
         await ctx.send(random.choice(['Heads', 'Tails']))
         
     @commands.check(command.isAllowed)
-    @commands.command(name="ddos", description="You ever wanted to DDoS something? Well today is your lucky day!")
+    @commands.command(name="ddos", description="You ever wanted to DDoS something? Well today is your lucky day!", usage="ddos <text>")
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def ddos(self, ctx, *, name):
         """
@@ -51,6 +51,14 @@ class oneLine(commands.Cog):
         :param ctx:
         """
         await ctx.send(f'{random.randint(0,10)}/10')
+
+    @commands.command(name="ping", description="Pings the bot.")
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    async def ping(self, ctx):
+        """
+        Command to ping the bot.
+        """
+        await ctx.send('pong!')
 
 def setup(bot):
     bot.add_cog(oneLine(bot))
