@@ -30,7 +30,7 @@ class SetupHelp(commands.MinimalHelpCommand):
         if queryCogGuild.status(self.context.guild.id, cog.qualified_name) or (cog.qualified_name in mainCogs):
             embed = emb.make(cog.qualified_name, cog.description)
 
-            for cmd in cog.walk_commands():
+            for cmd in sorted(list(set(cog.walk_commands()))):
                 embed.add_field(name=cmd.name, value=cmd.description, inline=False)
                 
             await self.context.send(embed=embed)
@@ -39,7 +39,7 @@ class SetupHelp(commands.MinimalHelpCommand):
 
     async def send_group_help(self, group):
         if queryCogGuild.status(self.context.guild.id, group.cog_name) or (group.cog_name in mainCogs):
-            embed = emb.make(group.name, group.description)
+            embed = emb.make(group.qualified_name, group.short_doc)
 
             for cmd in sorted(group.commands):
                 embed.add_field(name=cmd.name, value=cmd.description, inline=False)
