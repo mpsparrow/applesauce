@@ -21,6 +21,7 @@ class cogManage(commands.Cog):
         """
 
     @cog.command(name="enable", description="Enable loading of cog on bot startup.", usage="cog enable <cog name>", aliases=["e"])
+    @commands.is_owner()
     async def enable(self, ctx, name):
         """
         Enable loading of cog on bot startup by setting value in DB to True.
@@ -38,6 +39,7 @@ class cogManage(commands.Cog):
             await ctx.message.add_reaction("✅")
 
     @cog.command(name="disable", description="Disable loading of cog on bot startup.", usage="cog disable <cog name>", aliases=["d"])
+    @commands.is_owner()
     async def disable(self, ctx, name):
         """
         Disable loading of cog on bot startup by setting value in DB to False.
@@ -55,6 +57,7 @@ class cogManage(commands.Cog):
             await ctx.message.add_reaction("✅")
 
     @cog.command(name="load", description="Load cog while bot is running.", usage="cog load <cog name>", aliases=["l"])
+    @commands.is_owner()
     async def load(self, ctx, name):
         """
         Load cog while bot is running.
@@ -89,6 +92,7 @@ class cogManage(commands.Cog):
             await ctx.message.add_reaction("✅")
 
     @cog.command(name="unload", description="Unload cog while bot is running.", usage="cog unload <cog name>", aliases=["u"])
+    @commands.is_owner()
     async def unload(self, ctx, name):
         """
         Unload cog while bot is running.
@@ -109,6 +113,7 @@ class cogManage(commands.Cog):
             await ctx.message.add_reaction("✅")   
 
     @cog.command(name="reload", description="Reload cog while bot is running.", usage="cog reload <cog name>", aliases=["r"])
+    @commands.is_owner()
     async def reload(self, ctx, name):
         """
         Reload cog while bot is running.
