@@ -5,7 +5,7 @@ import datetime
 from util import config
 from termcolor import colored
 
-def write(filename: str, msg: str, tag="", start="", showdate=True, console=False, tagcolor: str = None):
+def write(filename: str, msg: str, tag="", start="", showdate=True, console=False, tagcolor=""):
     """
     Write to selected log file.
     :param str filename: txt file name
@@ -31,9 +31,11 @@ def write(filename: str, msg: str, tag="", start="", showdate=True, console=Fals
     else:
         log.write(f"{start}{tag.upper()} {msg}\n")
         if console and enableConsole:
-            if tagcolor is None:
+            if len(tagcolor) == 0:
+                print("0")
                 print(f"{start}{tag.upper()} {msg}")
             else:
+                print("1")
                 print(f"{start}{colored(tag.upper(), tagcolor)} {msg}")
     log.close()
 
