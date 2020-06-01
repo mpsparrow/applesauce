@@ -28,7 +28,7 @@ class SetupHelp(commands.MinimalHelpCommand):
 
     async def send_cog_help(self, cog):
         if queryCogGuild.status(self.context.guild.id, cog.qualified_name) or (cog.qualified_name in mainCogs):
-            embed = emb.make(cog.qualified_name, cog.description)
+            embed = emb.make(f"Cog: {cog.qualified_name}", cog.description)
 
             for cmd in cog.walk_commands():
                 embed.add_field(name=cmd.name, value=cmd.description, inline=False)
@@ -39,18 +39,18 @@ class SetupHelp(commands.MinimalHelpCommand):
 
     async def send_group_help(self, group):
         if queryCogGuild.status(self.context.guild.id, group.cog_name) or (group.cog_name in mainCogs):
-            embed = emb.make(group.qualified_name, "test")
+            embed = emb.make(f"Command Group: {group.qualified_name}", "test")
 
             for cmd in group.walk_commands():
                 embed.add_field(name=cmd.name, value=cmd.description, inline=False)
                 
             await self.context.send(embed=embed)
         else:
-            await self.context.send(embed=emb.make_error("Command not found.")) 
+            await self.context.send(embed=emb.make_error("Group not found.")) 
 
     async def send_command_help(self, command):
         if queryCogGuild.status(self.context.guild.id, command.cog_name) or (command.cog_name in mainCogs):
-            embed = emb.make(command.name, command.description)
+            embed = emb.make(f"Command: {command.name}", command.description)
 
             if len(command.full_parent_name) == 0:
                 embed.add_field(name="Usage", value=f"`{queryPrefix.prefix(self.context.guild.id)}{command.name}`", inline=False)
@@ -75,8 +75,12 @@ class SetupHelp(commands.MinimalHelpCommand):
             cmdString = ""
             if queryCogGuild.status(self.context.guild.id, x) or (x in mainCogs):
                 for y in set(self.context.bot.walk_commands()):
-                    if (y.cog_name == x) and (" " not in str(y)):
-                        cmdString += f"`{y}`, "
+                    try:
+                        await y.can_run(self.context)
+                        if (y.cog_name == x) and (" " not in str(y)):
+                            cmdString += f"`{y}`, "
+                    except:
+                        pass
 
                 if len(cmdString) > 0:
                     embed.add_field(name=x, value=cmdString[:-2], inline=False)
