@@ -37,7 +37,7 @@ class SetupHelp(commands.MinimalHelpCommand):
                     await cmd.can_run(self.context)
                     embed.add_field(name=cmd.name, value=cmd.description, inline=False)
                     count += 1
-                except CommandError:
+                except:
                     pass
             
             if count > 0:
@@ -60,7 +60,7 @@ class SetupHelp(commands.MinimalHelpCommand):
                 await self.context.send(embed=embed)
             else:
                 await self.context.send(embed=emb.make_error("Group not found.")) 
-        except CommandError:
+        except:
             await self.context.send(embed=emb.make_error("Group not found."))
 
     async def send_command_help(self, command):
@@ -85,7 +85,7 @@ class SetupHelp(commands.MinimalHelpCommand):
                 await self.context.send(embed=embed)
             else:
                 await self.context.send(embed=emb.make_error("Command not found.")) 
-        except CommandError:
+        except:
             await self.context.send(embed=emb.make_error("Command not found.")) 
 
     async def send_bot_help(self, mapping):
@@ -99,7 +99,7 @@ class SetupHelp(commands.MinimalHelpCommand):
                         await y.can_run(self.context)
                         if (y.cog_name == x) and (" " not in str(y)):
                             cmdString += f"`{y}`, "
-                    except CommandError:
+                    except:
                         pass
 
                 if len(cmdString) > 0:
