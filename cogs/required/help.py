@@ -53,7 +53,7 @@ class SetupHelp(commands.MinimalHelpCommand):
             
             count = 0
 
-            for cmd in sorted(list(set(group.walk_commands()))):
+            for cmd in set(group.walk_commands()):
                 try:
                     await cmd.can_run(self.context)
                     embed.add_field(name=cmd.name, value=cmd.description, inline=False)
