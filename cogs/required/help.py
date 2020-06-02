@@ -49,7 +49,7 @@ class SetupHelp(commands.MinimalHelpCommand):
 
     async def send_group_help(self, group):
         if queryCogGuild.status(self.context.guild.id, group.cog_name) or (group.cog_name in mainCogs):
-            embed = emb.make(f"Command Group: {group.qualified_name}", "test")
+            embed = emb.make(f"Command Group: {group.qualified_name}", group.description)
             
             count = 0
 
