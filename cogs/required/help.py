@@ -53,7 +53,7 @@ class SetupHelp(commands.MinimalHelpCommand):
             
             count = 0
 
-            for cmd in set(group.walk_commands()):
+            for cmd in sorted(list(set(group.walk_commands()))):
                 try:
                     await cmd.can_run(self.context)
                     embed.add_field(name=cmd.name, value=cmd.description, inline=False)
@@ -62,6 +62,11 @@ class SetupHelp(commands.MinimalHelpCommand):
                     pass
             
             if count > 0:
+                if group.cog_name not in mainCogs:
+                    embed.set_footer(text=f"Cog: {group.cog_name}")
+                else:
+                    embed.set_footer(text=f"Management Command")
+
                 await self.context.send(embed=embed)
             else:
                 await self.context.send(embed=emb.make_error("Group not available."))
@@ -86,7 +91,11 @@ class SetupHelp(commands.MinimalHelpCommand):
                         aliasStr += f"`{alias}`, "
                     embed.add_field(name="Aliases", value=f"{aliasStr[:-2]}", inline=False)
 
-                embed.set_footer(text=f"Cog: {command.cog_name}")
+                if command.cog_name not in mainCogs:
+                    embed.set_footer(text=f"Cog: {command.cog_name}")
+                else:
+                    embed.set_footer(text=f"Management Command")
+
                 await self.context.send(embed=embed)
             else:
                 await self.context.send(embed=emb.make_error("Command not available.")) 
