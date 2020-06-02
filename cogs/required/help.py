@@ -53,13 +53,13 @@ class SetupHelp(commands.MinimalHelpCommand):
             
             count = 0
 
-            for cmd in group.walk_commands():
+            for cmd in set(group.walk_commands()):
                 try:
                     await cmd.can_run(self.context)
                     embed.add_field(name=cmd.name, value=cmd.description, inline=False)
                     count += 1
-                except Exception as e:
-                    print(e)
+                except:
+                    pass
             
             if count > 0:
                 await self.context.send(embed=embed)
