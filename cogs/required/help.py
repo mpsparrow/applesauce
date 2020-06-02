@@ -27,7 +27,7 @@ class SetupHelp(commands.MinimalHelpCommand):
         await self.context.send(embed=emb.make_error("Sub-command not found."))
 
     async def send_cog_help(self, cog):
-        if queryCogGuild.status(self.context.guild.id, cog.qualified_name) or (cog.qualified_name in mainCogs):
+        if queryCogGuild.status(self.context.guild.id, cog.qualified_name):
             embed = emb.make(f"Cog: {cog.qualified_name}", cog.description)
 
             count = 0
@@ -43,25 +43,30 @@ class SetupHelp(commands.MinimalHelpCommand):
             if count > 0:
                 await self.context.send(embed=embed)
             else:
-                await self.context.send(embed=emb.make_error("Cog not found."))
+                await self.context.send(embed=emb.make_error("Cog not available."))
         else:
             await self.context.send(embed=emb.make_error("Cog not found.")) 
 
     async def send_group_help(self, group):
-        try:
-            await command.can_run(self.context)
+        if queryCogGuild.status(self.context.guild.id, group.cog_name) or (group.cog_name in mainCogs):
+            embed = emb.make(f"Command Group: {group.qualified_name}", "test")
+            
+            count = 0
 
-            if queryCogGuild.status(self.context.guild.id, group.cog_name) or (group.cog_name in mainCogs):
-                embed = emb.make(f"Command Group: {group.qualified_name}", "test")
-
-                for cmd in group.walk_commands():
+            for cmd in group.walk_commands():
+                try:
+                    await cmd.can_run(self.context)
                     embed.add_field(name=cmd.name, value=cmd.description, inline=False)
-                    
+                    count += 1
+                except Exception as e:
+                    print(e)
+            
+            if count > 0:
                 await self.context.send(embed=embed)
             else:
-                await self.context.send(embed=emb.make_error("Group not found.")) 
-        except:
-            await self.context.send(embed=emb.make_error("Group not found."))
+                await self.context.send(embed=emb.make_error("Group not available."))
+        else:
+            await self.context.send(embed=emb.make_error("Group not found.")) 
 
     async def send_command_help(self, command):
         try:
@@ -84,7 +89,7 @@ class SetupHelp(commands.MinimalHelpCommand):
                 embed.set_footer(text=f"Cog: {command.cog_name}")
                 await self.context.send(embed=embed)
             else:
-                await self.context.send(embed=emb.make_error("Command not found.")) 
+                await self.context.send(embed=emb.make_error("Command not available.")) 
         except:
             await self.context.send(embed=emb.make_error("Command not found.")) 
 
