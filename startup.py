@@ -59,7 +59,7 @@ async def on_ready():
         startLog.debug(f'Python {sys.version[:6]}', console=True)
         startLog.debug(f'OS {sys.platform}', console=True)
         startLog.debug(f'discord.py {discord.__version__}', console=True)
-        startLog.debug(f'mysql.connector {mysql.connector.__version__}', console=True)
+        startLog.debug(f'mysql.connector {mysql-connector-python.__version__}', console=True)
 
         # Requires Cogs loading
         # Any file in /cogs/required is considered a required cog
