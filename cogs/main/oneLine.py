@@ -7,7 +7,6 @@ class oneLine(commands.Cog):
     """
     Simple 'one-line' commands.
     """
-
     def __init__(self, bot):
         self.bot = bot
 
@@ -57,6 +56,7 @@ class oneLine(commands.Cog):
     async def ping(self, ctx):
         """
         Command to ping the bot.
+        :param ctx:
         """
         await ctx.send('pong!')
 

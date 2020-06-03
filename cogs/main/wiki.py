@@ -1,25 +1,27 @@
-'''
-Name: Wikipedia
-Description: Wikipedia command
-'''
-
 import aiohttp
 import asyncio
 import discord
 from discord.ext import commands
-from util import commandchecks
-
+from util.checks import command
 
 class Wiki(commands.Cog):
+    """
+    Wikipedia querying command.
+    """
     def __init__(self, bot):
         self.bot = bot
 
     # wikipedia (command)
-    @commands.check(commandchecks.isAllowed)
-    @commands.command(name="wikipedia", description="Queries Wikipedia and returns summary and link to the page.", usage="wikipedia <query>", aliases=['wiki'])
+    @commands.check(command.isAllowed)
+    @commands.command(name="wikipedia", description="Queries Wikipedia and returns summary.", usage="wikipedia <query>", aliases=['wiki'])
     @commands.cooldown(1, 5, commands.BucketType.guild)
     async def wikipedia(self, ctx, *, lookup: str):
-        loading = await ctx.send('Searching for article....') # loading message
+        """
+        Command to query Wikipedia and return article summary.
+        :param ctx:
+        :param str lookup:
+        """
+        await ctx.message.add_reaction("<a:loading:700208681685352479>") # loading message
         url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{lookup}"
 
         async with aiohttp.ClientSession() as session:
@@ -31,9 +33,9 @@ class Wiki(commands.Cog):
                     embed.add_field(name=f"{js['displaytitle']}", value=f"{js['extract']}", inline=False)
                     await ctx.send(embed=embed)
                 else:
-                    await ctx.send("no result found")
+                    await ctx.message.add_reaction("⚠️")
 
-        await loading.delete() # deletes loading message
+        await ctx.message.remove_reaction("<a:loading:700208681685352479>", self.bot.user) # deletes loading message
 
 def setup(bot):
     bot.add_cog(Wiki(bot))
