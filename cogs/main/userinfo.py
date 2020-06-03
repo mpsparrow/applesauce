@@ -1,24 +1,25 @@
-'''
-Name: User Info
-Description: User information command
-'''
-
 import discord
 from discord.ext import commands
-from util import commandchecks
+from util.checks import command
 import random
 import datetime
 
-
 class userInfo(commands.Cog):
+    """
+    Commands to return specific users information.
+    """
     def __init__(self, bot):
         self.bot = bot
 
-    # userinfo (command)
-    @commands.check(commandchecks.isAllowed)
+    @commands.check(command.isAllowed)
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name="userinfo", description="Displays random information and stats about the user.", usage="userinfo <user>", aliases=["player", "playerinfo", "user"])
     async def userinfo(self, ctx, *, user: discord.Member = None):
+        """
+        Command to display bunch of user information.
+        :param ctx:
+        :param str user:
+        """
         if not user:
             user = ctx.author
 

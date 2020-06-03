@@ -1,14 +1,12 @@
-'''
-Name: Hank
-Description: Skynet hank replacement
-'''
-
 import discord
 from discord.ext import commands
 import random
 import time
 
 class Hank(commands.Cog):
+    """
+    Hanks when you hank.
+    """
     def __init__(self, bot):
         self.bot = bot
         self.hankTimer = 0

@@ -1,13 +1,11 @@
-'''
-Name: Responses
-Description: random responses to things
-'''
-
 import discord
 from discord.ext import commands
 import random
 
 class Response(commands.Cog):
+    """
+    Custom bot responses to certain messages or pings.
+    """
     def __init__(self, bot):
         self.bot = bot
 

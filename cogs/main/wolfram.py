@@ -1,25 +1,28 @@
-'''
-Name: Wolfram Alpha
-Description: Wolfram Alpha command
-'''
-
 import discord
 from discord.ext import commands
-from util import config, commandchecks
+from util import config
+from util.checks import command
 import random
 import wolframalpha
 
-
 class Wolfram(commands.Cog):
+    """
+    Wolfram Alpha querying command.
+    """
     def __init__(self, bot):
         self.bot = bot
 
     # wolfram (command)
-    @commands.check(commandchecks.isAllowed)
-    @commands.command(name="wolfram", description="Queries Wolfram Alpha and returns the result and link.", usage="wolfram <query>", aliases=['wolf'])
+    @commands.check(command.isAllowed)
+    @commands.command(name="wolfram", description="Queries Wolfram Alpha and returns the result.", usage="wolfram <query>", aliases=['wolf'])
     @commands.cooldown(1, 15, commands.BucketType.default)
     async def wolfram(self, ctx, *, question):
-        loading = await ctx.send('Processing....') # loading message
+        """
+        Command to query Wolfram Alpha and return article summary.
+        :param ctx:
+        :param str question:
+        """
+        await ctx.message.add_reaction("<a:loading:700208681685352479>") # loading message
         questionLink = 'https://www.wolframalpha.com/input/?i=' + question.strip().lower().replace(' ', '+') # builds wolfram URL (used just for link in results)
 
         conf = config.readINI('cogConfig.ini')
@@ -56,7 +59,7 @@ class Wolfram(commands.Cog):
             e=discord.Embed(title='Result', description='No results found.', color=0xc1c100)
             embeds.append(e)
 
-        await loading.delete() # deletes loading message
+        await ctx.message.remove_reaction("<a:loading:700208681685352479>", self.bot.user) # deletes loading message
         for e in embeds:
             await ctx.send(embed=e) # sends embed
 
