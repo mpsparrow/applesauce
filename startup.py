@@ -42,6 +42,8 @@ async def on_ready():
     except NameError:
         startCount = 0
 
+    print(startCount)
+
     if startCount == 0:
         # starts timer to keep track of startup time
         startTime = time.time()
