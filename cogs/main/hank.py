@@ -4,6 +4,7 @@ import random
 import time
 from util.db.query import queryChannel
 from util.db.insert import insertChannel
+from util.checks import command
 
 class Hank(commands.Cog):
     """
