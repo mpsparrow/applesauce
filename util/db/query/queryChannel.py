@@ -20,7 +20,7 @@ def status(channelID: int, guildID: int, optionName: str):
                 WHERE guild_id = %s 
                 AND channel_id = %s
                 AND option_name = %s"""
-        values = (guildID, cogName)
+        values = (guildID, channelID, optionName)
         data = query.queryV(q, values)
     except exceptions.dbQueryFail:
         runLog.error("Failed to check for channel status. dbQueryFail (queryChannel.enabled)")
