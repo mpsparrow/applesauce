@@ -23,7 +23,7 @@ class Hank(commands.Cog):
                     self.hankTimer = time.time()
                     self.randomVal = random.randint(240, 900)
                     channel = self.bot.get_channel(message.channel.id)
-                    await channel.send("<:hank:461015208224358440>")
+                    await channel.send("<:hank:651284638958092301>")
                     return
 
     @commands.check(command.isAllowed)
@@ -41,7 +41,7 @@ class Hank(commands.Cog):
     @commands.command(name="hankDisable", description="Disable channel for hank reaction.", usage="hankDisable <channelID>")
     async def hankDisable(self, ctx):
         try:
-            insertChannel.channel(ctx.channel.id, ctx.guild.id, "hank", True)
+            insertChannel.channel(ctx.channel.id, ctx.guild.id, "hank", False)
             await ctx.message.add_reaction("✅")
         except:
             await ctx.message.add_reaction("❌")
