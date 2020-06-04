@@ -12,7 +12,7 @@ class Moderation(commands.Cog):
 
     # ban (command)
     @commands.check(command.isAllowed)
-    @commands.command(name="ban", description="Bans user from the guild.", usage="ban <user>")
+    @commands.command(name="ban", description="Bans user from the guild.", usage="ban <user> <reason>")
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
         await member.ban(reason=reason)

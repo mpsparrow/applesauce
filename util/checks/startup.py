@@ -71,7 +71,7 @@ def checks():
         startLog.proceed("database connected", console=True)
 
     # database table check and creation
-    dbTables = ["prefix", "ignore", "cogs_list", "cogs_guild", "config", "archive", "leaderboard"]
+    dbTables = ["prefix", "ignore", "cogs_list", "cogs_guild", "config", "channel", "archive", "leaderboard"]
     for table in dbTables:
         try:
             q = f"""SELECT * 
@@ -112,6 +112,12 @@ def checks():
                         tables.config()
                     except exceptions.dbTableCreationFail:
                         startLog.error("Unable to create 'config' db table or table already exists. dbTableCreationFail (tables.config)", console=True)
+                        return False
+                elif table == "channel":
+                    try:
+                        tables.channel()
+                    except exceptions.dbTableCreationFail:
+                        startLog.error("Unable to create 'channel' db table or table already exists. dbTableCreationFail (tables.config)", console=True)
                         return False
                 elif table == "archive":
                     try:

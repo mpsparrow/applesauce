@@ -80,6 +80,22 @@ def config():
     except exceptions.dbQueryFail:
         raise exceptions.dbTableCreationFail
 
+def channel():
+    """
+    Creates 'channel' database table.
+    """
+    try:
+        table = """CREATE TABLE `channel` (
+                `channel_id` BIGINT NOT NULL,
+                `guild_id` BIGINT NOT NULL,
+                `option_name` VARCHAR(50) NOT NULL,
+                `is_enabled` BOOLEAN NOT NULL,
+                primary key (channel_id, guild_id, option_name)
+                )"""
+        commit.commit(table)
+    except exceptions.dbQueryFail:
+        raise exceptions.dbTableCreationFail
+
 def archive():
     """
     Creates 'archive' database table.
