@@ -18,7 +18,7 @@ class Hank(commands.Cog):
     async def on_message(self, message: discord.Message):
         if ("<:hank:" in message.content):
             if queryChannel.status(message.channel.id, message.guild.id, "hank"):
-                if ((time.time() - self.hankTimer) > self.randomVal)):
+                if ((time.time() - self.hankTimer) > self.randomVal):
                     self.hankTimer = time.time()
                     self.randomVal = random.randint(240, 900)
                     channel = self.bot.get_channel(message.channel.id)
