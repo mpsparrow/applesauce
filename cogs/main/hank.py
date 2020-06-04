@@ -27,7 +27,7 @@ class Hank(commands.Cog):
                     return
 
     @commands.check(command.isAllowed)
-    @commands.has_permissions(manage_guild=true)
+    @commands.has_permissions(manage_guild=True)
     @commands.command(name="hankEnable", description="Enable channel for hank reaction.", usage="hankEnable <channelID>")
     async def hankEnable(self, ctx):
         try:
@@ -37,7 +37,7 @@ class Hank(commands.Cog):
             await ctx.message.add_reaction("❌")
 
     @commands.check(command.isAllowed)
-    @commands.has_permissions(manage_guild=true)
+    @commands.has_permissions(manage_guild=True)
     @commands.command(name="hankDisable", description="Disable channel for hank reaction.", usage="hankDisable <channelID>")
     async def hankDisable(self, ctx):
         try:
