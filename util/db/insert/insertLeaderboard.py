@@ -19,6 +19,5 @@ def leaderboard(guild_id: int, guild_name: str, member_id: int, member_name: str
             last_added = VALUES(last_added),
             message_count = VALUES(message_count)"""
         values = (guild_id, guild_name, member_id, member_name, level, points, next_level, last_added, message_count)
-        dbConnect.commit(query, values)
     except:
-        
+        pass
