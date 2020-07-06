@@ -1,7 +1,7 @@
 """
 Main expections for bot framework
 """
-import log.runLog
+from util.log import runLog
 
 class dbConnectionFail(Exception):
     """
