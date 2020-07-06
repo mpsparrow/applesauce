@@ -1,9 +1,8 @@
 """
 Database table creation functions
 """
-import db.commit
-import log.runLog
-import util.exceptions
+import commit
+from util import exceptions
 
 def prefix():
     """
