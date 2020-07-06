@@ -17,7 +17,7 @@ def isAllowed(ctx):
         author = ctx.message.author.id
         value = queryCogGuild.status(guildID, cogName) and not(queryIgnore.status(guildID, author))
     except Exception:
-        runLog.error("isAllowed error (checks.command)")
+        runLog.error("isAllowed error (util.checks.command)")
         return False
     else:
         return value
