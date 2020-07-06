@@ -1,6 +1,7 @@
 """
 Main expections for bot framework
 """
+import log.runLog
 
 class dbConnectionFail(Exception):
     """
@@ -14,7 +15,9 @@ class dbConnectionFail(Exception):
 
     def __str__(self):
         if self.message:
+            runLog.error(f"dbConnectionFail, {self.message}")
             return f"dbConnectionFail, {self.message}"
+        runLog.error("dbConnectionFail has been raised")
         return "dbConnectionFail has been raised"
 
 class dbCommitFail(Exception):
@@ -29,7 +32,9 @@ class dbCommitFail(Exception):
 
     def __str__(self):
         if self.message:
+            runLog.error(f"dbCommitFail, {self.message}")
             return f"dbCommitFail, {self.message}"
+        runLog.error("dbCommitFail has been raised")
         return "dbCommitFail has been raised"
 
 class dbQueryFail(Exception):
@@ -44,7 +49,9 @@ class dbQueryFail(Exception):
 
     def __str__(self):
         if self.message:
+            runLog.error(f"dbQueryFail, {self.message}")
             return f"dbQueryFail, {self.message}"
+        runLog.error("dbQueryFail has been raised")
         return "dbQueryFail has been raised"
 
 class dbTableFail(Exception):
@@ -59,7 +66,9 @@ class dbTableFail(Exception):
 
     def __str__(self):
         if self.message:
+            runLog.error(f"dbTableFail, {self.message}")
             return f"dbTableFail, {self.message}"
+        runLog.error("dbTableFail has been raised")
         return "dbTableFail has been raised"
 
 class configError(Exception):
@@ -74,7 +83,9 @@ class configError(Exception):
 
     def __str__(self):
         if self.message:
+            runLog.error(f"configError, {self.message}")
             return f"configError, {self.message}"
+        runLog.error("configError has been raised")
         return "configError has been raised"
 
 class PrefixError(Exception):
@@ -89,5 +100,7 @@ class PrefixError(Exception):
 
     def __str__(self):
         if self.message:
+            runLog.error(f"PrefixError, {self.message}")
             return f"PrefixError, {self.message}"
+        runLog.error("PrefixError has been raised")
         return "PrefixError has been raised"
