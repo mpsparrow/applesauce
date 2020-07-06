@@ -1,13 +1,14 @@
 """
 Database table creation functions
 """
-from util.db import commit
-from util.log import runLog
-from util import exceptions
+import db.commit
+import log.runLog
+import util.exceptions
 
 def prefix():
     """
-    Creates 'prefix' database table.
+    Creates 'prefix' database table
+    :raises dbTableFail: if query fails to create table
     """
     try:
         table = """CREATE TABLE `prefix` (
@@ -17,11 +18,12 @@ def prefix():
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
-        raise exceptions.dbTableCreationFail
+        raise exceptions.dbTableFail("prefix table unable to be created (util.db.tables.prefix)")
 
 def ignore():
     """
-    Creates 'ignore' database table.
+    Creates 'ignore' database table
+    :raises dbTableFail: if query fails to create table
     """
     try:
         table = """CREATE TABLE `ignore` (
@@ -33,11 +35,12 @@ def ignore():
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
-        raise exceptions.dbTableCreationFail
+        raise exceptions.dbTableFail("ignore table unable to be created (util.db.tables.ignore)")
 
 def cogsList():
     """
-    Creates 'cogs_list' database table (for keeping of main cog states).
+    Creates 'cogs_list' database table (for keeping of main cog states)
+    :raises dbTableFail: if query fails to create table
     """
     try:
         table = """CREATE TABLE `cogs_list` (
@@ -48,11 +51,12 @@ def cogsList():
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
-        raise exceptions.dbTableCreationFail
+        raise exceptions.dbTableFail("cogsList table unable to be created (util.db.tables.cogsList)")
 
 def cogsGuild():
     """
-    Creates 'cogs_guild' database table (for each guild).
+    Creates 'cogs_guild' database table (for each guild)
+    :raises dbTableFail: if query fails to create table
     """
     try:
         table = """CREATE TABLE `cogs_guild` (
@@ -63,11 +67,12 @@ def cogsGuild():
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
-        raise exceptions.dbTableCreationFail
+        raise exceptions.dbTableFail("cogsGuild table unable to be created (util.db.tables.cogsGuild)")
 
 def config():
     """
-    Creates 'config' database table.
+    Creates 'config' database table
+    :raises dbTableFail: if query fails to create table
     """
     try:
         table = """CREATE TABLE `config` (
@@ -78,11 +83,12 @@ def config():
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
-        raise exceptions.dbTableCreationFail
+        raise exceptions.dbTableFail("config table unable to be created (util.db.tables.config)")
 
 def channel():
     """
-    Creates 'channel' database table.
+    Creates 'channel' database table
+    :raises dbTableFail: if query fails to create table
     """
     try:
         table = """CREATE TABLE `channel` (
@@ -94,11 +100,12 @@ def channel():
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
-        raise exceptions.dbTableCreationFail
+        raise exceptions.dbTableFail("channel table unable to be created (util.db.tables.channel)")
 
 def archive():
     """
-    Creates 'archive' database table.
+    Creates 'archive' database table
+    :raises dbTableFail: if query fails to create table
     """
     try:
         table = """CREATE TABLE `archive` (
@@ -111,11 +118,12 @@ def archive():
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
-        raise exceptions.dbTableCreationFail
+        raise exceptions.dbTableFail("archive table unable to be created (util.db.tables.archive)")
 
 def leaderboard():
     """
-    Creates 'leaderboard' database table.
+    Creates 'leaderboard' database table
+    :raises dbTableFail: if query fails to create table
     """
     try:
         table = """CREATE TABLE `leaderboard` (
@@ -132,4 +140,4 @@ def leaderboard():
                 )"""
         commit.commit(table)
     except exceptions.dbQueryFail:
-        raise exceptions.dbTableCreationFail
+        raise exceptions.dbTableFail("leaderboard table unable to be created (util.db.tables.leaderboard)")
