@@ -134,6 +134,6 @@ def checks():
                 startLog.info(f"'{table}' db table created", console=True)
             else: 
                 startLog.proceed(f"{table} found", console=True)  
-        except:
+        except Exception:
             startLog.error("db checking failed", console=True)
             return False      
