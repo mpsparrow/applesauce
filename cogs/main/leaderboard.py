@@ -1,8 +1,3 @@
-'''
-Name: Leaderboard
-Description: Leaderboard system
-'''
-
 import discord
 from discord.ext import commands
 import datetime
@@ -61,7 +56,7 @@ class Leaderboard(commands.Cog):
                 await ctx.send(embed=embed.make_error_embed("User unavailable."))
 
             emb = discord.Embed(description=f"Rank Info", color=userColor)
-            emb.set_author(name=userDisplay, icon_url=f'https://cdn.discordapp.com/avatars/{userID}/{userAvatar}.png', url=f'https://applesauce.site/member.php?member={userID}')
+            emb.set_author(name=userDisplay, icon_url=f'https://cdn.discordapp.com/avatars/{userID}/{userAvatar}.png', url=f'https://applesauce.site/profile/{userID}')
             emb.add_field(name='Level', value=data[4], inline=False)
             emb.add_field(name='XP Needed for Next Level', value=data[6], inline=False)
             emb.add_field(name='Total XP', value=data[5], inline=False)
@@ -76,7 +71,7 @@ class Leaderboard(commands.Cog):
     @commands.command(name="leaderboard", description="Displays link to leaderboard.", usage="leaderboard", aliases=['levels'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def leaderboard(self, ctx):
-        await ctx.send(f"Leaderboard: http://applesauce.site/leaderboard.php?guild={ctx.guild.id}")
+        await ctx.send(f"Leaderboard: http://applesauce.site/leaderboard/{ctx.guild.id}/1")
 
 def setup(bot):
     bot.add_cog(Leaderboard(bot))
