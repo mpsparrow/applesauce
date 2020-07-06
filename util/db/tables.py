@@ -1,7 +1,7 @@
 """
 Database table creation functions
 """
-import commit
+from util.db import commit
 from util import exceptions
 
 def prefix():

@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-import db.insert.insertPrefix
-import util.exceptions
+from util.db.insert import insertPrefix
+from util import exceptions
 
 class Prefix(commands.Cog):
     """
