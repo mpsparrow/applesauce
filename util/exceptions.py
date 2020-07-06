@@ -1,5 +1,5 @@
 """
-Custom throwable exceptions
+Main expections for bot framework
 """
 
 class dbConnectionFail(Exception):
@@ -14,8 +14,8 @@ class dbConnectionFail(Exception):
 
     def __str__(self):
         if self.message:
-            return 'dbConnectionFail, {0} '.format(self.message)
-        return 'dbConnectionFail has been raised'
+            return f"dbConnectionFail, {self.message}"
+        return "dbConnectionFail has been raised"
 
 class dbCommitFail(Exception):
     """
@@ -29,8 +29,8 @@ class dbCommitFail(Exception):
 
     def __str__(self):
         if self.message:
-            return 'dbCommitFail, {0} '.format(self.message)
-        return 'dbCommitFail has been raised'
+            return f"dbCommitFail, {self.message}"
+        return "dbCommitFail has been raised"
 
 class dbQueryFail(Exception):
     """
@@ -44,10 +44,10 @@ class dbQueryFail(Exception):
 
     def __str__(self):
         if self.message:
-            return 'dbQueryFail, {0} '.format(self.message)
-        return 'dbQueryFail has been raised'
+            return f"dbQueryFail, {self.message}"
+        return "dbQueryFail has been raised"
 
-class dbTableCreationFail(Exception):
+class dbTableFail(Exception):
     """
     Raised when database table is unable to be created
     """
@@ -59,27 +59,12 @@ class dbTableCreationFail(Exception):
 
     def __str__(self):
         if self.message:
-            return 'dbTableCreationFail, {0} '.format(self.message)
-        return 'dbTableCreationFail has been raised'
+            return f"dbTableFail, {self.message}"
+        return "dbTableFail has been raised"
 
-class configReadError(Exception):
+class configError(Exception):
     """
-    Raised when there is an error reading a config file
-    """
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
-    def __str__(self):
-        if self.message:
-            return 'configReadError, {0} '.format(self.message)
-        return 'configReadError has been raised'
-
-class configWriteError(Exception):
-    """
-    Raised when there is an error writing to a config file
+    Raised when there is an error accessing a config file
     """
     def __init__(self, *args):
         if args:
@@ -89,38 +74,8 @@ class configWriteError(Exception):
 
     def __str__(self):
         if self.message:
-            return 'configWriteError, {0} '.format(self.message)
-        return 'configWriteError has been raised'
-
-class CogNotFound(Exception):
-    """
-    Raised when cog is not found in db
-    """
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
-    def __str__(self):
-        if self.message:
-            return 'CogNotFound, {0} '.format(self.message)
-        return 'CogNotFound has been raised'
-
-class CogInsertFail(Exception):
-    """
-    Raised when cog fails to be inserted into db
-    """
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
-    def __str__(self):
-        if self.message:
-            return 'CogInsertFail, {0} '.format(self.message)
-        return 'CogInsertFail has been raised'
+            return f"configError, {self.message}"
+        return "configError has been raised"
 
 class PrefixError(Exception):
     """
@@ -134,5 +89,5 @@ class PrefixError(Exception):
 
     def __str__(self):
         if self.message:
-            return 'PrefixError, {0} '.format(self.message)
-        return 'PrefixError has been raised'
+            return f"PrefixError, {self.message}"
+        return "PrefixError has been raised"
