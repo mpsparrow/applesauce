@@ -23,12 +23,12 @@ def connect():
         )
     except mysql.Error as e:
         if e.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            runLog.error("Username or password incorrect. ER_ACCESS_DENIED_ERROR (connect.connect)")
+            runLog.error("ER_ACCESS_DENIED_ERROR username or password is incorrect (util.db.connect.connect)")
         elif e.errno == errorcode.ER_BAD_DB_ERROR:
-            runLog.error("Database does not exist. ER_BAD_DB_ERROR (connect.connect)")
+            runLog.error("ER_BAD_DB_ERROR database does not exist (util.db.connect.connect)")
         else:
-            runLog.error("Database error. (connect.connect)")
+            runLog.error("database error (util.db.connect.connect)")
             runLog.error(e)
-        raise exceptions.dbConnectionFail
+        raise exceptions.dbConnectionFail("failed to connect to database (util.db.connect.connect)")
     else:
         return cnx
