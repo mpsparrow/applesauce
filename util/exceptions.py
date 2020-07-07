@@ -3,6 +3,17 @@ Main expections for bot framework
 """
 from util.log import runLog
 
+####### EXCEPTIONS #######
+### Database Exceptions ###
+# dbConnectionFail - Raised when database connection fails
+# dbCommitFail - Raised when database commit fails
+# dbQueryFail - Raised when database query fails
+# dbTableFail - Raised when database table is unable to be created
+
+### Other ###
+# configError - Raised when there is an error accessing a config file
+# prefixError - Raised if unable to get a prefix
+
 class dbConnectionFail(Exception):
     """
     Raised when database connection fails

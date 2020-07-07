@@ -132,7 +132,7 @@ def checks():
                         startLog.error("Unable to create 'leaderboard' db table or table already exists", console=True)
                         return False
                 startLog.info(f"'{table}' db table created", console=True)
-            else: 
+            else:
                 startLog.proceed(f"{table} found", console=True)  
         except Exception:
             startLog.error("db checking failed", console=True)

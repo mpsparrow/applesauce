@@ -23,7 +23,7 @@ def status(channelID: int, guildID: int, optionName: str):
         values = (guildID, channelID, optionName)
         data = query.queryV(q, values)
     except exceptions.dbQueryFail:
-        runLog.error("Failed to check for channel status. dbQueryFail (queryChannel.enabled)")
+        runLog.error("Failed to return channel status (util.db.query.queryChannel.status)")
         return False # return False so it disallows the action since an error occured
     else:
         if len(data) == 0:
