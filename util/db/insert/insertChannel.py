@@ -20,4 +20,4 @@ def channel(channelID: str, guildID: int, optionName: str, enabled: bool):
         values = (channelID, guildID, optionName, enabled)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
-        runLog.error(f"Error adding/updating {name} channel. dbCommitFail (insertChannel.cog)")
+        runLog.error(f"Error adding/updating {name} channel (util.db.insert.insertChannel.cog)")

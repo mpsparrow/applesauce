@@ -21,7 +21,7 @@ def status(guildID: int, cogName: str):
         values = (guildID, cogName)
         data = query.queryV(q, values)
     except exceptions.dbQueryFail:
-        runLog.error("Failed to check for cog status. dbQueryFail (queryCogGuild.enabled)")
+        runLog.error("Failed to check for cog status (util.db.query.queryCogGuild.status)")
         return False # return False so it disallows the action since an error occured
     else:
         if len(data) == 0:

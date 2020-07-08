@@ -13,6 +13,8 @@ from util.log import runLog
 ### Other ###
 # configError - Raised when there is an error accessing a config file
 # prefixError - Raised if unable to get a prefix
+# CogNotFound - Raised if unable to find a cog
+# CogFail - Raised if cog actions fail
 
 class dbConnectionFail(Exception):
     """
@@ -115,3 +117,37 @@ class PrefixError(Exception):
             return f"PrefixError, {self.message}"
         runLog.error("PrefixError has been raised")
         return "PrefixError has been raised"
+
+class CogNotFound(Exception):
+    """
+    Raised if unable to find a cog
+    """
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            runLog.error(f"CogNotFound, {self.message}")
+            return f"CogNotFound, {self.message}"
+        runLog.error("CogNotFound has been raised")
+        return "CogNotFound has been raised"
+
+class CogFail(Exception):
+    """
+    Raised if cog actions fail
+    """
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            runLog.error(f"CogFail, {self.message}")
+            return f"CogFail, {self.message}"
+        runLog.error("CogFail has been raised")
+        return "CogFail has been raised"   

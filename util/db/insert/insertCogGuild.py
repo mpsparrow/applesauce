@@ -11,6 +11,7 @@ def cog(guildID: int, cogName: str, enabled: bool):
     :param int guildID: ID of guild
     :param int cogName: Name of cog
     :param bool enabled: If cog is enabled for use. True = Yes
+    :raises CogFail: If adding/updating the cog in db fails
     """
     try:
         query = f"""INSERT INTO `cogs_guild` (
@@ -19,4 +20,4 @@ def cog(guildID: int, cogName: str, enabled: bool):
         values = (guildID, cogName, enabled)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
-        runLog.error(f"Error adding/updating {name} cog. dbCommitFail (insertCogGuild.cog)")
+        raise exceptions.CogFail(f"Error adding/updating {name} cog. Raised from dbCommitFail (util.db.insert.insertCogGuild.cog)")

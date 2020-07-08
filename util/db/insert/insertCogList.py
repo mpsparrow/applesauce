@@ -11,7 +11,7 @@ def cog(name: str, is_enabled: bool, is_loaded: bool):
     :param str name: Cog name
     :param bool is_enabled: Enable on startup or not
     :param bool is_loaded: Loaded cog status
-    :raises raise CogInsertFail: if fails to insert/update cog info in db
+    :raises CogFail: if fails to insert/update cog info in db
     """
     try:
         query = f"""INSERT INTO `cogs_list` (
@@ -20,15 +20,14 @@ def cog(name: str, is_enabled: bool, is_loaded: bool):
         values = (name, is_enabled, is_loaded)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
-        runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCogList.loaded)")
-        raise exceptions.CogInsertFail
+        raise exceptions.CogFail(f"Error setting {name} cog is_loading. Raised from dbCommitFail (util.db.insert.insertCogList.cog)")
 
 def loaded(name: str, is_loaded: bool):
     """
     Sets cog is_loaded status in db.
     :param str name: Cog name
     :param bool is_loaded: Loaded cog status
-    :raises raise CogInsertFail: if fails to insert/update cog info in db
+    :raises CogFail: if fails to insert/update cog info in db
     """
     try:
         query = f"""INSERT INTO `cogs_list` (
@@ -37,15 +36,14 @@ def loaded(name: str, is_loaded: bool):
         values = (name, is_loaded)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
-        runLog.error(f"Error setting {name} cog is_loading. dbCommitFail (insertCogList.loaded)")
-        raise exceptions.CogInsertFail
+        raise exceptions.CogFail(f"Error setting {name} cog is_loading. Raised from dbCommitFail (util.db.insert.insertCogList.loaded)")
 
 def enabled(name: str, is_enabled: bool):
     """
     Sets cog is_enabled status in db.
     :param str name: Cog name
     :param bool is_enabled: Enable on startup or not
-    :raises raise CogInsertFail: if fails to insert/update cog info in db
+    :raises CogFail: if fails to insert/update cog info in db
     """
     try:
         query = f"""INSERT INTO `cogs_list` (
@@ -54,5 +52,4 @@ def enabled(name: str, is_enabled: bool):
         values = (name, is_enabled)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
-        runLog.error(f"Error setting {name} cog is_enabled. dbCommitFail (insertCogList.enabled)")
-        raise exceptions.CogInsertFail
+        raise exceptions.CogFail(f"Error setting {name} cog is_enabled. Raised from dbCommitFail (util.db.insert.insertCogList.enabled)")

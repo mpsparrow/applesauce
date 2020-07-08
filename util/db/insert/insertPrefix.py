@@ -19,5 +19,4 @@ def prefix(guildID: int, pref: str):
         values = (guildID, pref)
         commit.commitV(query, values)
     except exceptions.dbCommitFail:
-        runLog.error("Error setting prefix. (insertPrefix.prefix)")
-        raise exceptions.PrefixError
+        raise exceptions.PrefixError("Error setting prefix. Raised from dbCommitFail (util.db.insert.insertPrefix.prefix)")

@@ -17,8 +17,7 @@ def loaded(name: str):
         q = f"""SELECT is_loaded FROM `cogs_list` WHERE cog_name = '{name}'"""
         data = query.query(q)
     except exceptions.dbQueryFail:
-        runLog.error("Failed to check for is_loaded cog. dbQueryFail (queryCogList.loaded)")
-        raise exceptions.CogNotFound
+        raise exceptions.CogNotFound("Failed to check for is_loaded cog. Raised from dbQueryFail (util.db.query.queryCogList.loaded)")
     else:
         if len(data) == 0:
             return False
@@ -37,8 +36,7 @@ def enabled(name: str):
         q = f"""SELECT is_enabled FROM `cogs_list` WHERE cog_name = '{name}'"""
         data = query.query(q)
     except exceptions.dbQueryFail:
-        runLog.error("Failed to check for is_enabled cog. dbQueryFail (queryCogList.enabled)")
-        raise exceptions.CogNotFound
+        raise exceptions.CogNotFound("Failed to check for is_enabled cog. Raised from dbQueryFail (util.db.query.queryCogList.enabled)")
     else:
         if len(data) == 0:
             return False

@@ -21,7 +21,7 @@ def status(guildID: int, memberID: int):
         values = (guildID, memberID)
         data = query.queryV(q, values)
     except exceptions.dbQueryFail:
-        runLog.error("Failed to check for ignored user. dbQueryFail (queryIgnore.ignore)")
+        runLog.error("Failed to check for ignored user (util.db.query.queryIgnore.status)")
         return True # return True so it disallows the action since an error occured
     else:
         if len(data) == 0:
