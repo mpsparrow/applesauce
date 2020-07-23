@@ -1,0 +1,12 @@
+WARNING:discord.client:PyNaCl is not installed, voice will NOT be supported
+INFO:discord.client:logging in using static token
+INFO:discord.gateway:Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6&compress=zlib-stream
+INFO:discord.gateway:Shard ID None has sent the IDENTIFY payload.
+INFO:discord.gateway:Shard ID None has connected to Gateway: ["gateway-prd-main-gcbl",{"micros":54492,"calls":["discord-sessions-prd-1-49",{"micros":48652,"calls":["start_session",{"micros":46863,"calls":["api-prd-main-brln",{"micros":44099,"calls":["get_user",{"micros":4253},"add_authorized_ip",{"micros":2584},"get_guilds",{"micros":2643},"coros_wait",{"micros":1}]}]},"guilds_connect",{"micros":3,"calls":[]},"presence_connect",{"micros":542,"calls":[]}]}]}] (Session ID: bb078f166873d0df2061e061da51abd5).
+INFO:startLog:Starting Applesauce
+INFO:startLog:Safemode Activated
+INFO:discord.client:Received signal to terminate bot and event loop.
+INFO:discord.client:Cleaning up tasks.
+INFO:discord.client:Cleaning up after 4 tasks.
+INFO:discord.client:All tasks finished cancelling.
+INFO:discord.client:Closing the event loop.
