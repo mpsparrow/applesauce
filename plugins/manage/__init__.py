@@ -26,8 +26,7 @@ def setup(bot):
     """
     Setup when registering plugin
     :raises PluginTableError: database table errored out while being created
-    """
-    """
+
     try:
         # create database table for plugin
         create_table()

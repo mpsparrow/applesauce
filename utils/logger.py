@@ -4,7 +4,7 @@ import os
 # main format for logs
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
-def setup_logger(name, log_file, level=logging.INFO, format=formatter):
+def setup_logger(name, log_file, level=logging.INFO, logFormat=formatter):
     """
     Creates new logging instances
     :param str name: unique name for logger
@@ -13,7 +13,7 @@ def setup_logger(name, log_file, level=logging.INFO, format=formatter):
     :param format: logging format
     """
     handler = logging.FileHandler(log_file)        
-    handler.setFormatter(formatter)
+    handler.setFormatter(logFormat)
 
     logger = logging.getLogger(name)
     logger.setLevel(level)
@@ -43,5 +43,5 @@ def cleanLogs():
         try:
             with open(logFile, "w"):
                 pass
-        except Exception:
+        except Exception as error:
             pass
