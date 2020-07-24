@@ -40,10 +40,10 @@ def clearLogs():
     """
     if os.path.isdir("logs"):
         logFiles = [f for f in os.listdir("logs") if os.path.isfile(join("logs", f))]
-        
+
         for logFile in logFiles:
             try:
                 with open(logFile, "w"):
                     pass
-            except Exception as error:
+            except IOError:
                 pass
