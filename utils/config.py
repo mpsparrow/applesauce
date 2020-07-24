@@ -57,7 +57,7 @@ def readJSON(filename: str):
     :raises configError: if it fails to read or access json file
     """
     try:
-        with open(filename, 'r') as jsondata:
+        with open(filename, "r") as jsondata:
             data = json.load(jsondata)
     except:
         raise configError("failed to read (utils.config.readJSON)")
@@ -72,7 +72,7 @@ def dumpJSON(filename: str, data):
     :raises configError: if it fails to write to json file
     """
     try:
-        with open(filename, 'w') as jsondata:
+        with open(filename, "w") as jsondata:
             json.dump(data, jsondata, indent=4)
     except:
         raise configError("failed to write (utils.config.dumpJSON)")
