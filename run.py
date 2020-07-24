@@ -15,7 +15,7 @@ import logging
 import discord
 import importlib
 from discord.ext import commands
-from utils.logger import log, startLog, cleanLogs
+from utils.logger import log, startLog, clearLogs, createFolder
 from utils.checks import startupchecks
 
 # command line arguments assigning
@@ -24,9 +24,16 @@ parser.add_argument("--s", action="store_true",
                     help="Boots the bot up in safemode (doesn't load any plugins, connect to a database, or run startup checks)")
 parser.add_argument("--p", action="store_true",
                     help="Skips the loading of all plugins")
+parser.add_argument("--c", action="store_true",
+                    help="Don't clear logs on startup")
 args = parser.parse_args()
 
-cleanLogs() # clears logs and creates folder structure for logs
+createFolder("logs") # create logs folder
+
+# clears all logs in "logs" folder
+if not(args.c):
+    clearLogs()
+
 logging.basicConfig(filename="logs/discord.log",level=logging.INFO) # system logs defined
 
 # defines bot

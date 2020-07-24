@@ -26,22 +26,24 @@ startLog = setup_logger('startLog', 'logs/startup.log')
 log = setup_logger('log', 'logs/runtime.log')
 pluginLog = setup_logger('pluginLog', 'logs/plugins.log')
 
-logFiles = ["logs/discord.log", "logs/plugins.log", "logs/runtime.log", "logs/startup.log"]
 
-def cleanLogs():
+def createFolder(name: str):
+    """
+    Create a folder
+    """
+    if not(os.path.isdir(name)):
+        os.mkdir(name)
+
+def clearLogs():
     """
     Cleans main logs and makes sure folder structure is correct
     """
-    # create 'logs' folder
-    try:
-        os.mkdir("logs")
-    except OSError:
-        pass
-
-    # clean log files
-    for logFile in logFiles:
-        try:
-            with open(logFile, "w"):
+    if os.path.isdir("logs"):
+        logFiles = [f for f in os.listdir("logs") if os.path.isfile(join("logs", f))]
+        
+        for logFile in logFiles:
+            try:
+                with open(logFile, "w"):
+                    pass
+            except Exception as error:
                 pass
-        except Exception as error:
-            pass
