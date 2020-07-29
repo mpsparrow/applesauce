@@ -22,7 +22,7 @@ def setup_logger(name, log_file, level=logging.INFO, logFormat=formatter):
     return logger
 
 # define log types
-startLog = setup_logger("startLog", "logs/startup.log")
+startLog = setup_logger("startLog", "logs/startup.log", logFormat=logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
 log = setup_logger("log", "logs/runtime.log")
 pluginLog = setup_logger("pluginLog", "logs/plugins.log")
 
@@ -39,11 +39,11 @@ def clearLogs():
     Cleans main logs and makes sure folder structure is correct
     """
     if os.path.isdir("logs"):
-        logFiles = [f for f in os.listdir("logs") if os.path.isfile(join("logs", f))]
+        logFiles = [f for f in os.listdir("logs") if os.path.isfile(os.path.join("logs", f))]
 
         for logFile in logFiles:
             try:
-                with open(logFile, "w"):
+                with open(f"logs/{logFile}", "w"):
                     pass
             except IOError:
                 log.exception("failed clearing logs")

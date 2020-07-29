@@ -1,13 +1,15 @@
 '''
 Applesauce
 
-Created By: Matthew Sparrow
+Created By: Matthew Sparrow (mattthetechguy)
 Version: v2.0
-Last Updated: July 22, 2020
+Last Updated: July 29, 2020
 Created On: October 12, 2019
 
 Licensed under GPL-3.0
 (license.txt for more info)
+
+https://github.com/mpsparrow/applesauce
 '''
 import os
 import argparse
@@ -15,29 +17,30 @@ import logging
 import discord
 import importlib
 from discord.ext import commands
-from utils.logger import log, startLog, clearLogs, createFolder
+from utils.config import readINI
+from utils.logger import createFolder, log, startLog, clearLogs
 from utils.checks import startupchecks
 
 # command line arguments assigning
 parser = argparse.ArgumentParser(description="Applesauce - modular Discord bot framework based on discord.py")
 parser.add_argument("--s", action="store_true",
                     help="Boots the bot up in safemode (doesn't load any plugins, connect to a database, or run startup checks)")
-parser.add_argument("--p", action="store_true",
+parser.add_argument("--p", action="store_false",
                     help="Skips the loading of all plugins")
-parser.add_argument("--c", action="store_true",
+parser.add_argument("--c", action="store_false",
                     help="Don't clear logs on startup")
 args = parser.parse_args()
 
 createFolder("logs") # create logs folder
 
 # clears all logs in "logs" folder
-if not(args.c):
+if args.c:
     clearLogs()
 
 logging.basicConfig(filename="logs/discord.log",level=logging.INFO) # system logs defined
 
 # defines bot
-bot = commands.Bot(command_prefix="a!", case_insensitive=True)
+bot = commands.Bot(command_prefix=readINI("config.ini")["main"]["defaultPrefix"], case_insensitive=True)
 
 # on_ready() starts the bootup of the bot
 @bot.event
@@ -60,8 +63,8 @@ async def on_ready():
         print("logs\startup.log")
         os._exit(1)
 
-
-    if not(args.p):
+    # if safemode is not active
+    if args.p:
         # plugin loading
         startLog.info("Starting Plugins")
 
@@ -95,6 +98,5 @@ async def on_ready():
     else:
         startLog.info("Plugin Loading Skipped")
 
-# Starts bot with Discord token from mainConfig.ini
-bot.run("xxxxxxxxx")
-startLog.info("Bot Started")
+# Starts bot with Discord token from config.ini
+bot.run(readINI("config.ini")["main"]["discordToken"])

@@ -1,6 +1,4 @@
-import mysql.connector as mysql
-from mysql.connector import errorcode
-from utils.logger import log
+import pymongo
 from utils.config import readINI
 
 

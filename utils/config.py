@@ -5,7 +5,7 @@ import json
 import configparser
 from utils.logger import log
 
-class configError(FrameworkError):
+class configError(Exception):
     """
     Raised when there is an error accessing a config file
     """
