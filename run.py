@@ -7,7 +7,7 @@ Last Updated: July 29, 2020
 Created On: October 12, 2019
 
 Licensed under GPL-3.0
-(license.txt for more info)
+(LICENSE.txt for more info)
 
 https://github.com/mpsparrow/applesauce
 '''
@@ -18,7 +18,7 @@ import discord
 import importlib
 from discord.ext import commands
 from utils.config import readINI
-from utils.logger import createFolder, log, startLog, clearLogs
+from utils.logger import log, startLog, clearLogs
 from utils.checks import startupchecks
 
 # command line arguments assigning
@@ -30,8 +30,6 @@ parser.add_argument("--p", action="store_false",
 parser.add_argument("--c", action="store_false",
                     help="Don't clear logs on startup")
 args = parser.parse_args()
-
-createFolder("logs") # create logs folder
 
 # clears all logs in "logs" folder
 if args.c:
