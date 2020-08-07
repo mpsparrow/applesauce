@@ -76,7 +76,7 @@ else: # not safemode
         startLog.info("Starting Plugins")
 
         pluginCol = connect()["applesauce"]["plugins"]
-        # pluginCol.update_one({"loaded": True}, {"$set": {"loaded": False}})
+        pluginCol.update({"loaded": True}, { $set: {"loaded": False}})
 
         for folder in ["core", "plugins"]:
             for plugins in next(os.walk(folder))[1]:
@@ -94,7 +94,10 @@ else: # not safemode
                                    "cog_names": i.COG_NAMES,
                                    "version": i.VERSION,
                                    "loaded": True }
-                    pluginCol.update(pluginINFO, upsert=True)
+                    try:
+                        pluginCol.insert_one(pluginINFO)
+                    except Exception as e:
+                        print(e)
                 except commands.ExtensionNotFound:
                     # The cog could not be found.
                     startLog.warning(f"plugins.{plugins}: not found (ExtensionNotFound)")
