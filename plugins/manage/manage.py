@@ -62,7 +62,7 @@ class Manage(commands.Cog):
             pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin unloaded.")
             await ctx.message.add_reaction("⚠️")
 
-    @cog.command(name="unload", description="Unload a plugin", usage="plugin unload <plugin name>", aliases=["u"])
+    @plugin.command(name="unload", description="Unload a plugin", usage="plugin unload <plugin name>", aliases=["u"])
     @commands.is_owner()
     async def unload(self, ctx, plugin):
         """
