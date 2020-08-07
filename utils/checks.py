@@ -4,4 +4,11 @@ def startupchecks():
     """
     Checks to make sure everything is in place before starting the bot
     """
-    return isConnected(connect())
+    try:
+        connect()
+        print("worked")
+        return True
+    except Exception as e:
+        print("something")
+        print(e)
+        return False
