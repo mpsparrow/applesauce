@@ -33,7 +33,7 @@ def readINI(filename: str):
         conf = configparser.ConfigParser()
         conf.read(filename)
     except:
-        raise configError("failed to read (utils.config.readINI)")
+        raise configError("failed to read ini")
     else:
         return conf
 
@@ -47,7 +47,7 @@ def dumpINI(write):
         conf = configparser.ConfigParser()
         conf.write(write)
     except:
-        raise configError("failed to write (utils.config.dumpINI)")
+        raise configError("failed to write ini")
 
 def readJSON(filename: str):
     """
@@ -60,7 +60,7 @@ def readJSON(filename: str):
         with open(filename, "r") as jsondata:
             data = json.load(jsondata)
     except:
-        raise configError("failed to read (utils.config.readJSON)")
+        raise configError("failed to read JSON")
     else:
         return data
 
@@ -75,4 +75,4 @@ def dumpJSON(filename: str, data):
         with open(filename, "w") as jsondata:
             json.dump(data, jsondata, indent=4)
     except:
-        raise configError("failed to write (utils.config.dumpJSON)")
+        raise configError("failed to write JSON")

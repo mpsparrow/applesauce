@@ -21,16 +21,10 @@ def setup_logger(name, log_file, level=logging.INFO, logFormat=formatter):
 
     return logger
 
-
-# create logs folder
-if not(os.path.isdir("logs")):
-    os.mkdir("logs")
-
 # define log types
 startLog = setup_logger("startLog", "logs/startup.log", logFormat=logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
 log = setup_logger("log", "logs/runtime.log")
 pluginLog = setup_logger("pluginLog", "logs/plugins.log")
-
 
 def clearLogs():
     """
