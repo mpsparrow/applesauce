@@ -89,14 +89,14 @@ else: # not safemode
                 try:
                     bot.load_extension(f"plugins.{plugins}")
                     i = importlib.import_module(f"plugins.{plugins}")
-                    pluginINFO = { "_id": plugin, 
+                    pluginINFO = { "_id": plugins, 
                                    "plugin_name": i.PLUGIN_NAME,
                                    "cog_names": i.COG_NAMES,
                                    "version": i.VERSION,
                                    "loaded": True }
-                    pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
-                    startLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-                    pluginLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginCol.update_one({ "_id": plugins }, { "$set": pluginINFO }, upsert=True)
+                    startLog.info(f"Loaded: {plugins} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginLog.info(f"Loaded: {plugins} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
                 except commands.ExtensionNotFound:
                     # The plugin could not be found.
                     startLog.error(f"plugins.{plugins}: not found (ExtensionNotFound)")
