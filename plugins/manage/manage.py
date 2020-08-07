@@ -13,9 +13,9 @@ class Manage(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(name="plugin", description="Plugin management", usage="plugin <action> <plugin name>", aliases=["plugin"])
+    @commands.group(name="plug", description="Plugin management", usage="plug <action> <plugin name>", aliases=["p"])
     @commands.has_permissions(manage_guild=True)
-    async def plugin(self, ctx):
+    async def plug(self, ctx):
         """
         Command group for plugin management.
         :param ctx:
