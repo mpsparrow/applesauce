@@ -31,8 +31,8 @@ class Manage(commands.Cog):
         :param str name: Plugin name
         """
         try:
-            bot.load_extension(f"plugins.{plugins}")
-            i = importlib.import_module(f"plugins.{plugins}")
+            self.bot.load_extension(f"plugins.{plugin}")
+            i = importlib.import_module(f"plugins.{plugin}")
             pluginINFO = { "_id": plugin, 
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
@@ -43,37 +43,37 @@ class Manage(commands.Cog):
             await ctx.message.add_reaction("✅")
         except commands.ExtensionNotFound:
             # The plugin could not be found.
-            pluginLog.error(f"plugins.{plugins}: not found (ExtensionNotFound)")
+            pluginLog.error(f"plugins.{plugin}: not found (ExtensionNotFound)")
             await ctx.message.add_reaction("❌")
         except commands.ExtensionAlreadyLoaded:
             # The plugin was already loaded.
-            pluginLog.info(f"plugins.{plugins}: already loaded (ExtensionAlreadyLoaded)")
+            pluginLog.info(f"plugins.{plugin}: already loaded (ExtensionAlreadyLoaded)")
             await ctx.message.add_reaction("✅")
         except commands.NoEntryPointError:
             # The plugin does not have a setup function.
-            pluginLog.error(f"plugins.{plugins}: no setup function (NoEntryPointError)")
+            pluginLog.error(f"plugins.{plugin}: no setup function (NoEntryPointError)")
             await ctx.message.add_reaction("⚠️")
         except commands.ExtensionFailed:
             # The plugin setup function has an execution error.
-            pluginLog.error(f"plugins.{plugins}: execution error (ExtensionFailed)")
+            pluginLog.error(f"plugins.{plugin}: execution error (ExtensionFailed)")
             await ctx.message.add_reaction("⚠️")
         except Exception as error:
-            bot.unload_extension(f"plugins.{plugins}")
-            pluginLog.error(f"plugins.{plugins}: variables not properly defined. Plugin unloaded.")
+            self.bot.unload_extension(f"plugins.{plugin}")
+            pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin unloaded.")
             await ctx.message.add_reaction("⚠️")
 
     @cog.command(name="unload", description="Unload a plugin", usage="plugin unload <plugin name>", aliases=["u"])
     @commands.is_owner()
-    async def unload(self, ctx, name):
+    async def unload(self, ctx, plugin):
         """
         Unload a plugin
         `unload_extension <https://discordpy.readthedocs.io/en/latest/ext/commands/api.html?highlight=unload_extension#discord.ext.commands.Bot.unload_extension>`
         :param ctx:
-        :param str name: Plugin name
+        :param str plugin: Plugin name
         """
         try:
-            bot.unload_extension(f"plugins.{plugins}")
-            i = importlib.import_module(f"plugins.{plugins}")
+            self.bot.unload_extension(f"plugins.{plugin}")
+            i = importlib.import_module(f"plugins.{plugin}")
             pluginINFO = { "_id": plugin, 
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
@@ -84,8 +84,8 @@ class Manage(commands.Cog):
             await ctx.message.add_reaction("✅")
         except commands.ExtensionNotLoaded:
             # The plugin was not found or unloaded.
-            pluginLog.error(f"plugins.{plugins}: unable to be found and unloaded. (ExtensionNotLoaded)")
+            pluginLog.error(f"plugins.{plugin}: unable to be found and unloaded. (ExtensionNotLoaded)")
             await ctx.message.add_reaction("❌")
         except Exception as error:
-            pluginLog.error(f"plugins.{plugins}: unknown unloading plugin error.")
+            pluginLog.error(f"plugins.{plugin}: unknown unloading plugin error.")
             await ctx.message.add_reaction("⚠️")

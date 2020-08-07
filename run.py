@@ -79,44 +79,44 @@ else: # not safemode
         pluginCol.update_many({ "loaded": True }, { "$set": { "loaded": False }}) # set all plugins to not loaded
 
         for folder in ["plugins"]:
-            for plugins in next(os.walk(folder))[1]:
+            for plugin in next(os.walk(folder))[1]:
 
                 # skips '__pycache__' folder
-                if plugins == "__pycache__":
+                if plugin == "__pycache__":
                     continue
 
                 # tries to load plugin
                 try:
-                    bot.load_extension(f"plugins.{plugins}")
-                    i = importlib.import_module(f"plugins.{plugins}")
-                    pluginINFO = { "_id": plugins, 
+                    bot.load_extension(f"plugins.{plugin}")
+                    i = importlib.import_module(f"plugins.{plugin}")
+                    pluginINFO = { "_id": plugin, 
                                    "plugin_name": i.PLUGIN_NAME,
                                    "cog_names": i.COG_NAMES,
                                    "version": i.VERSION,
                                    "loaded": True }
-                    pluginCol.update_one({ "_id": plugins }, { "$set": pluginINFO }, upsert=True)
-                    startLog.info(f"Loaded: {plugins} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-                    pluginLog.info(f"Loaded: {plugins} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
+                    startLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
                 except commands.ExtensionNotFound:
                     # The plugin could not be found.
-                    startLog.error(f"plugins.{plugins}: not found (ExtensionNotFound)")
-                    pluginLog.error(f"plugins.{plugins}: not found (ExtensionNotFound)")
+                    startLog.error(f"plugins.{plugin}: not found (ExtensionNotFound)")
+                    pluginLog.error(f"plugins.{plugin}: not found (ExtensionNotFound)")
                 except commands.ExtensionAlreadyLoaded:
                     # The plugin was already loaded.
-                    startLog.info(f"plugins.{plugins}: already loaded (ExtensionAlreadyLoaded)")
-                    pluginLog.info(f"plugins.{plugins}: already loaded (ExtensionAlreadyLoaded)")
+                    startLog.info(f"plugins.{plugin}: already loaded (ExtensionAlreadyLoaded)")
+                    pluginLog.info(f"plugins.{plugin}: already loaded (ExtensionAlreadyLoaded)")
                 except commands.NoEntryPointError:
                     # The plugin does not have a setup function.
-                    startLog.error(f"plugins.{plugins}: no setup function (NoEntryPointError)")
-                    pluginLog.error(f"plugins.{plugins}: no setup function (NoEntryPointError)")
+                    startLog.error(f"plugins.{plugin}: no setup function (NoEntryPointError)")
+                    pluginLog.error(f"plugins.{plugin}: no setup function (NoEntryPointError)")
                 except commands.ExtensionFailed:
                     # The plugin setup function has an execution error.
-                    startLog.error(f"plugins.{plugins}: execution error (ExtensionFailed)")
-                    pluginLog.error(f"plugins.{plugins}: execution error (ExtensionFailed)")
+                    startLog.error(f"plugins.{plugin}: execution error (ExtensionFailed)")
+                    pluginLog.error(f"plugins.{plugin}: execution error (ExtensionFailed)")
                 except Exception as error:
-                    bot.unload_extension(f"plugins.{plugins}")
-                    startLog.error(f"plugins.{plugins}: variables not properly defined. Plugin unloaded.")
-                    pluginLog.error(f"plugins.{plugins}: variables not properly defined. Plugin unloaded.")
+                    bot.unload_extension(f"plugins.{plugin}")
+                    startLog.error(f"plugins.{plugin}: variables not properly defined. Plugin unloaded.")
+                    pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin unloaded.")
     else:
         startLog.info("Plugin Loading Skipped")
 
