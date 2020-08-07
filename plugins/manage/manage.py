@@ -20,6 +20,11 @@ class Manage(commands.Cog):
         Command group for plugin management.
         :param ctx:
         """
+        pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+        embed=discord.Embed(title='Debug', color=0xc1c100)
+        for x in pluginCol.find({ "loaded": True })
+            embed.add_field(name=x["_id"], value=x["plugin_name"], inline=False)
+        await ctx.send(embed=embed)
 
     @plug.command(name="load", description="Load a plugin", usage="plugin load <plugin name>", aliases=["l"])
     @commands.is_owner()
