@@ -47,56 +47,54 @@ bot = commands.Bot(command_prefix=readINI("config.ini")["main"]["defaultPrefix"]
 
 startLog.info("Starting Bot")
 
-# if safemode 
-if args.s:
+if args.s: # if safemode 
     startLog.info("Safemode Activated")
-    return
+else: # not safemode
+    # startup checks
+    startLog.info("Running Checks")
 
-# startup checks
-startLog.info("Running Checks")
+    if startupchecks():
+        startLog.info("Startup Checks Passed")
+    else:
+        startLog.error("Startup Checks Failed, System Aborting")
+        print("Startup Checks Failed")
+        print("logs\startup.log")
+        os._exit(1)
 
-if startupchecks():
-    startLog.info("Startup Checks Passed")
-else:
-    startLog.error("Startup Checks Failed, System Aborting")
-    print("Startup Checks Failed")
-    print("logs\startup.log")
-    os._exit(1)
+    # if safemode is not active
+    if args.p:
+        # plugin loading
+        startLog.info("Starting Plugins")
 
-# if safemode is not active
-if args.p:
-    # plugin loading
-    startLog.info("Starting Plugins")
+        for folder in ["core", "plugins"]:
+            for plugins in next(os.walk(folder))[1]:
 
-    for folder in ["core", "plugins"]:
-        for plugins in next(os.walk(folder))[1]:
+                # skips '__pycache__' folder
+                if plugins == "__pycache__":
+                    continue
 
-            # skips '__pycache__' folder
-            if plugins == "__pycache__":
-                continue
-
-            # tries to load extension
-            try:
-                bot.load_extension(f"plugins.{plugins}")
-                i = importlib.import_module(f"plugins.{plugins}")
-                startLog.info(f"Loaded: {i.PLUGIN_NAME} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-            except commands.ExtensionNotFound:
-                # The cog could not be found.
-                startLog.warning(f"plugins.{plugins}: not found (ExtensionNotFound)")
-            except commands.ExtensionAlreadyLoaded:
-                # The cog was already loaded.
-                startLog.warning(f"plugins.{plugins}: already loaded (ExtensionAlreadyLoaded)")
-            except commands.NoEntryPointError:
-                # The cog does not have a setup function.
-                startLog.error(f"plugins.{plugins}: no setup function (NoEntryPointError)")
-            except commands.ExtensionFailed:
-                # The cog setup function has an execution error.
-                startLog.error(f"plugins.{plugins}: execution error (ExtensionFailed)")
-            except Exception as error:
-                bot.unload_extension(f"plugins.{plugins}")
-                startLog.error(f"plugins.{plugins}: variables not properly defined. Plugin unloaded.")
-else:
-    startLog.info("Plugin Loading Skipped")
+                # tries to load extension
+                try:
+                    bot.load_extension(f"plugins.{plugins}")
+                    i = importlib.import_module(f"plugins.{plugins}")
+                    startLog.info(f"Loaded: {i.PLUGIN_NAME} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                except commands.ExtensionNotFound:
+                    # The cog could not be found.
+                    startLog.warning(f"plugins.{plugins}: not found (ExtensionNotFound)")
+                except commands.ExtensionAlreadyLoaded:
+                    # The cog was already loaded.
+                    startLog.warning(f"plugins.{plugins}: already loaded (ExtensionAlreadyLoaded)")
+                except commands.NoEntryPointError:
+                    # The cog does not have a setup function.
+                    startLog.error(f"plugins.{plugins}: no setup function (NoEntryPointError)")
+                except commands.ExtensionFailed:
+                    # The cog setup function has an execution error.
+                    startLog.error(f"plugins.{plugins}: execution error (ExtensionFailed)")
+                except Exception as error:
+                    bot.unload_extension(f"plugins.{plugins}")
+                    startLog.error(f"plugins.{plugins}: variables not properly defined. Plugin unloaded.")
+    else:
+        startLog.info("Plugin Loading Skipped")
 
 @bot.event
 async def on_ready():
