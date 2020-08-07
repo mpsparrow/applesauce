@@ -1,7 +1,7 @@
 from .manage import Manage
 
 ### PLUGIN INFO ###
-PLUGIN_NAME = "Plugin Management"
+PLUGIN_NAME = "Plugissn Management"
 COG_NAMES = ["Manage"]
 VERSION = 0.1
 AUTHOR = "Matthew Sparrow"
