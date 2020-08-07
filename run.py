@@ -26,6 +26,7 @@ if not(os.path.isdir("logs")):
 from utils.config import readINI
 from utils.checks import startupChecks
 from utils.logger import log, startLog, clearLogs
+from utils.database.actions import connect
 
 # command line arguments assigning
 parser = argparse.ArgumentParser(description="Applesauce - modular Discord bot framework based on discord.py")
@@ -73,6 +74,8 @@ else: # not safemode
         # plugin loading
         startLog.info("Starting Plugins")
 
+        pluginsDB = connect()["plugins"]
+
         for folder in ["core", "plugins"]:
             for plugins in next(os.walk(folder))[1]:
 
@@ -85,6 +88,8 @@ else: # not safemode
                     bot.load_extension(f"plugins.{plugins}")
                     i = importlib.import_module(f"plugins.{plugins}")
                     startLog.info(f"Loaded: {i.PLUGIN_NAME} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginINFO = { "name": i.PLUGIN_NAME, "cogs": i.COG_NAMES }
+                    pluginsDB.insert_one(pluginINFO)
                 except commands.ExtensionNotFound:
                     # The cog could not be found.
                     startLog.warning(f"plugins.{plugins}: not found (ExtensionNotFound)")
