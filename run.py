@@ -76,6 +76,7 @@ else: # not safemode
         startLog.info("Starting Plugins")
 
         pluginCol = connect()["applesauce"]["plugins"]
+        pluginCol.update_one({"loaded": True}, {"$set": {"loaded": False}})
 
         for folder in ["core", "plugins"]:
             for plugins in next(os.walk(folder))[1]:
