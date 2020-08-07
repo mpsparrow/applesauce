@@ -32,13 +32,16 @@ class Manage(commands.Cog):
         """
         try:
             self.bot.load_extension(f"plugins.{plugin}")
+            print("0")
             i = importlib.import_module(f"plugins.{plugin}")
+            print("1")
             pluginINFO = { "_id": plugin, 
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
                             "version": i.VERSION,
                             "loaded": True }
             pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
+            print("2")
             pluginLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             await ctx.message.add_reaction("✅")
         except commands.ExtensionNotFound:
