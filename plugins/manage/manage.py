@@ -21,7 +21,7 @@ class Manage(commands.Cog):
         :param ctx:
         """
 
-    @plugin.command(name="load", description="Load a plugin", usage="plugin load <plugin name>", aliases=["l"])
+    @plug.command(name="load", description="Load a plugin", usage="plugin load <plugin name>", aliases=["l"])
     @commands.is_owner()
     async def load(self, ctx, plugin):
         """
@@ -62,7 +62,7 @@ class Manage(commands.Cog):
             pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin unloaded.")
             await ctx.message.add_reaction("⚠️")
 
-    @plugin.command(name="unload", description="Unload a plugin", usage="plugin unload <plugin name>", aliases=["u"])
+    @plug.command(name="unload", description="Unload a plugin", usage="plugin unload <plugin name>", aliases=["u"])
     @commands.is_owner()
     async def unload(self, ctx, plugin):
         """
