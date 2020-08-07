@@ -21,8 +21,8 @@ class Manage(commands.Cog):
         :param ctx:
         """
         pluginCol = connect()["applesauce"]["plugins"] # connect to DB
-        embed=discord.Embed(title='Debug', color=0xc1c100)
-        for x in pluginCol.find({ "loaded": True })
+        embed=discord.Embed(title='Plugins', color=0xc1c100)
+        for x in pluginCol.find({ "loaded": True }):
             embed.add_field(name=x["_id"], value=x["plugin_name"], inline=False)
         await ctx.send(embed=embed)
 
