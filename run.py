@@ -94,11 +94,7 @@ else: # not safemode
                                    "cog_names": i.COG_NAMES,
                                    "version": i.VERSION,
                                    "loaded": True }
-                    try:
-                        pluginCol.update_one({"_id": i.PLUGIN_NAME }, pluginINFO)
-                    except Exception as e:
-                        print(e)
-                        pluginCol.insert_one(pluginINFO)
+                    pluginCol.update_one({"_id": i.PLUGIN_NAME }, { "$set": pluginINFO }, upsert=True)
                         
                 except commands.ExtensionNotFound:
                     # The cog could not be found.
