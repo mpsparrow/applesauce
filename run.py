@@ -90,11 +90,11 @@ else: # not safemode
                     bot.load_extension(f"plugins.{plugins}")
                     i = importlib.import_module(f"plugins.{plugins}")
                     startLog.info(f"Loaded: {i.PLUGIN_NAME} | Cogs: {i.COG_NAMES} | Version: {i.VERSION} | Loaded: Yes")
-                    pluginINFO = { "_id": i.PLUGIN_NAME, 
+                    pluginINFO = { "plugin_name": i.PLUGIN_NAME, 
                                    "cog_names": i.COG_NAMES,
                                    "version": i.VERSION,
                                    "loaded": True }
-                    pluginCol.insert_one(pluginINFO, upsert=True)
+                    pluginCol.insert_one(pluginINFO)
                 except commands.ExtensionNotFound:
                     # The cog could not be found.
                     startLog.warning(f"plugins.{plugins}: not found (ExtensionNotFound)")
