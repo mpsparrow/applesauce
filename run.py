@@ -75,8 +75,8 @@ else: # not safemode
         # plugin loading
         startLog.info("Starting Plugins")
 
-        pluginCol = connect()["applesauce"]["plugins"]
-        pluginCol.update_many({"loaded": True}, { "$set": {"loaded": False}})
+        pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+        pluginCol.update_many({"loaded": True}, { "$set": {"loaded": False}}) # set all plugins to not loaded
 
         for folder in ["core", "plugins"]:
             for plugins in next(os.walk(folder))[1]:
@@ -95,10 +95,11 @@ else: # not safemode
                                    "version": i.VERSION,
                                    "loaded": True }
                     try:
-                        pluginCol.insert_one(pluginINFO)
+                        pluginCol.update_one({"_id": i.PLUGIN_NAME }, pluginINFO)
                     except Exception as e:
-                        pluginCol.update_one({"_id": i.PLUGIN_NAME }, { "$set": {"loaded": True}})
                         print(e)
+                        pluginCol.insert_one(pluginINFO)
+                        
                 except commands.ExtensionNotFound:
                     # The cog could not be found.
                     startLog.warning(f"plugins.{plugins}: not found (ExtensionNotFound)")
