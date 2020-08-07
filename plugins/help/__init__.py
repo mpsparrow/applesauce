@@ -1,11 +1,11 @@
-from .manage import Manage
+from .help import AdvancedHelp
 
 ### PLUGIN INFO ###
-PLUGIN_NAME = "Plugin Management"
-COG_NAMES = ["Manage"]
+PLUGIN_NAME = "Help"
+COG_NAMES = ["AdvancedHelp"]
 VERSION = 0.1
 AUTHOR = "Matthew Sparrow"
-DESCRIPTION = "Core plugin management commands"
+DESCRIPTION = "An advanced help command set"
 LOAD_ON_START = True
 REQUIRED = True
 
@@ -15,4 +15,4 @@ def setup(bot):
     """
 
     # register cog
-    bot.add_cog(Manage(bot))
+    bot.add_cog(AdvancedHelp(bot))

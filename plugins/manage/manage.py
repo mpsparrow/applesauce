@@ -8,7 +8,7 @@ from utils.logger import pluginLog
 
 class Manage(commands.Cog):
     """
-    Management commands
+    Plugin management commands
     """
     def __init__(self, bot):
         self.bot = bot
@@ -22,7 +22,7 @@ class Manage(commands.Cog):
         """
 
     @plug.command(name="all", description="List all loaded plugins", usage="plug all <plugin name>", aliases=["a"])
-    @commands.is_owner()
+    @commands.has_permissions(manage_guild=True)
     async def all(self, ctx):
         """
         List all loaded plugins
@@ -51,6 +51,10 @@ class Manage(commands.Cog):
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
                             "version": i.VERSION,
+                            "author": i.AUTHOR,
+                            "description": i.DESCRIPTION,
+                            "load_on_start": i.LOAD_ON_START, 
+                            "required": i.REQUIRED,
                             "loaded": True }
             pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
@@ -86,13 +90,23 @@ class Manage(commands.Cog):
         :param str plugin: Plugin name
         """
         try:
-            self.bot.unload_extension(f"plugins.{plugin}")
             i = importlib.import_module(f"plugins.{plugin}")
+
+            if i.REQUIRED:
+                await ctx.message.add_reaction("⚠️")
+                await ctx.send("Required plugins cannot be unloaded")
+                return
+
+            self.bot.unload_extension(f"plugins.{plugin}")
             pluginCol = connect()["applesauce"]["plugins"] # connect to DB
             pluginINFO = { "_id": plugin, 
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
                             "version": i.VERSION,
+                            "author": i.AUTHOR,
+                            "description": i.DESCRIPTION,
+                            "load_on_start": i.LOAD_ON_START, 
+                            "required": i.REQUIRED,
                             "loaded": False }
             pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Unloaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")

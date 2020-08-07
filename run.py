@@ -65,7 +65,7 @@ else: # not safemode
     if startupChecks():
         startLog.info("Startup Checks Passed")
     else:
-        startLog.error("Startup Checks Failed, System Aborting")
+        startLog.error("Startup Checks Failed. Startup Aborting")
         print("Startup Checks Failed")
         print("logs\startup.log")
         os._exit(1)
@@ -87,16 +87,25 @@ else: # not safemode
 
                 # tries to load plugin
                 try:
-                    bot.load_extension(f"plugins.{plugin}")
                     i = importlib.import_module(f"plugins.{plugin}")
+                    loaded = False
+
+                    if i.LOAD_ON_START:
+                        bot.load_extension(f"plugins.{plugin}")
+                        loaded = True
+
                     pluginINFO = { "_id": plugin, 
-                                   "plugin_name": i.PLUGIN_NAME,
-                                   "cog_names": i.COG_NAMES,
-                                   "version": i.VERSION,
-                                   "loaded": True }
+                                    "plugin_name": i.PLUGIN_NAME,
+                                    "cog_names": i.COG_NAMES,
+                                    "version": i.VERSION,
+                                    "author": i.AUTHOR,
+                                    "description": i.DESCRIPTION,
+                                    "load_on_start": i.LOAD_ON_START, 
+                                    "required": i.REQUIRED,
+                                    "loaded": loaded }
                     pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
-                    startLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-                    pluginLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    startLog.info(f"{plugin} (plugin.{i.PLUGIN_NAME}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginLog.info(f"{plugin} (plugin.{i.PLUGIN_NAME}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
                 except commands.ExtensionNotFound:
                     # The plugin could not be found.
                     startLog.error(f"plugins.{plugin}: not found (ExtensionNotFound)")
@@ -115,8 +124,14 @@ else: # not safemode
                     pluginLog.error(f"plugins.{plugin}: execution error (ExtensionFailed)")
                 except Exception as error:
                     bot.unload_extension(f"plugins.{plugin}")
-                    startLog.error(f"plugins.{plugin}: variables not properly defined. Plugin unloaded.")
-                    pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin unloaded.")
+                    startLog.error(f"plugins.{plugin}: variables not properly defined. Plugin not loaded.")
+                    pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin not loaded.")
+
+                    if i.REQUIRED:
+                        startLog.error(f"Required plugin {plugin} failed to load. Startup Aborting")
+                        print("Plugin Loading Failed")
+                        print("logs\startup.log | logs\plugins.log")
+                        os._exit(1)
     else:
         startLog.info("Plugin Loading Skipped")
 
