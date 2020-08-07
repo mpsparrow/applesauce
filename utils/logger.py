@@ -4,7 +4,7 @@ import os
 # main format for logs
 formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s (%(pathname)s - %(funcName)s - %(lineno)d)")
 
-def setup_logger(name, log_file, level=logging.INFO, logFormat=formatter):
+def setup_logger(name, log_file, level=logging.DEBUG, logFormat=formatter):
     """
     Creates new logging instances
     :param str name: unique name for logger

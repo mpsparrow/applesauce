@@ -41,7 +41,7 @@ args = parser.parse_args()
 if args.c:
     clearLogs()
 
-logging.basicConfig(filename="logs/discord.log", level=logging.INFO) # system logs defined
+logging.basicConfig(filename="logs/discord.log", level=logging.DEBUG) # system logs defined
 
 # log debug information
 startLog.debug(f"discordpy: {discord.__version__}")
