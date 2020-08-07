@@ -9,6 +9,7 @@ def databaseCheck():
         c = connect()
         isConnected(c)
         startLog.info("Connected to MongoDB database")
+        return True
     except Exception as e:
         startLog.error("Unable to connect to DB")
         startLog.error(e)
