@@ -32,9 +32,8 @@ class Manage(commands.Cog):
         """
         try:
             self.bot.load_extension(f"plugins.{plugin}")
-            print("0")
             i = importlib.import_module(f"plugins.{plugin}")
-            print("1")
+            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
             pluginINFO = { "_id": plugin, 
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
@@ -77,6 +76,7 @@ class Manage(commands.Cog):
         try:
             self.bot.unload_extension(f"plugins.{plugin}")
             i = importlib.import_module(f"plugins.{plugin}")
+            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
             pluginINFO = { "_id": plugin, 
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
