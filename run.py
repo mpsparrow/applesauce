@@ -18,13 +18,13 @@ import logging
 import discord
 import importlib
 from discord.ext import commands
-from utils.config import readINI
-from utils.checks import startupchecks
 
 # create logs folder
 if not(os.path.isdir("logs")):
     os.mkdir("logs")
 
+from utils.config import readINI
+from utils.checks import startupChecks
 from utils.logger import log, startLog, clearLogs
 
 # command line arguments assigning
@@ -60,7 +60,7 @@ else: # not safemode
     # startup checks
     startLog.info("Running Checks")
 
-    if startupchecks():
+    if startupChecks():
         startLog.info("Startup Checks Passed")
     else:
         startLog.error("Startup Checks Failed, System Aborting")
