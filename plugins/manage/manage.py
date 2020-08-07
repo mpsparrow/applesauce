@@ -20,13 +20,21 @@ class Manage(commands.Cog):
         Command group for plugin management.
         :param ctx:
         """
+
+    @plug.command(name="all", description="List all loaded plugins", usage="plug all <plugin name>", aliases=["a"])
+    @commands.is_owner()
+    async def all(self, ctx):
+        """
+        List all loaded plugins
+        :param ctx:
+        """
         pluginCol = connect()["applesauce"]["plugins"] # connect to DB
         embed=discord.Embed(title='Plugins', color=0xc1c100)
         for x in pluginCol.find({ "loaded": True }):
             embed.add_field(name=x["_id"], value=x["plugin_name"], inline=False)
         await ctx.send(embed=embed)
 
-    @plug.command(name="load", description="Load a plugin", usage="plugin load <plugin name>", aliases=["l"])
+    @plug.command(name="load", description="Load a plugin", usage="plug load <plugin name>", aliases=["l"])
     @commands.is_owner()
     async def load(self, ctx, plugin):
         """
@@ -68,7 +76,7 @@ class Manage(commands.Cog):
             pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin unloaded.")
             await ctx.message.add_reaction("⚠️")
 
-    @plug.command(name="unload", description="Unload a plugin", usage="plugin unload <plugin name>", aliases=["u"])
+    @plug.command(name="unload", description="Unload a plugin", usage="plug unload <plugin name>", aliases=["u"])
     @commands.is_owner()
     async def unload(self, ctx, plugin):
         """
