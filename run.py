@@ -90,7 +90,7 @@ else: # not safemode
                     bot.load_extension(f"plugins.{plugins}")
                     i = importlib.import_module(f"plugins.{plugins}")
                     startLog.info(f"Loaded: {i.PLUGIN_NAME} | Cogs: {i.COG_NAMES} | Version: {i.VERSION} | Loaded: Yes")
-                    pluginINFO = { "plugin_name": i.PLUGIN_NAME, 
+                    pluginINFO = { "_id": i.PLUGIN_NAME, 
                                    "cog_names": i.COG_NAMES,
                                    "version": i.VERSION,
                                    "loaded": True }
