@@ -11,7 +11,7 @@ def connect():
     :return: client
     """
     conf = readINI("config.ini")["MongoDB"]
-    client = MongoClient(f"mongodb://{conf['user']}:{conf['password']}@{conf['host']}?authSource={conf['database']}")
+    client = MongoClient(f"mongodb://{conf['user']}:{conf['password']}@{conf['host']}/?authSource={conf['database']}")
     return client
 
 def connectC(user: str, password: str, host: str, database: str):
@@ -23,7 +23,7 @@ def connectC(user: str, password: str, host: str, database: str):
     :param str database: database name
     :return: client
     """
-    client = MongoClient(f"mongodb://{user}:{password}@{host}?authSource={database}")
+    client = MongoClient(f"mongodb://{user}:{password}@{host}/?authSource={database}")
     return client
 
 def isConnected(client: MongoClient):
