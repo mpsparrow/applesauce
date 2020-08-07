@@ -75,9 +75,8 @@ else: # not safemode
         # plugin loading
         startLog.info("Starting Plugins")
 
-        myClient = connect()
-        myDB = myClient["applesauce"]
-        myCol = myDB["plugins"]
+        pluginCol = connect()["applesauce"]["plugins"]
+        pluginCol.drop()
 
         for folder in ["core", "plugins"]:
             for plugins in next(os.walk(folder))[1]:
@@ -91,8 +90,11 @@ else: # not safemode
                     bot.load_extension(f"plugins.{plugins}")
                     i = importlib.import_module(f"plugins.{plugins}")
                     startLog.info(f"Loaded: {i.PLUGIN_NAME} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-                    pluginINFO = { "name": i.PLUGIN_NAME, "cogs": i.COG_NAMES }
-                    myCol.insert_one(pluginINFO)
+                    pluginINFO = { "plugin_name": i.PLUGIN_NAME, 
+                                   "cog_names": i.COG_NAMES,
+                                   "version": i.VERSION,
+                                   "loaded": True }
+                    pluginCol.update(pluginINFO)
                 except commands.ExtensionNotFound:
                     # The cog could not be found.
                     startLog.warning(f"plugins.{plugins}: not found (ExtensionNotFound)")
