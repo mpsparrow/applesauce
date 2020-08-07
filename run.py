@@ -26,7 +26,7 @@ if not(os.path.isdir("logs")):
 
 from utils.config import readINI
 from utils.checks import startupChecks
-from utils.logger import log, startLog, clearLogs
+from utils.logger import log, startLog, clearLogs, pluginLog
 from utils.database.actions import connect
 
 # command line arguments assigning
@@ -76,41 +76,47 @@ else: # not safemode
         startLog.info("Starting Plugins")
 
         pluginCol = connect()["applesauce"]["plugins"] # connect to DB
-        pluginCol.update_many({"loaded": True}, { "$set": {"loaded": False}}) # set all plugins to not loaded
+        pluginCol.update_many({ "loaded": True }, { "$set": { "loaded": False }}) # set all plugins to not loaded
 
-        for folder in ["core", "plugins"]:
+        for folder in ["plugins"]:
             for plugins in next(os.walk(folder))[1]:
 
                 # skips '__pycache__' folder
                 if plugins == "__pycache__":
                     continue
 
-                # tries to load extension
+                # tries to load plugin
                 try:
                     bot.load_extension(f"plugins.{plugins}")
                     i = importlib.import_module(f"plugins.{plugins}")
-                    startLog.info(f"Loaded: {i.PLUGIN_NAME} | Cogs: {i.COG_NAMES} | Version: {i.VERSION} | Loaded: Yes")
-                    pluginINFO = { "_id": i.PLUGIN_NAME, 
+                    pluginINFO = { "_id": plugin, 
+                                   "plugin_name": i.PLUGIN_NAME,
                                    "cog_names": i.COG_NAMES,
                                    "version": i.VERSION,
                                    "loaded": True }
-                    pluginCol.update_one({"_id": i.PLUGIN_NAME }, { "$set": pluginINFO }, upsert=True)
-                        
+                    pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
+                    startLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
                 except commands.ExtensionNotFound:
-                    # The cog could not be found.
-                    startLog.warning(f"plugins.{plugins}: not found (ExtensionNotFound)")
+                    # The plugin could not be found.
+                    startLog.error(f"plugins.{plugins}: not found (ExtensionNotFound)")
+                    pluginLog.error(f"plugins.{plugins}: not found (ExtensionNotFound)")
                 except commands.ExtensionAlreadyLoaded:
-                    # The cog was already loaded.
-                    startLog.warning(f"plugins.{plugins}: already loaded (ExtensionAlreadyLoaded)")
+                    # The plugin was already loaded.
+                    startLog.info(f"plugins.{plugins}: already loaded (ExtensionAlreadyLoaded)")
+                    pluginLog.info(f"plugins.{plugins}: already loaded (ExtensionAlreadyLoaded)")
                 except commands.NoEntryPointError:
-                    # The cog does not have a setup function.
+                    # The plugin does not have a setup function.
                     startLog.error(f"plugins.{plugins}: no setup function (NoEntryPointError)")
+                    pluginLog.error(f"plugins.{plugins}: no setup function (NoEntryPointError)")
                 except commands.ExtensionFailed:
-                    # The cog setup function has an execution error.
+                    # The plugin setup function has an execution error.
                     startLog.error(f"plugins.{plugins}: execution error (ExtensionFailed)")
+                    pluginLog.error(f"plugins.{plugins}: execution error (ExtensionFailed)")
                 except Exception as error:
                     bot.unload_extension(f"plugins.{plugins}")
                     startLog.error(f"plugins.{plugins}: variables not properly defined. Plugin unloaded.")
+                    pluginLog.error(f"plugins.{plugins}: variables not properly defined. Plugin unloaded.")
     else:
         startLog.info("Plugin Loading Skipped")
 
