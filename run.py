@@ -93,8 +93,9 @@ else: # not safemode
                     pluginINFO = { "plugin_name": i.PLUGIN_NAME, 
                                    "cog_names": i.COG_NAMES,
                                    "version": i.VERSION,
-                                   "loaded": True }
-                    pluginCol.insert_one(pluginINFO)
+                                   "loaded": True,
+                                   "guilds": {} }
+                    pluginCol.update(pluginINFO)
                 except commands.ExtensionNotFound:
                     # The cog could not be found.
                     startLog.warning(f"plugins.{plugins}: not found (ExtensionNotFound)")
