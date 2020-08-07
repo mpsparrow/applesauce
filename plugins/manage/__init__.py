@@ -15,4 +15,4 @@ def setup(bot):
 
     # register cog
     bot.add_cog(Manage(bot))
-    bot.add_cog(Manage2(bot))
+    bot.add_cog(Manage23(bot))
