@@ -1,4 +1,4 @@
-from utils.logger import log
+from utils.logger import pluginLog
 
 class pluginTableError(PluginError):
     """
@@ -9,5 +9,5 @@ class pluginTableError(PluginError):
         self.error = error
 
     def __str__(self):
-        log.error(f"{self.name}: pluginTableError: {self.error}")
+        pluginLog.error(f"{self.name}: pluginTableError: {self.error}")
         return f"{self.name}: pluginTableError: {self.error}"

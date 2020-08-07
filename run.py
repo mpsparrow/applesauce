@@ -45,7 +45,7 @@ logging.basicConfig(filename="logs/discord.log", level=logging.INFO) # system lo
 
 # log debug information
 startLog.debug(f"discordpy: {discord.__version__}")
-startLog.debug(f"python: {sys.version}")
+startLog.debug(f"python: {sys.version[:5]}")
 startLog.debug(f"os: {sys.platform}")
 
 # defines bot

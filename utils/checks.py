@@ -20,4 +20,3 @@ def startupChecks():
     Checks to make sure everything is in place before starting the bot
     """
     return databaseCheck()
-
