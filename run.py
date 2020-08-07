@@ -3,7 +3,7 @@ Applesauce
 
 Created By: Matthew Sparrow (mattthetechguy)
 Version: v2.0
-Last Updated: July 29, 2020
+Last Updated: August 6, 2020
 Created On: October 12, 2019
 
 Licensed under GPL-3.0
@@ -12,6 +12,7 @@ Licensed under GPL-3.0
 https://github.com/mpsparrow/applesauce
 '''
 import os
+import sys
 import argparse
 import logging
 import discord
@@ -40,11 +41,17 @@ args = parser.parse_args()
 if args.c:
     clearLogs()
 
-logging.basicConfig(filename="logs/discord.log",level=logging.INFO) # system logs defined
+logging.basicConfig(filename="logs/discord.log", level=logging.INFO) # system logs defined
+
+# log debug information
+startLog.debug(f"discordpy: {discord.__version__}")
+startLog.debug(f"python: {sys.version}")
+startLog.debug(f"os: {sys.platform}")
 
 # defines bot
 bot = commands.Bot(command_prefix=readINI("config.ini")["main"]["defaultPrefix"], case_insensitive=True)
 
+# starting of bot
 startLog.info("Starting Bot")
 
 if args.s: # if safemode 
