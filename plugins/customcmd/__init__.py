@@ -1,7 +1,7 @@
 from .customcmd import CustomCMD
 
 ### PLUGIN INFO ###
-PLUGIN_NAME = "Custom Commandss"
+PLUGIN_NAME = "Custom Commands"
 COG_NAMES = ["CustomCMD"]
 VERSION = 0.1
 AUTHOR = "Matthew Sparrow"
