@@ -40,7 +40,6 @@ class Manage(commands.Cog):
                             "version": i.VERSION,
                             "loaded": True }
             pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
-            print("2")
             pluginLog.info(f"Loaded: {plugin} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             await ctx.message.add_reaction("✅")
         except commands.ExtensionNotFound:
