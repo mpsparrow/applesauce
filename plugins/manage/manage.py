@@ -45,7 +45,8 @@ class Manage(commands.Cog):
                     continue
 
                 data = pluginCol.find_one({ "_id": plugin })
-                embed.add_field(name=f"{data['_id']} ({"Loaded" if data['loaded'] else "Unloaded"})", 
+                loaded = "Loaded" if data['loaded'] else "Unloaded"
+                embed.add_field(name=f"{data['_id']} ({loaded})", 
                                 value=data["description"], 
                                 inline=False)
         else:
