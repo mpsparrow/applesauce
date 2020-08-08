@@ -78,8 +78,8 @@ if __name__ == "__main__":
 
             pluginCol = connect()["applesauce"]["plugins"] # connect to DB
             pluginCol.update_many({ "loaded": True }, { "$set": { "loaded": False }}) # set all plugins to not loaded
-            print(list(readINI("config.ini")["main"]["pluginFolders"]))
-            for folder in list(readINI("config.ini")["main"]["pluginFolders"]):
+
+            for folder in list(readINI("config.ini")["main"]["pluginFolders"].split(", ")):
                 print(folder)
                 for plugin in next(os.walk(folder))[1]:
 
