@@ -39,10 +39,11 @@ class Manage(commands.Cog):
             for folder in list(readINI("config.ini")["main"]["pluginFolders"].split(", ")):
                 plugins.append(os.listdir(folder))
 
+            print(plugins)
             for plugin in plugins:
                 print(plugin)
                 # skips '__pycache__' folder
-                if plugin == "__pycache__":
+                if plugin == "__pycache__" or "." in plugin:
                     continue
 
                 data = pluginCol.find({ "_id": plugin })
