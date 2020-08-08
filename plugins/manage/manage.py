@@ -35,10 +35,14 @@ class Manage(commands.Cog):
         if show_unloaded and await self.bot.is_owner(ctx.author):
             plugins = []
 
-            for folder in readINI("config.ini")["main"]["pluginFolders"]:
+            for folder in list(readINI("config.ini")["main"]["pluginFolders"]):
                 plugins.append(os.listdir(folder))
 
             for plugin in plugins:
+                # skips '__pycache__' folder
+                if plugin == "__pycache__":
+                    continue
+
                 data = pluginCol.find_one({ "_id": plugin })
                 embed.add_field(name=f"{data['_id']} ({data['loaded']})", value=data["plugin_name"], inline=False)
         else:
