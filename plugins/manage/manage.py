@@ -48,7 +48,7 @@ class Manage(commands.Cog):
                 try:
                     data = pluginCol.find_one({ "_id": plugin })
                     loaded = "Loaded" if data['loaded'] else "Unloaded"
-                    embed.add_field(name=f"{data['_id']} ({data['version']}) ({loaded})", 
+                    embed.add_field(name=f"{data['_id']} v{data['version']} ({loaded})", 
                                     value=data["description"], 
                                     inline=False)
                 except TypeError:
@@ -56,7 +56,7 @@ class Manage(commands.Cog):
                     try:
                         # working
                         i = importlib.import_module(f"plugins.{plugin}")
-                        embed.add_field(name=f"{plugin} ({i.VERSION}) (never loaded)", 
+                        embed.add_field(name=f"{plugin} v{i.VERSION} (never loaded)", 
                                         value=i.DESCRIPTION, 
                                         inline=False)
                     except Exception as error:
