@@ -35,7 +35,7 @@ class Manage(commands.Cog):
         if show_unloaded and await self.bot.is_owner(ctx.author):
             plugins = []
 
-            for folder in list(readINI("config.ini")["main"]["pluginFolders"]):
+            for folder in list(readINI("config.ini")["main"]["pluginFolders"].split(", ")):
                 plugins.append(os.listdir(folder))
 
             for plugin in plugins:
