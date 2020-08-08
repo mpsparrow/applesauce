@@ -40,11 +40,12 @@ class Manage(commands.Cog):
                 plugins.append(os.listdir(folder))
 
             for plugin in plugins:
+                print(plugin)
                 # skips '__pycache__' folder
                 if plugin == "__pycache__":
                     continue
 
-                data = pluginCol.find_one({ "_id": plugin })
+                data = pluginCol.find({ "_id": plugin })
                 embed.add_field(name=f"{data['_id']} ({data['loaded']})", value=data["plugin_name"], inline=False)
         else:
             for x in pluginCol.find({ "loaded": True }):
