@@ -26,7 +26,7 @@ if not(os.path.isdir("logs")) and __name__ == "__main__":
 
 from utils.config import readINI
 from utils.checks import startupChecks
-from utils.logger import log, startLog, clearLogs, pluginLog
+from utils.logger import startLog, clearLogs, pluginLog
 from utils.database.actions import connect
 
 # command line arguments assigning
