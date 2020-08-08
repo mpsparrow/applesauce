@@ -44,8 +44,9 @@ args = parser.parse_args()
 if __name__ == "__main__":
     # outputs startLog (startup.log) to console
     if args.o:
-        startLog.addHandler(logging.StreamHandler())
-        startLog.addHandler(logging.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s")))
+        consoleLog = logging.StreamHandler()
+        consoleLog.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+        startLog.addHandler(consoleLog)
 
     # starting of bot
     startLog.info("Starting Bot")
