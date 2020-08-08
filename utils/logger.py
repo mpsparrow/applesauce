@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 
 # main format for logs
 formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s (%(pathname)s - %(funcName)s - %(lineno)d)")
@@ -24,7 +23,6 @@ def setup_logger(name, log_file, level=logging.DEBUG, logFormat=formatter):
 
 # define log types
 startLog = setup_logger("startLog", "logs/startup.log", logFormat=logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
-startLog.addHandler(logging.StreamHandler(sys.stdout))
 log = setup_logger("log", "logs/runtime.log")
 pluginLog = setup_logger("pluginLog", "logs/plugins.log")
 

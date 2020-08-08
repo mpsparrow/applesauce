@@ -31,6 +31,8 @@ from utils.database.actions import connect
 
 # command line arguments assigning
 parser = argparse.ArgumentParser(description="Applesauce - modular Discord bot framework based on discord.py")
+parser.add_argument("--o", action="store_false",
+                    help="Outputs startup.log to console")
 parser.add_argument("--c", action="store_false",
                     help="Skips startup checks")
 parser.add_argument("--p", action="store_false",
@@ -40,6 +42,10 @@ parser.add_argument("--l", action="store_false",
 args = parser.parse_args()
 
 if __name__ == "__main__":
+    # outputs startLog (startup.log) to console
+    if args.o:
+        startLog.addHandler(logging.StreamHandler())
+
     # starting of bot
     startLog.info("Starting Bot")
 
