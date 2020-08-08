@@ -78,8 +78,9 @@ if __name__ == "__main__":
 
             pluginCol = connect()["applesauce"]["plugins"] # connect to DB
             pluginCol.update_many({ "loaded": True }, { "$set": { "loaded": False }}) # set all plugins to not loaded
-
+            print(readINI("config.ini")["main"]["pluginFolders"])
             for folder in readINI("config.ini")["main"]["pluginFolders"]:
+                print(folder)
                 for plugin in next(os.walk(folder))[1]:
 
                     # skips '__pycache__' folder
