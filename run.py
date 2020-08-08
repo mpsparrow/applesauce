@@ -31,20 +31,25 @@ from utils.database.actions import connect
 
 # command line arguments assigning
 parser = argparse.ArgumentParser(description="Applesauce - modular Discord bot framework based on discord.py")
-parser.add_argument("--s", action="store_true",
-                    help="Boots the bot up in safemode (doesn't load any plugins, connect to a database, or run startup checks)")
+parser.add_argument("--c", action="store_false",
+                    help="Skips startup checks")
 parser.add_argument("--p", action="store_false",
                     help="Skips the loading of all plugins")
-parser.add_argument("--c", action="store_false",
-                    help="Don't clear logs on startup")
+parser.add_argument("--l", action="store_false",
+                    help="Skips clearing logs on startup")
 args = parser.parse_args()
 
 if __name__ == "__main__":
-    # clears all logs in "logs" folder
-    if args.c:
-        clearLogs()
+    # starting of bot
+    startLog.info("Starting Bot")
 
-    logging.basicConfig(filename="logs/discord.log", level=logging.INFO) # system logs defined
+    # system logs defined
+    logging.basicConfig(filename="logs/discord.log", level=logging.INFO) 
+
+    # clears all logs in "logs" folder
+    if args.l:
+        clearLogs()
+        startLog.info("Logs Cleared")
 
     # log debug information
     startLog.debug(f"discordpy: {discord.__version__}")
@@ -54,90 +59,83 @@ if __name__ == "__main__":
     # defines bot
     bot = commands.Bot(command_prefix=readINI("config.ini")["main"]["defaultPrefix"], case_insensitive=True)
 
-    # starting of bot
-    startLog.info("Starting Bot")
-
-    if args.s: # if safemode 
-        startLog.info("Safemode Activated")
-    else: # not safemode
-        # startup checks
+    # startup checks
+    if args.c:
         startLog.info("Running Checks")
 
         if startupChecks():
-            startLog.info("Startup Checks Passed")
+            startLog.info("Checks Passed")
         else:
-            startLog.error("Startup Checks Failed. Startup Aborting")
-            print("Startup Checks Failed")
-            print("logs\startup.log")
+            startLog.error("Checks Failed. Startup Aborting")
             os._exit(1)
+    else:
+        startLog.info("Skipped Checks")
 
-        # if safemode is not active
-        if args.p:
-            # plugin loading
-            startLog.info("Starting Plugins")
+    # plugin loading
+    if args.p:
+        startLog.info("Starting Plugins")
 
-            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
-            pluginCol.update_many({ "loaded": True }, { "$set": { "loaded": False }}) # set all plugins to not loaded
+        pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+        pluginCol.update_many({ "loaded": True }, { "$set": { "loaded": False }}) # set all plugins to not loaded
 
-            for folder in list(readINI("config.ini")["main"]["pluginFolders"].split(", ")):
-                for plugin in next(os.walk(folder))[1]:
+        for folder in list(readINI("config.ini")["main"]["pluginFolders"].split(", ")):
+            for plugin in next(os.walk(folder))[1]:
 
-                    # skips '__pycache__' folder
-                    if plugin == "__pycache__":
-                        continue
+                # skips '__pycache__' folder
+                if plugin == "__pycache__":
+                    continue
 
-                    # tries to load plugin
+                # tries to load plugin
+                try:
+                    i = importlib.import_module(f"{folder}.{plugin}")
+                    loaded = False
+
+                    if i.LOAD_ON_START:
+                        bot.load_extension(f"{folder}.{plugin}")
+                        loaded = True
+
+                    pluginINFO = { "_id": plugin, 
+                                    "plugin_name": i.PLUGIN_NAME,
+                                    "cog_names": i.COG_NAMES,
+                                    "version": i.VERSION,
+                                    "author": i.AUTHOR,
+                                    "description": i.DESCRIPTION,
+                                    "load_on_start": i.LOAD_ON_START, 
+                                    "required": i.REQUIRED,
+                                    "loaded": loaded }
+                    pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
+                    startLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                except commands.ExtensionNotFound:
+                    # The plugin could not be found.
+                    startLog.error(f"{folder}.{plugin}: not found (ExtensionNotFound)")
+                    pluginLog.error(f"{folder}.{plugin}: not found (ExtensionNotFound)")
+                except commands.ExtensionAlreadyLoaded:
+                    # The plugin was already loaded.
+                    startLog.info(f"{folder}.{plugin}: already loaded (ExtensionAlreadyLoaded)")
+                    pluginLog.info(f"{folder}.{plugin}: already loaded (ExtensionAlreadyLoaded)")
+                except commands.NoEntryPointError:
+                    # The plugin does not have a setup function.
+                    startLog.error(f"{folder}.{plugin}: no setup function (NoEntryPointError)")
+                    pluginLog.error(f"{folder}.{plugin}: no setup function (NoEntryPointError)")
+                except commands.ExtensionFailed:
+                    # The plugin setup function has an execution error.
+                    startLog.error(f"{folder}.{plugin}: execution error (ExtensionFailed)")
+                    pluginLog.error(f"{folder}.{plugin}: execution error (ExtensionFailed)")
+                except Exception as error:
                     try:
-                        i = importlib.import_module(f"plugins.{plugin}")
-                        loaded = False
+                        bot.unload_extension(f"{folder}.{plugin}")
+                        startLog.error(f"{folder}.{plugin}: variables not properly defined. Plugin not loaded.")
+                        pluginLog.error(f"{folder}.{plugin}: variables not properly defined. Plugin not loaded.")
 
-                        if i.LOAD_ON_START:
-                            bot.load_extension(f"plugins.{plugin}")
-                            loaded = True
-
-                        pluginINFO = { "_id": plugin, 
-                                        "plugin_name": i.PLUGIN_NAME,
-                                        "cog_names": i.COG_NAMES,
-                                        "version": i.VERSION,
-                                        "author": i.AUTHOR,
-                                        "description": i.DESCRIPTION,
-                                        "load_on_start": i.LOAD_ON_START, 
-                                        "required": i.REQUIRED,
-                                        "loaded": loaded }
-                        pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
-                        startLog.info(f"{plugin} (plugin.{i.PLUGIN_NAME}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-                        pluginLog.info(f"{plugin} (plugin.{i.PLUGIN_NAME}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-                    except commands.ExtensionNotFound:
-                        # The plugin could not be found.
-                        startLog.error(f"plugins.{plugin}: not found (ExtensionNotFound)")
-                        pluginLog.error(f"plugins.{plugin}: not found (ExtensionNotFound)")
-                    except commands.ExtensionAlreadyLoaded:
-                        # The plugin was already loaded.
-                        startLog.info(f"plugins.{plugin}: already loaded (ExtensionAlreadyLoaded)")
-                        pluginLog.info(f"plugins.{plugin}: already loaded (ExtensionAlreadyLoaded)")
-                    except commands.NoEntryPointError:
-                        # The plugin does not have a setup function.
-                        startLog.error(f"plugins.{plugin}: no setup function (NoEntryPointError)")
-                        pluginLog.error(f"plugins.{plugin}: no setup function (NoEntryPointError)")
-                    except commands.ExtensionFailed:
-                        # The plugin setup function has an execution error.
-                        startLog.error(f"plugins.{plugin}: execution error (ExtensionFailed)")
-                        pluginLog.error(f"plugins.{plugin}: execution error (ExtensionFailed)")
+                        if i.REQUIRED:
+                            startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
+                            os._exit(1)
                     except Exception as error:
-                        try:
-                            bot.unload_extension(f"plugins.{plugin}")
-                            startLog.error(f"plugins.{plugin}: variables not properly defined. Plugin not loaded.")
-                            pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin not loaded.")
-
-                            if i.REQUIRED:
-                                startLog.error(f"Required plugin {plugin} failed to load. Startup Aborting")
-                                print("Plugin Loading Failed")
-                                print("logs\startup.log | logs\plugins.log")
-                                os._exit(1)
-                        except Exception as error:
-                            startLog.error(f"plugins.{plugin}: {error}")
-        else:
-            startLog.info("Plugin Loading Skipped")
+                        startLog.error(f"{folder}.{plugin}: {error}")
+                        pluginLog.error(f"{folder}.{plugin}: {error}")
+    else:
+        startLog.info("Skipped Plugin Loading")
 
 @bot.event
 async def on_ready():
