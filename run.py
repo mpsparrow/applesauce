@@ -124,15 +124,18 @@ if __name__ == "__main__":
                         startLog.error(f"plugins.{plugin}: execution error (ExtensionFailed)")
                         pluginLog.error(f"plugins.{plugin}: execution error (ExtensionFailed)")
                     except Exception as error:
-                        bot.unload_extension(f"plugins.{plugin}")
-                        startLog.error(f"plugins.{plugin}: variables not properly defined. Plugin not loaded.")
-                        pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin not loaded.")
+                        try:
+                            bot.unload_extension(f"plugins.{plugin}")
+                            startLog.error(f"plugins.{plugin}: variables not properly defined. Plugin not loaded.")
+                            pluginLog.error(f"plugins.{plugin}: variables not properly defined. Plugin not loaded.")
 
-                        if i.REQUIRED:
-                            startLog.error(f"Required plugin {plugin} failed to load. Startup Aborting")
-                            print("Plugin Loading Failed")
-                            print("logs\startup.log | logs\plugins.log")
-                            os._exit(1)
+                            if i.REQUIRED:
+                                startLog.error(f"Required plugin {plugin} failed to load. Startup Aborting")
+                                print("Plugin Loading Failed")
+                                print("logs\startup.log | logs\plugins.log")
+                                os._exit(1)
+                        except Exception as error:
+                            startLog.error(f"plugins.{plugin}: {error}")
         else:
             startLog.info("Plugin Loading Skipped")
 
