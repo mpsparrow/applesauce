@@ -25,7 +25,7 @@ class Manage(commands.Cog):
 
     @plug.command(name="all", description="List all loaded plugins", usage="plug all <plugin name>", aliases=["a"])
     @commands.has_permissions(manage_guild=True)
-    async def all(self, ctx, show_unloaded=False: bool):
+    async def all(self, ctx, show_unloaded: bool=False):
         """
         List all loaded plugins
         :param ctx:
