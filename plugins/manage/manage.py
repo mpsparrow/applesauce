@@ -37,7 +37,7 @@ class Manage(commands.Cog):
             plugins = []
 
             for folder in list(readINI("config.ini")["main"]["pluginFolders"].split(", ")):
-                plugins.append(os.listdir(folder))
+                plugins += os.listdir(folder)
 
             print(plugins)
             for plugin in plugins:
