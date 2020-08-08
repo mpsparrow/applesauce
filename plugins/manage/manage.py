@@ -29,6 +29,7 @@ class Manage(commands.Cog):
         """
         List all loaded plugins
         :param ctx:
+        :param show_unloaded: show unloaded plugins for owner
         """
         pluginCol = connect()["applesauce"]["plugins"] # connect to DB
         embed=discord.Embed(title='Plugins', color=0xc1c100)
@@ -44,17 +45,30 @@ class Manage(commands.Cog):
                 if plugin == "__pycache__" or "." in plugin:
                     continue
 
-                data = pluginCol.find_one({ "_id": plugin })
-                loaded = "Loaded" if data['loaded'] else "Unloaded"
-                embed.add_field(name=f"{data['_id']} ({loaded})", 
-                                value=data["description"], 
-                                inline=False)
+                try:
+                    data = pluginCol.find_one({ "_id": plugin })
+                    loaded = "Loaded" if data['loaded'] else "Unloaded"
+                    embed.add_field(name=f"{data['_id']} ({loaded})", 
+                                    value=data["description"], 
+                                    inline=False)
+                except TypeError:
+                    # not in database
+                    try:
+                        # working
+                        i = importlib.import_module(f"plugins.{plugin}")
+                        embed.add_field(name=f"{plugin} (never loaded)", 
+                                        value=i.DESCRIPTION, 
+                                        inline=False)
+                    except Exception as error:
+                        # error in plugin
+                        embed.add_field(name=f"{plugin} (never loaded)(error)", 
+                                        value="unknown", 
+                                        inline=False)
         else:
             for x in pluginCol.find({ "loaded": True }):
                 embed.add_field(name=x["_id"], 
                                 value=x["description"], 
                                 inline=False)
-
         await ctx.send(embed=embed)
 
     @plug.command(name="load", description="Load a plugin", usage="plug load <plugin name>", aliases=["l"])
