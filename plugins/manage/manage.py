@@ -39,20 +39,20 @@ class Manage(commands.Cog):
             for folder in list(readINI("config.ini")["main"]["pluginFolders"].split(", ")):
                 plugins += os.listdir(folder)
 
-            print(plugins)
             for plugin in plugins:
-                # skips '__pycache__' folder
+                # skips '__pycache__' folder and any files
                 if plugin == "__pycache__" or "." in plugin:
                     continue
 
-                print(plugin)
-
                 data = pluginCol.find_one({ "_id": plugin })
-                print(data)
-                embed.add_field(name=f"{data['_id']} ({data['loaded']})", value=data["plugin_name"], inline=False)
+                embed.add_field(name=f"{data['_id']} ({"Loaded" if data['loaded'] else "Unloaded"})", 
+                                value=data["description"], 
+                                inline=False)
         else:
             for x in pluginCol.find({ "loaded": True }):
-                embed.add_field(name=x["_id"], value=x["plugin_name"], inline=False)
+                embed.add_field(name=x["_id"], 
+                                value=x["description"], 
+                                inline=False)
 
         await ctx.send(embed=embed)
 
