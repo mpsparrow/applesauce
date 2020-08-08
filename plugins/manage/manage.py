@@ -1,3 +1,4 @@
+import os
 import discord
 import pymongo
 import importlib
@@ -24,7 +25,7 @@ class Manage(commands.Cog):
 
     @plug.command(name="all", description="List all loaded plugins", usage="plug all <plugin name>", aliases=["a"])
     @commands.has_permissions(manage_guild=True)
-    async def all(self, ctx, show_unloaded=False):
+    async def all(self, ctx, show_unloaded=False: bool):
         """
         List all loaded plugins
         :param ctx:
