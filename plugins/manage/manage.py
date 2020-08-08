@@ -5,6 +5,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from utils.database.actions import connect
 from utils.logger import pluginLog
+from utils.config import readINI
 
 class Manage(commands.Cog):
     """
@@ -23,15 +24,27 @@ class Manage(commands.Cog):
 
     @plug.command(name="all", description="List all loaded plugins", usage="plug all <plugin name>", aliases=["a"])
     @commands.has_permissions(manage_guild=True)
-    async def all(self, ctx):
+    async def all(self, ctx, show_unloaded=False):
         """
         List all loaded plugins
         :param ctx:
         """
         pluginCol = connect()["applesauce"]["plugins"] # connect to DB
         embed=discord.Embed(title='Plugins', color=0xc1c100)
-        for x in pluginCol.find({ "loaded": True }):
-            embed.add_field(name=x["_id"], value=x["plugin_name"], inline=False)
+
+        if show_unloaded and await self.bot.is_owner(ctx.author):
+            plugins = []
+
+            for folder in readINI("config.ini")["main"]["pluginFolders"]:
+                plugins.append(os.listdir(folder))
+
+            for plugin in plugins:
+                data = pluginCol.find_one({ "_id": plugin })
+                embed.add_field(name=f"{data['_id']} ({data['loaded']})", value=data["plugin_name"], inline=False)
+        else:
+            for x in pluginCol.find({ "loaded": True }):
+                embed.add_field(name=x["_id"], value=x["plugin_name"], inline=False)
+
         await ctx.send(embed=embed)
 
     @plug.command(name="load", description="Load a plugin", usage="plug load <plugin name>", aliases=["l"])
