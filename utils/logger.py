@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 # main format for logs
 formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s (%(pathname)s - %(funcName)s - %(lineno)d)")
