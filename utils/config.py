@@ -76,3 +76,17 @@ def dumpJSON(filename: str, data):
             json.dump(data, jsondata, indent=4)
     except:
         raise configError("failed to write JSON")
+
+def readTXT(filename: str):
+    """
+    Reads txt file
+    :param str filename: txt file name
+    :return: txt file contents
+    :raises configError: if it fails to read or access txt file
+    """
+    try:
+        data = open(filename, "r")
+    except:
+        raise configError("failed to read txt")
+    else:
+        return data

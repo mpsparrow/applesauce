@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from utils.config import readTXT
 
 class Debugger(commands.Cog):
     """
@@ -14,4 +15,9 @@ class Debugger(commands.Cog):
         """
         Pings the bot and returns latency
         """
-        await ctx.send(f"pong! {self.bot.latency}")
+        await ctx.send(f"pong! {round(self.bot.latency*1000, 1)}ms")
+
+    @commands.command(name="startlog", description="Outputs startup.log")
+    @commands.is_owner()
+    async def startlog(self, ctx):
+        await ctx.send(f"```{readTXT("logs/startup.log").read()}```")
