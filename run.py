@@ -147,11 +147,12 @@ if __name__ == "__main__":
 
 @bot.event
 async def on_ready():
+    # checking for if this is the first connect or a reconnect to the Discord API
     try:
         firstRun
     except NameError:
         firstRun = True
-        
+
     if firstRun:
         startLog.info(f"Connected! {bot.user.name} | {bot.user.id}")
         firstRun = False
