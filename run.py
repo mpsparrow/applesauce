@@ -31,14 +31,16 @@ from utils.database.actions import connect
 
 # command line arguments assigning
 parser = argparse.ArgumentParser(description="Applesauce - modular Discord bot framework based on discord.py")
-parser.add_argument("--o", action="store_true",
-                    help="Outputs startup.log to console")
 parser.add_argument("--c", action="store_false",
                     help="Skips startup checks")
-parser.add_argument("--p", action="store_false",
-                    help="Skips the loading of all plugins")
+parser.add_argument("--d", action="store_true",
+                    help="Prints more debug information in logs")
 parser.add_argument("--l", action="store_false",
                     help="Skips clearing logs on startup")
+parser.add_argument("--o", action="store_true",
+                    help="Outputs startup.log to console")
+parser.add_argument("--p", action="store_false",
+                    help="Skips the loading of all plugins")
 args = parser.parse_args()
 
 if __name__ == "__main__":
@@ -56,13 +58,25 @@ if __name__ == "__main__":
     # starting of bot
     startLog.info("Starting Bot")
 
-    # system logs defined
-    logging.basicConfig(filename="logs/discord.log", level=logging.INFO) 
-
-    # log debug information
-    startLog.debug(f"discordpy: {discord.__version__}")
-    startLog.debug(f"python: {sys.version[:5]}")
-    startLog.debug(f"os: {sys.platform}")
+    # system logs discord.log
+    if args.d:
+        # debugging mode if arg
+        logging.basicConfig(filename="logs/discord.log", level=logging.DEBUG, 
+                            format="%(asctime)s %(levelname)s %(message)s (%(pathname)s - %(funcName)s - %(lineno)d)")
+        
+        # log debug information
+        startLog.debug(f"python: {sys.version[:5]}")
+        startLog.debug(f"os: {sys.platform}")
+        startLog.debug(f"discordpy: {discord.__version__}")
+        startLog.debug(f"pymongo: {pymongo.__version__}")
+        startLog.debug(f"sys: {sys.__version__}")
+        startLog.debug(f"os: {os.__version__}")
+        startLog.debug(f"argparse: {argparse.__version__}")
+        startLog.debug(f"logging: {logging.__version__}")
+        startLog.debug(f"importlib: {importlib.__version__}")
+    else:
+        logging.basicConfig(filename="logs/discord.log", level=logging.INFO, 
+                            format="%(asctime)s %(levelname)s %(message)s") 
 
     # defines bot
     bot = commands.Bot(command_prefix=readINI("config.ini")["main"]["defaultPrefix"], case_insensitive=True)
