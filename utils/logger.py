@@ -24,7 +24,7 @@ def setup_logger(name, log_file, level=logging.DEBUG, logFormat=formatter):
 # define log types
 startLog = setup_logger("startLog", "logs/startup.log", logFormat=logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
 log = setup_logger("log", "logs/runtime.log")
-pluginLog = setup_logger("pluginLog", "logs/plugins.log")
+pluginLog = setup_logger("pluginLog", "logs/plugins.log", logFormat=logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
 
 def clearLogs():
     """
