@@ -48,16 +48,16 @@ if __name__ == "__main__":
         consoleLog.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
         startLog.addHandler(consoleLog)
 
+    # clears all logs in "logs" folder
+    if args.l:
+        clearLogs()
+        startLog.info("Logs Cleared")
+
     # starting of bot
     startLog.info("Starting Bot")
 
     # system logs defined
     logging.basicConfig(filename="logs/discord.log", level=logging.INFO) 
-
-    # clears all logs in "logs" folder
-    if args.l:
-        clearLogs()
-        startLog.info("Logs Cleared")
 
     # log debug information
     startLog.debug(f"discordpy: {discord.__version__}")
