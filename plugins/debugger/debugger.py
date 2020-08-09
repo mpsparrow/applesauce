@@ -20,4 +20,7 @@ class Debugger(commands.Cog):
     @commands.command(name="startlog", description="Outputs startup.log")
     @commands.is_owner()
     async def startlog(self, ctx):
-        await ctx.send(f"```{readTXT("logs/startup.log").read()}```")
+        try:
+            await ctx.send(f"```{readTXT("logs\startup.log").read()}```")
+        except configError:
+            await ctx.send("Not available")
