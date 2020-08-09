@@ -89,4 +89,4 @@ def readTXT(filename: str):
     except:
         raise configError("failed to read txt")
     else:
-        return data
+        return data.read()
