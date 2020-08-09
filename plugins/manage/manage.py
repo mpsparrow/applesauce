@@ -94,20 +94,20 @@ class Manage(commands.Cog):
             pluginLog.info(f"Loaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             await ctx.message.add_reaction("✅")
         except commands.ExtensionNotFound:
-            # The plugin could not be found.
+            # The plugin could not be found
             pluginLog.error(f"{folder}.{plug}: not found (ExtensionNotFound)")
             await ctx.message.add_reaction("❌")
         except commands.ExtensionAlreadyLoaded:
-            # The plugin was already loaded.
+            # The plugin was already loaded
             pluginLog.info(f"{folder}.{plug}: already loaded (ExtensionAlreadyLoaded)")
             await ctx.message.add_reaction("✅")
         except commands.NoEntryPointError:
-            # The plugin does not have a setup function.
+            # The plugin does not have a setup function
             pluginLog.error(f"{folder}.{plug}: no setup function (NoEntryPointError)")
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
         except commands.ExtensionFailed:
-            # The plugin setup function has an execution error.
+            # The plugin setup function has an execution error
             pluginLog.error(f"{folder}.{plug}: execution error (ExtensionFailed)")
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
@@ -150,7 +150,7 @@ class Manage(commands.Cog):
             pluginLog.info(f"Unloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             await ctx.message.add_reaction("✅")
         except commands.ExtensionNotLoaded:
-            # The plugin was not found or unloaded.
+            # The plugin was not found or unloaded
             pluginLog.error(f"{folder}.{plug}: unable to be found and unloaded. (ExtensionNotLoaded)")
             await ctx.message.add_reaction("❌")
         except Exception as error:
@@ -185,21 +185,22 @@ class Manage(commands.Cog):
             pluginLog.info(f"Reloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             await ctx.message.add_reaction("✅")
         except commands.ExtensionNotLoaded:
-            # The plugin could not be found.
-            pluginLog.error(f"{folder}.{plug}: was not loaded (ExtensionNotLoaded)")
+            # The plugin doesn't exist
+            pluginLog.error(f"{folder}.{plug}: not found (ExtensionNotLoaded)")
             await ctx.message.add_reaction("❌")
-            await ctx.message.add_reaction("⚠️")
         except commands.ExtensionNotFound:
-            # The plugin was already loaded.
+            # The plugin did exist at one point but now doesn't
+            # Was probably loaded but than deleted
             pluginLog.info(f"{folder}.{plug}: not found (ExtensionNotFound)")
             await ctx.message.add_reaction("❌")
+            await ctx.message.add_reaction("⚠️")
         except commands.NoEntryPointError:
-            # The plugin does not have a setup function.
+            # The plugin does not have a setup function
             pluginLog.error(f"{folder}.{plug}: no setup function (NoEntryPointError)")
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
         except commands.ExtensionFailed:
-            # The plugin setup function has an execution error.
+            # The plugin setup function has an execution error
             pluginLog.error(f"{folder}.{plug}: execution error (ExtensionFailed)")
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
