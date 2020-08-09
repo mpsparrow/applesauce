@@ -43,8 +43,9 @@ class Manage(commands.Cog):
 
                 try:
                     data = pluginCol.find_one({ "_id": plug })
-                    loaded = "Loaded" if data['loaded'] else "Unloaded"
-                    embed.add_field(name=f"{data['_id']} v{data['version']} ({loaded})", 
+                    loaded = "Loaded" if data["loaded"] else "Unloaded"
+                    hidden = "(Hidden)" if data["hidden"] else ""
+                    embed.add_field(name=f"{data['_id']} v{data['version']} ({loaded}){hidden}", 
                                     value=data["description"], 
                                     inline=False)
                 except TypeError:
@@ -52,7 +53,8 @@ class Manage(commands.Cog):
                     try:
                         # working
                         i = importlib.import_module(f"{folder}.{plug}")
-                        embed.add_field(name=f"{plug} v{i.VERSION} (never loaded)", 
+                        hidden = "(Hidden)" if i.HIDDEN else ""
+                        embed.add_field(name=f"{plug} v{i.VERSION} (never loaded){hidden}", 
                                         value=i.DESCRIPTION, 
                                         inline=False)
                     except Exception as error:
@@ -61,7 +63,7 @@ class Manage(commands.Cog):
                                         value="unknown", 
                                         inline=False)
         else:
-            for x in pluginCol.find({ "loaded": True }):
+            for x in pluginCol.find({ "loaded": True, "hidden": False }):
                 embed.add_field(name=x["_id"], 
                                 value=x["description"], 
                                 inline=False)
@@ -89,6 +91,7 @@ class Manage(commands.Cog):
                             "description": i.DESCRIPTION,
                             "load_on_start": i.LOAD_ON_START, 
                             "required": i.REQUIRED,
+                            "hidden": i.HIDDEN,
                             "loaded": True }
             pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Loaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
@@ -145,6 +148,7 @@ class Manage(commands.Cog):
                             "description": i.DESCRIPTION,
                             "load_on_start": i.LOAD_ON_START, 
                             "required": i.REQUIRED,
+                            "hidden": i.HIDDEN,
                             "loaded": False }
             pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Unloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
@@ -180,6 +184,7 @@ class Manage(commands.Cog):
                             "description": i.DESCRIPTION,
                             "load_on_start": i.LOAD_ON_START, 
                             "required": i.REQUIRED,
+                            "hidden": i.HIDDEN,
                             "loaded": True }
             pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Reloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")

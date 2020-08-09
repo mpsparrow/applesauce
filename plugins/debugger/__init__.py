@@ -8,6 +8,7 @@ AUTHOR = "Matthew Sparrow"
 DESCRIPTION = "Debugging tools for owners"
 LOAD_ON_START = False
 REQUIRED = False
+HIDDEN = True
 
 def setup(bot):
     """

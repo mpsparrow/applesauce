@@ -110,6 +110,7 @@ if __name__ == "__main__":
                                 "description": i.DESCRIPTION,
                                 "load_on_start": i.LOAD_ON_START, 
                                 "required": i.REQUIRED,
+                                "hidden": i.HIDDEN,
                                 "loaded": loaded }
                 pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
                 startLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")

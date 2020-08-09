@@ -14,4 +14,4 @@ class Debugger(commands.Cog):
         """
         Pings the bot and returns latency
         """
-        await ctx.send(f"pong! {bot.latency}")
+        await ctx.send(f"pong! {self.bot.latency}")

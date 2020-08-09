@@ -8,6 +8,7 @@ AUTHOR = "Matthew Sparrow"
 DESCRIPTION = "An advanced help command set"
 LOAD_ON_START = True
 REQUIRED = True
+HIDDEN = False
 
 def setup(bot):
     """

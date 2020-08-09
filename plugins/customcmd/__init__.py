@@ -8,6 +8,7 @@ AUTHOR = "Matthew Sparrow"
 DESCRIPTION = "Creation of custom commands"
 LOAD_ON_START = True
 REQUIRED = False
+HIDDEN = False
 
 def setup(bot):
     """
