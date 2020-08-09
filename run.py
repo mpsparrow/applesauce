@@ -31,16 +31,16 @@ from utils.database.actions import connect
 
 # command line arguments assigning
 parser = argparse.ArgumentParser(description="Applesauce - modular Discord bot framework based on discord.py")
-parser.add_argument("--c", action="store_false",
-                    help="Skips startup checks")
-parser.add_argument("--d", action="store_true",
-                    help="Prints more debug information in logs")
-parser.add_argument("--l", action="store_false",
-                    help="Skips clearing logs on startup")
-parser.add_argument("--o", action="store_true",
-                    help="Outputs startup.log to console")
-parser.add_argument("--p", action="store_false",
-                    help="Skips the loading of all plugins")
+parser.add_argument("-c", "skipchecks", action="store_false",
+                    help="skips startup checks")
+parser.add_argument("-d", "-debug", action="store_true",
+                    help="prints more debug information in logs")
+parser.add_argument("-l", "-skipclear", action="store_false",
+                    help="skips clearing logs on startup")
+parser.add_argument("-o", "-outputlog", action="store_true",
+                    help="outputs startup.log to console")
+parser.add_argument("-p", "-skipplugins", action="store_false",
+                    help="skips the loading of all plugins")
 args = parser.parse_args()
 
 if __name__ == "__main__":
