@@ -26,7 +26,7 @@ if not(os.path.isdir("logs")) and __name__ == "__main__":
 
 from utils.config import readINI
 from utils.checks import startupChecks
-from utils.logger import startLog, clearLogs, pluginLog
+from utils.logger import startLog, clearLogs, pluginLog, log
 from utils.database.actions import connect
 
 # command line arguments assigning
@@ -145,11 +145,16 @@ if __name__ == "__main__":
     else:
         startLog.info("Skipped Plugin Loading")
 
+# keeps track of first bootup for on_ready startLog
+firstRun = True
+
 @bot.event
 async def on_ready():
-    startLog.info("Connected to Discord")
-    startLog.info(bot.user.name)
-    startLog.info(bot.user.id)
+    if firstRun:
+        startLog.info(f"Connected! {bot.user.name} | {bot.user.id}")
+        firstRun = False
+    else:
+        log.info(f"Reconnected! {bot.user.name} | {bot.user.id}")
 
 # Starts bot with Discord token from config.ini
 bot.run(readINI("config.ini")["main"]["discordToken"])
