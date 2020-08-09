@@ -86,6 +86,6 @@ def readTXT(filename: str):
     """
     try:
         with open(filename) as data:
-            return data.read()
+            return data
     except:
         raise configError("failed to read txt")
