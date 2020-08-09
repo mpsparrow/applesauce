@@ -69,11 +69,8 @@ if __name__ == "__main__":
         startLog.debug(f"os: {sys.platform}")
         startLog.debug(f"discordpy: {discord.__version__}")
         startLog.debug(f"pymongo: {pymongo.__version__}")
-        startLog.debug(f"sys: {sys.__version__}")
-        startLog.debug(f"os: {os.__version__}")
         startLog.debug(f"argparse: {argparse.__version__}")
         startLog.debug(f"logging: {logging.__version__}")
-        startLog.debug(f"importlib: {importlib.__version__}")
     else:
         logging.basicConfig(filename="logs/discord.log", level=logging.INFO, 
                             format="%(asctime)s %(levelname)s %(message)s") 
