@@ -145,11 +145,13 @@ if __name__ == "__main__":
     else:
         startLog.info("Skipped Plugin Loading")
 
-# keeps track of first bootup for on_ready startLog
-firstRun = True
-
 @bot.event
 async def on_ready():
+    try:
+        firstRun
+    except NameError:
+        firstRun = True
+        
     if firstRun:
         startLog.info(f"Connected! {bot.user.name} | {bot.user.id}")
         firstRun = False
