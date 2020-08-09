@@ -23,4 +23,4 @@ class Debugger(commands.Cog):
         """
         Outputs startup.log
         """
-        await ctx.send(f"```{readTXT('logs/startup.log').read()}```")
+        await ctx.send(f"```{readTXT('logs/startup.log')}```")
