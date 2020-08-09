@@ -3,7 +3,7 @@ Applesauce
 
 Created By: Matthew Sparrow (mattthetechguy)
 Version: v2.0
-Last Updated: August 8, 2020
+Last Updated: August 9, 2020
 Created On: October 12, 2019
 
 Licensed under GPL-3.0
@@ -148,6 +148,8 @@ if __name__ == "__main__":
 @bot.event
 async def on_ready():
     startLog.info("Connected to Discord")
+    startLog.info(bot.user.name)
+    startLog.info(bot.user.id)
 
 # Starts bot with Discord token from config.ini
 bot.run(readINI("config.ini")["main"]["discordToken"])
