@@ -1,5 +1,7 @@
+import os
 from utils.database.actions import isConnected, connect
 from utils.logger import startLog
+from utils.config import readINI
 
 def databaseCheck():
     """
@@ -15,8 +17,23 @@ def databaseCheck():
         startLog.error(e)
         return False
 
+def configCheck():
+    """
+    Checks if config.ini contains proper variables
+    """
+    try:
+        data = readINI("config.ini")["main"]
+        if (len(data["discordToken"]) == 59) and (data["defaultPrefix"] is not None) and not(os.path.isdir(data["pluginFolder"])):
+            startLog.info("Main config items located")
+            return True
+        return False
+    except Exception as e:
+        startLog.error("Unable to locate proper variables in config.ini")
+        startLog.error(e)
+        return False
+
 def startupChecks():
     """
     Checks to make sure everything is in place before starting the bot
     """
-    return databaseCheck()
+    return databaseCheck() and configCheck()
