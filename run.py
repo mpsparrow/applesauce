@@ -31,7 +31,7 @@ from utils.database.actions import connect
 
 # command line arguments assigning
 parser = argparse.ArgumentParser(description="Applesauce - modular Discord bot framework based on discord.py")
-parser.add_argument("-c", "skipchecks", action="store_false",
+parser.add_argument("-c", "-skipchecks", action="store_false",
                     help="skips startup checks")
 parser.add_argument("-d", "-debug", action="store_true",
                     help="prints more debug information in logs")
