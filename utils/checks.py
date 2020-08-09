@@ -23,7 +23,7 @@ def configCheck():
     """
     try:
         data = readINI("config.ini")["main"]
-        if (len(data["discordToken"]) == 59) and (data["defaultPrefix"] is not "") and os.path.isdir(data["pluginFolder"]):
+        if (len(data["discordToken"]) == 59) and (data["defaultPrefix"] != "") and os.path.isdir(data["pluginFolder"]):
             startLog.info("Main config items located")
             return True
         startLog.error("Unable to locate proper variables in config.ini")
