@@ -85,7 +85,7 @@ def readTXT(filename: str):
     :raises configError: if it fails to read or access txt file
     """
     try:
-        data = open(filename, "r")
+        with open(filename) as data:
     except:
         raise configError("failed to read txt")
     else:
