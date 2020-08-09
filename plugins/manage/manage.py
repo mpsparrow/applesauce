@@ -15,7 +15,7 @@ class Manage(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(name="plugin", description="Plugin management", usage="plugin <action> <plugin name>", aliases=["p", "plug"])
+    @commands.group(name="plugin", description="Plugin management", usage="<action>", aliases=["p", "plug"])
     @commands.has_permissions(manage_guild=True)
     async def plugin(self, ctx):
         """
@@ -23,7 +23,7 @@ class Manage(commands.Cog):
         :param ctx:
         """
 
-    @plugin.command(name="all", description="List all loaded plugins", usage="plugin all <plugin name>", aliases=["a"])
+    @plugin.command(name="all", description="List all loaded plugins", usage="<plugin name>", aliases=["a"])
     @commands.has_permissions(manage_guild=True)
     async def all(self, ctx, show_unloaded: bool=False):
         """
@@ -67,7 +67,7 @@ class Manage(commands.Cog):
                                 inline=False)
         await ctx.send(embed=embed)
 
-    @plugin.command(name="load", description="Load a plugin", usage="plugin load <plugin name>", aliases=["l"])
+    @plugin.command(name="load", description="Load a plugin", usage="<plugin name>", aliases=["l"])
     @commands.is_owner()
     async def load(self, ctx, plug):
         """
@@ -104,17 +104,20 @@ class Manage(commands.Cog):
         except commands.NoEntryPointError:
             # The plugin does not have a setup function.
             pluginLog.error(f"{folder}.{plug}: no setup function (NoEntryPointError)")
+            await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
         except commands.ExtensionFailed:
             # The plugin setup function has an execution error.
             pluginLog.error(f"{folder}.{plug}: execution error (ExtensionFailed)")
+            await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
         except Exception as error:
             self.bot.unload_extension(f"{folder}.{plug}")
             pluginLog.error(f"{folder}.{plug}: variables not properly defined. Plugin unloaded.")
+            await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
 
-    @plugin.command(name="unload", description="Unload a plugin", usage="plugin unload <plugin name>", aliases=["u"])
+    @plugin.command(name="unload", description="Unload a plugin", usage="<plugin name>", aliases=["u"])
     @commands.is_owner()
     async def unload(self, ctx, plug):
         """
@@ -152,4 +155,55 @@ class Manage(commands.Cog):
             await ctx.message.add_reaction("❌")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unknown unloading plugin error.")
+            await ctx.message.add_reaction("❌")
+            await ctx.message.add_reaction("⚠️")
+
+    @plugin.command(name="reload", description="Reload a plugin", usage="<plugin name>", aliases=["r"])
+    @commands.is_owner()
+    async def reload(self, ctx, plug):
+        """
+        Reload a plugin
+        `reload_extension <https://discordpy.readthedocs.io/en/latest/ext/commands/api.html?highlight=reload_extension#discord.ext.commands.Bot.reload_extension>`
+        :param ctx:
+        :param str plug: Plugin name
+        """
+        try:
+            folder = readINI("config.ini")["main"]["pluginFolder"]
+            self.bot.reload_extension(f"{folder}.{plug}")
+            i = importlib.import_module(f"{folder}.{plug}")
+            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+            pluginINFO = { "_id": plug, 
+                            "plugin_name": i.PLUGIN_NAME,
+                            "cog_names": i.COG_NAMES,
+                            "version": i.VERSION,
+                            "author": i.AUTHOR,
+                            "description": i.DESCRIPTION,
+                            "load_on_start": i.LOAD_ON_START, 
+                            "required": i.REQUIRED,
+                            "loaded": True }
+            pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
+            pluginLog.info(f"Reloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+            await ctx.message.add_reaction("✅")
+        except commands.ExtensionNotLoaded:
+            # The plugin could not be found.
+            pluginLog.error(f"{folder}.{plug}: was not loaded (ExtensionNotLoaded)")
+            await ctx.message.add_reaction("❌")
+            await ctx.message.add_reaction("⚠️")
+        except commands.ExtensionNotFound:
+            # The plugin was already loaded.
+            pluginLog.info(f"{folder}.{plug}: not found (ExtensionNotFound)")
+            await ctx.message.add_reaction("❌")
+        except commands.NoEntryPointError:
+            # The plugin does not have a setup function.
+            pluginLog.error(f"{folder}.{plug}: no setup function (NoEntryPointError)")
+            await ctx.message.add_reaction("❌")
+            await ctx.message.add_reaction("⚠️")
+        except commands.ExtensionFailed:
+            # The plugin setup function has an execution error.
+            pluginLog.error(f"{folder}.{plug}: execution error (ExtensionFailed)")
+            await ctx.message.add_reaction("❌")
+            await ctx.message.add_reaction("⚠️")
+        except Exception as error:
+            pluginLog.error(f"{folder}.{plug}: unknown reloading plugin error.")
+            await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
