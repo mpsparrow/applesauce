@@ -25,7 +25,7 @@ if not(os.path.isdir("logs")) and __name__ == "__main__":
     os.mkdir("logs")
 
 from utils.config import readINI
-from utils.checks import startupChecks
+from utils.startchecks import startupChecks
 from utils.logger import startLog, clearLogs, pluginLog, log
 from utils.database.actions import connect
 
@@ -122,7 +122,6 @@ if __name__ == "__main__":
                                 "load_on_start": i.LOAD_ON_START, 
                                 "required": i.REQUIRED,
                                 "hidden": i.HIDDEN,
-                                "always_allow": i.ALWAYS_ALLOW,
                                 "loaded": loaded }
                 pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
                 startLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
@@ -182,41 +181,9 @@ async def on_ready():
     else:
         log.info(f"Reconnected! {bot.user.name} | {bot.user.id}")
 
-class pluginNotEnabled(Exception):
-    """
-    Raised when a plugin is not enabled so the command cannot execute
-    """
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
-    def __str__(self):
-        if self.message:
-            log.error(f"pluginNotEnabled, {self.message}")
-            return f"pluginNotEnabled, {self.message}"
-        log.error("pluginNotEnabled has been raised")
-        return "pluginNotEnabled has been raised"
-
-@bot.event
-async def on_command(ctx):
-    # don't allow commands if not enabled in guild
-    try:
-        pluginCol = connect()["applesauce"]["plugins"]
-        pluginData = pluginCol.find_one({ "_id": str(ctx.command.cog).split('.')[1] })
-
-        if not(pluginData["always_allow"]) and not(pluginData["guilds"][str(ctx.guild.id)]):
-            return
-    except Exception:
-        raise pluginNotEnabled
-
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, pluginNotEnabled):
-        # plugin is not enabled so command won't run
-        pass
-    pass
+    log.error(f"Command error: {error}")
 
 # Starts bot with Discord token from config.ini
 bot.run(readINI("config.ini")["main"]["discordToken"])

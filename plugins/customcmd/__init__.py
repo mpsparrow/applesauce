@@ -9,7 +9,6 @@ DESCRIPTION = "Creation of custom commands"
 LOAD_ON_START = True
 REQUIRED = False
 HIDDEN = False
-ALWAYS_ALLOW = False
 
 def setup(bot):
     """

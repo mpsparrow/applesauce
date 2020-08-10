@@ -9,7 +9,6 @@ DESCRIPTION = "Debugging tools for owners"
 LOAD_ON_START = False
 REQUIRED = False
 HIDDEN = True
-ALWAYS_ALLOW = True
 
 def setup(bot):
     """

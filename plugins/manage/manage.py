@@ -56,9 +56,7 @@ class Manage(commands.Cog):
                     except Exception:
                         enabledGuild = ""
 
-                    always = "(Allowed)" if data["always_allow"] else f"{enabledGuild}"
-
-                    embed.add_field(name=f"{data['_id']} v{data['version']} {loaded}{hidden}{always}", 
+                    embed.add_field(name=f"{data['_id']} v{data['version']} {loaded}{hidden}{enabledGuild}", 
                                     value=data["description"], 
                                     inline=False)
                 except TypeError:
@@ -67,8 +65,7 @@ class Manage(commands.Cog):
                         # working
                         i = importlib.import_module(f"{folder}.{plug}")
                         hidden = "(Hidden)" if i.HIDDEN else ""
-                        always = "(Allowed)" if i.ALWAYS_ALLOW else ""
-                        embed.add_field(name=f"{plug} v{i.VERSION} (never loaded){hidden}{always}", 
+                        embed.add_field(name=f"{plug} v{i.VERSION} (never loaded){hidden}", 
                                         value=i.DESCRIPTION, 
                                         inline=False)
                     except Exception as error:
@@ -88,9 +85,7 @@ class Manage(commands.Cog):
                 except Exception:
                     enabledGuild = ""
 
-                always = "(Allowed)" if x["always_allow"] else f"{enabledGuild}"
-
-                embed.add_field(name=f"{x['_id']} {always}", 
+                embed.add_field(name=f"{x['_id']} {enabledGuild}", 
                                 value=x["description"], 
                                 inline=False)
         await ctx.send(embed=embed)
@@ -118,7 +113,6 @@ class Manage(commands.Cog):
                             "load_on_start": i.LOAD_ON_START, 
                             "required": i.REQUIRED,
                             "hidden": i.HIDDEN,
-                            "always_allow": i.ALWAYS_ALLOW,
                             "loaded": True }
             pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Loaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
@@ -177,7 +171,6 @@ class Manage(commands.Cog):
                             "load_on_start": i.LOAD_ON_START, 
                             "required": i.REQUIRED,
                             "hidden": i.HIDDEN,
-                            "always_allow": i.ALWAYS_ALLOW,
                             "loaded": False }
             pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Unloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
@@ -215,7 +208,6 @@ class Manage(commands.Cog):
                             "load_on_start": i.LOAD_ON_START, 
                             "required": i.REQUIRED,
                             "hidden": i.HIDDEN,
-                            "always_allow": i.ALWAYS_ALLOW,
                             "loaded": True }
             pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Reloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
@@ -258,11 +250,6 @@ class Manage(commands.Cog):
             folder = readINI("config.ini")["main"]["pluginFolder"]
             i = importlib.import_module(f"{folder}.{plug}")
             pluginCol = connect()["applesauce"]["plugins"] # connect to DB
-
-            if i.ALWAYS_ALLOW:
-                await ctx.message.add_reaction("✅")
-                await ctx.message.add_reaction("⚠️")
-                return
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
                 validID = True
@@ -313,11 +300,6 @@ class Manage(commands.Cog):
             folder = readINI("config.ini")["main"]["pluginFolder"]
             i = importlib.import_module(f"{folder}.{plug}")
             pluginCol = connect()["applesauce"]["plugins"] # connect to DB
-
-            if i.ALWAYS_ALLOW:
-                await ctx.message.add_reaction("✅")
-                await ctx.message.add_reaction("⚠️")
-                return
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
                 validID = True

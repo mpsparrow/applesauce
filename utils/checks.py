@@ -1,40 +1,24 @@
-import os
-from utils.database.actions import isConnected, connect
-from utils.logger import startLog
-from utils.config import readINI
+import pymongo
+import discord
+from discord.ext import commands
+from utils.database.actions import connect
 
-def databaseCheck():
+def is_guild_enabled():
     """
-    Checks connection to MongoDB database
+    Custom decorator to see if guild is enabled
     """
-    try:
-        c = connect()
-        isConnected(c)
-        startLog.info("Connected to MongoDB database")
-        return True
-    except Exception as e:
-        startLog.error("Unable to connect to DB")
-        startLog.error(e)
-        return False
+    def predicate(ctx):
+        """
+        Command check to see if guild is enabled
+        :param ctx:
+        """
+        try:
+            pluginCol = connect()["applesauce"]["plugins"]
+            pluginData = pluginCol.find_one({ "_id": str(ctx.command.cog).split('.')[1] })
 
-def configCheck():
-    """
-    Checks if config.ini contains proper variables
-    """
-    try:
-        data = readINI("config.ini")["main"]
-        if (len(data["discordToken"]) == 59) and (data["defaultPrefix"] != "") and os.path.isdir(data["pluginFolder"]):
-            startLog.info("Main config items located")
-            return True
-        startLog.error("Unable to locate proper variables in config.ini")
-        return False
-    except Exception as e:
-        startLog.error("Unable to locate proper variables in config.ini")
-        startLog.error(e)
-        return False
-
-def startupChecks():
-    """
-    Checks to make sure everything is in place before starting the bot
-    """
-    return databaseCheck() and configCheck()
+            if pluginData["guilds"][str(ctx.guild.id)]:
+                return True
+            return False
+        except Exception:
+            return False
+    return commands.check(predicate)
