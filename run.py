@@ -204,7 +204,7 @@ async def on_command(ctx):
     # don't allow commands if not enabled in guild
     try:
         pluginCol = connect()["applesauce"]["plugins"]
-        pluginData = pluginCol.find_one( "_id": str(ctx.command.cog).split('.')[1] )
+        pluginData = pluginCol.find_one({ "_id": str(ctx.command.cog).split('.')[1] })
         print(ctx)
         print(pluginData["always_allow"])
         print(pluginData[str(ctx.guild.id)])
