@@ -32,7 +32,7 @@ class Plugins(commands.Cog):
         :param show_unloaded: show unloaded plugins for owner
         """
         pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
-        embed=discord.Embed(title='Plugins', color=0xc1c100)
+        embed=discord.Embed(title="Plugins", color=0xc1c100)
         folder = readINI("config.ini")["main"]["pluginFolder"]
 
         if show_unloaded and await self.bot.is_owner(ctx.author):
@@ -56,23 +56,14 @@ class Plugins(commands.Cog):
                     except Exception:
                         enabledGuild = "❌"
 
-                    embed.add_field(name=f"{enabledGuild}{loaded}{hidden} {data['_id']} v{data['version']}", 
-                                    value=data["description"], 
-                                    inline=False)
+                    embed.add_field(name=f"{enabledGuild}{loaded}{hidden} {data['_id']}  (v{data['version']})", 
+                                    value=data["description"], inline=False)
                 except TypeError:
                     # not in database
-                    try:
-                        # working
-                        i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-                        hidden = "❔" if i.HIDDEN else "⬛"
-                        embed.add_field(name=f"{hidden}{plug} v{i.VERSION} (never loaded)", 
-                                        value=i.DESCRIPTION, 
-                                        inline=False)
-                    except Exception as error:
-                        # error in plugin
-                        embed.add_field(name=f"{plug} (never loaded)(error)", 
-                                        value="unknown", 
-                                        inline=False)
+                    i = importlib.import_module(f"{folder}.{plug}.plugininfo")
+                    hidden = "⬛⬛❔" if i.HIDDEN else "⬛⬛⬛"
+                    embed.add_field(name=f"{hidden} {plug} v{i.VERSION} (never loaded)", 
+                                    value=i.DESCRIPTION, inline=False)
         else:
             for x in pluginCol.find({ "loaded": True, "hidden": False }):
                 # checks if plugin is enabled in guild
@@ -86,9 +77,77 @@ class Plugins(commands.Cog):
                     enabledGuild = "❌"
 
                 embed.add_field(name=f"{enabledGuild} {x['_id']}", 
-                                value=x["description"], 
-                                inline=False)
+                                value=x["description"], inline=False)
         await ctx.send(embed=embed)
+
+    @plugin.command(name="info", description="List all loaded plugins", usage="<plugin name>", aliases=["i", "information"])
+    @commands.has_permissions(manage_guild=True)
+    async def info(self, ctx, plug):
+        """
+        List information about a specific plugin
+        :param ctx:
+        :param str plug: Plugin name
+        """
+        pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
+        folder = readINI("config.ini")["main"]["pluginFolder"]
+
+        try:
+            data = pluginCol.find_one({ "_id": plug })
+
+            if data["loaded"] or await self.bot.is_owner(ctx.author):
+                loaded = "📥" if data["loaded"] else "📤"
+                hidden = "❔" if data["hidden"] else ""
+
+                # checks if plugin is enabled in guild
+                try:
+                    isEnabled = data["guilds"][str(ctx.guild.id)]
+                    if isEnabled:
+                        enabledGuild = "✅"
+                    else:
+                        enabledGuild = "❌"
+                except Exception:
+                    enabledGuild = "❌"
+
+                embed=discord.Embed(title=f"{data["plugin_name"]} {enabledGuild}{loaded}{hidden}", color=0xc1c100)
+                embed.add_field(name=f"Description", 
+                                value=data["description"], inline=False)
+                embed.add_field(name=f"ID Name", 
+                                value=data["_id"], inline=True)
+
+                if await self.bot.is_owner(ctx.author):
+                    embed.add_field(name=f"Author", 
+                                    value=data["author"], inline=False)
+                    embed.add_field(name=f"Version", 
+                                    value=data["version"], inline=True)
+                    embed.add_field(name=f"Load On Start", 
+                                    value=data["load_on_start"], inline=True)
+                    embed.add_field(name=f"Required", 
+                                    value=data["required"], inline=False)
+                    embed.add_field(name=f"Cogs", 
+                                    value=data["cog_names"], inline=False)
+
+                await ctx.send(embed=embed)
+        except TypeError:
+            # not in database
+            if await self.bot.is_owner(ctx.author):
+                i = importlib.import_module(f"{folder}.{plug}.plugininfo")
+                hidden = "❔" if i.HIDDEN else ""
+                embed=discord.Embed(title=f"{data["_id"]} {hidden} (never loaded)", color=0xc1c100)
+                embed.add_field(name=f"Description", 
+                                value=i.DESCRIPTION, inline=False)
+                embed.add_field(name=f"ID Name", 
+                                value=plug, inline=True)
+                embed.add_field(name=f"Author", 
+                                value=i.AUTHOR, inline=False)
+                embed.add_field(name=f"Version", 
+                                value=i.VERSION, inline=True)
+                embed.add_field(name=f"Load On Start", 
+                                value=i.LOAD_ON_START, inline=True)
+                embed.add_field(name=f"Required", 
+                                value=i.REQUIRED, inline=False)
+                embed.add_field(name=f"Cogs", 
+                                value=i.COG_NAMES, inline=False)
+                await ctx.send(embed=embed)
 
     @plugin.command(name="load", description="Load a plugin", usage="<plugin name>", aliases=["l"])
     @commands.is_owner()
