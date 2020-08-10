@@ -240,16 +240,16 @@ class Manage(commands.Cog):
                     validID = False
 
                 if validID:
-                    pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { int(guildID): True }}}, upsert=True)
-                    pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {int(guildID)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { str(guildID): True }}}, upsert=True)
+                    pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
                     await ctx.message.add_reaction("✅")
                 else:
                     pluginLog.error(f"{folder}.{plug}: owner invalid guildID for enabling extension")
                     await ctx.message.add_reaction("❌")
                     await ctx.message.add_reaction("⚠️")
             else:
-                pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { int(ctx.guild.id): True }}}, upsert=True)
-                pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {int(ctx.guild.id)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { str(ctx.guild.id): True }}}, upsert=True)
+                pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
                 await ctx.message.add_reaction("✅")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unable to enable extension")
@@ -280,16 +280,16 @@ class Manage(commands.Cog):
                     validID = False
 
                 if validID:
-                    pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { int(guildID): False }}}, upsert=True)
-                    pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {int(guildID)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { str(guildID): False }}}, upsert=True)
+                    pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
                     await ctx.message.add_reaction("✅")
                 else:
                     pluginLog.error(f"{folder}.{plug}: owner invalid guildID for disabling extension")
                     await ctx.message.add_reaction("❌")
                     await ctx.message.add_reaction("⚠️")
             else:
-                pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { int(ctx.guild.id): False }}}, upsert=True)
-                pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {int(ctx.guild.id)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { str(ctx.guild.id): False }}}, upsert=True)
+                pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
                 await ctx.message.add_reaction("✅")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unable to disable extension")
