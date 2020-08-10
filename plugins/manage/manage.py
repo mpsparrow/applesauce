@@ -241,7 +241,7 @@ class Manage(commands.Cog):
                     validID = False
 
                 if validID:
-                    pluginCol.update_one({ "_id": plug }, { "$addToSet": { "guild": { str(guildID): True }}}, upsert=True)
+                    pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(guildID)}": True }, upsert=True})
                     pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES}")
                     await ctx.message.add_reaction("✅")
                 else:
@@ -249,7 +249,7 @@ class Manage(commands.Cog):
                     await ctx.message.add_reaction("❌")
                     await ctx.message.add_reaction("⚠️")
             else:
-                pluginCol.update_one({ "_id": plug }, { "$addToSet": { "guild": { str(ctx.guild.id): True }}}, upsert=True)
+                pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": True }, upsert=True})
                 pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
                 await ctx.message.add_reaction("✅")
         except Exception as error:
@@ -282,7 +282,7 @@ class Manage(commands.Cog):
                     validID = False
 
                 if validID:
-                    pluginCol.update_one({ "_id": plug }, { "$addToSet": { "guild": { str(guildID): False }}}, upsert=True)
+                    pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(guildID)}": False }, upsert=True})
                     pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES}")
                     await ctx.message.add_reaction("✅")
                 else:
@@ -290,7 +290,7 @@ class Manage(commands.Cog):
                     await ctx.message.add_reaction("❌")
                     await ctx.message.add_reaction("⚠️")
             else:
-                pluginCol.update_one({ "_id": plug }, { "$addToSet": { "guild": { str(ctx.guild.id): False }}}, upsert=True)
+                pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": False }, upsert=True})
                 pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
                 await ctx.message.add_reaction("✅")
         except Exception as error:
