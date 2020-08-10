@@ -223,6 +223,7 @@ class Manage(commands.Cog):
         :param str plug: Plugin name
         """
         try:
+            folder = readINI("config.ini")["main"]["pluginFolder"]
             pluginData = connect()["applesauce"]["plugins"] # connect to DB
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
@@ -261,6 +262,7 @@ class Manage(commands.Cog):
         :param str plug: Plugin name
         """
         try:
+            folder = readINI("config.ini")["main"]["pluginFolder"]
             pluginData = connect()["applesauce"]["plugins"] # connect to DB
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
