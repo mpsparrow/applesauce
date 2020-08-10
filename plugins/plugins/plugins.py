@@ -109,12 +109,8 @@ class Plugins(commands.Cog):
                     enabledGuild = "❌"
 
                 embed=discord.Embed(title=f"{data['plugin_name']} {enabledGuild}{loaded}{hidden}", description=data["description"], color=0xc1c100)
-                embed.add_field(name=f"ID Name", 
-                                value=data["_id"], inline=True)
 
                 if await self.bot.is_owner(ctx.author):
-                    embed.add_field(name=f"Author", 
-                                    value=data["author"], inline=True)
                     embed.add_field(name=f"Version", 
                                     value=data["version"], inline=True)
                     load_on_start = "✅" if data["load_on_start"] else "❌"
@@ -123,11 +119,17 @@ class Plugins(commands.Cog):
                     required = "✅" if data["required"] else "❌"
                     embed.add_field(name=f"Required", 
                                     value=required, inline=True)
+                    embed.add_field(name=f"ID Name", 
+                                    value=data["_id"], inline=True)
                     cogString = ""
                     for cog in data["cog_names"]:
                         cogString += f"`{cog}`, "
                     embed.add_field(name=f"Cogs", 
                                     value=cogString[:-2], inline=False)
+                    embed.set_footer(text=f"Created by {data['author']}")
+                else:
+                    embed.add_field(name=f"ID Name", 
+                                    value=data["_id"], inline=True)
                 await ctx.send(embed=embed)
         except TypeError:
             # not in database
@@ -135,10 +137,6 @@ class Plugins(commands.Cog):
                 i = importlib.import_module(f"{folder}.{plug}.plugininfo")
                 hidden = "❔" if i.HIDDEN else ""
                 embed=discord.Embed(title=f"{plug} {hidden} (never loaded)", description=i.DESCRIPTION, color=0xc1c100)
-                embed.add_field(name=f"ID Name", 
-                                value=plug, inline=True)
-                embed.add_field(name=f"Author", 
-                                value=i.AUTHOR, inline=True)
                 embed.add_field(name=f"Version", 
                                 value=i.VERSION, inline=True)
                 load_on_start = "✅" if i.LOAD_ON_START else "❌"
@@ -147,11 +145,14 @@ class Plugins(commands.Cog):
                 required = "✅" if i.REQUIRED else "❌"
                 embed.add_field(name=f"Required", 
                                 value=required, inline=True)
+                embed.add_field(name=f"ID Name", 
+                                value=plug, inline=True)
                 cogString = ""
                 for cog in i.COG_NAMES:
                     cogString += f"`{cog}`, "
                 embed.add_field(name=f"Cogs", 
                                 value=cogString[:-2], inline=False)
+                embed.set_footer(text=f"Created by {i.AUTHOR}")
                 await ctx.send(embed=embed)
 
     @plugin.command(name="load", description="Load a plugin", usage="<plugin name>", aliases=["l"])
