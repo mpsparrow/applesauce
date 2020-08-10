@@ -43,8 +43,8 @@ class Manage(commands.Cog):
 
                 try:
                     data = pluginCol.find_one({ "_id": plug })
-                    loaded = "(Loaded)" if data["loaded"] else ""
-                    hidden = "(Hidden)" if data["hidden"] else ""
+                    loaded = "📥" if data["loaded"] else "📤"
+                    hidden = "❔" if data["hidden"] else ""
 
                     # checks if plugin is enabled in guild
                     try:
@@ -56,7 +56,7 @@ class Manage(commands.Cog):
                     except Exception:
                         enabledGuild = "❌"
 
-                    embed.add_field(name=f"[{enabledGuild}] {data['_id']} v{data['version']} {loaded}{hidden}", 
+                    embed.add_field(name=f"{enabledGuild} {data['_id']} v{data['version']} {loaded}{hidden}", 
                                     value=data["description"], 
                                     inline=False)
                 except TypeError:
@@ -64,7 +64,7 @@ class Manage(commands.Cog):
                     try:
                         # working
                         i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-                        hidden = "(Hidden)" if i.HIDDEN else ""
+                        hidden = "❔" if i.HIDDEN else ""
                         embed.add_field(name=f"{plug} v{i.VERSION} (never loaded){hidden}", 
                                         value=i.DESCRIPTION, 
                                         inline=False)
@@ -85,7 +85,7 @@ class Manage(commands.Cog):
                 except Exception:
                     enabledGuild = "❌"
 
-                embed.add_field(name=f"[{enabledGuild}] {x['_id']}", 
+                embed.add_field(name=f"{enabledGuild} {x['_id']}", 
                                 value=x["description"], 
                                 inline=False)
         await ctx.send(embed=embed)
