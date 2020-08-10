@@ -108,7 +108,7 @@ class Plugins(commands.Cog):
                 except Exception:
                     enabledGuild = "❌"
 
-                embed=discord.Embed(title=f"{data["plugin_name"]} {enabledGuild}{loaded}{hidden}", color=0xc1c100)
+                embed=discord.Embed(title=f"{data['plugin_name']} {enabledGuild}{loaded}{hidden}", color=0xc1c100)
                 embed.add_field(name=f"Description", 
                                 value=data["description"], inline=False)
                 embed.add_field(name=f"ID Name", 
@@ -132,7 +132,7 @@ class Plugins(commands.Cog):
             if await self.bot.is_owner(ctx.author):
                 i = importlib.import_module(f"{folder}.{plug}.plugininfo")
                 hidden = "❔" if i.HIDDEN else ""
-                embed=discord.Embed(title=f"{data["_id"]} {hidden} (never loaded)", color=0xc1c100)
+                embed=discord.Embed(title=f"{plug} {hidden} (never loaded)", color=0xc1c100)
                 embed.add_field(name=f"Description", 
                                 value=i.DESCRIPTION, inline=False)
                 embed.add_field(name=f"ID Name", 
