@@ -227,6 +227,7 @@ class Manage(commands.Cog):
         """
         try:
             folder = readINI("config.ini")["main"]["pluginFolder"]
+            i = importlib.import_module(f"{folder}.{plug}")
             pluginCol = connect()["applesauce"]["plugins"] # connect to DB
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
@@ -241,7 +242,7 @@ class Manage(commands.Cog):
 
                 if validID:
                     pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { str(guildID): True }}}, upsert=True)
-                    pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES}")
                     await ctx.message.add_reaction("✅")
                 else:
                     pluginLog.error(f"{folder}.{plug}: owner invalid guildID for enabling extension")
@@ -249,7 +250,7 @@ class Manage(commands.Cog):
                     await ctx.message.add_reaction("⚠️")
             else:
                 pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { str(ctx.guild.id): True }}}, upsert=True)
-                pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
                 await ctx.message.add_reaction("✅")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unable to enable extension")
@@ -267,6 +268,7 @@ class Manage(commands.Cog):
         """
         try:
             folder = readINI("config.ini")["main"]["pluginFolder"]
+            i = importlib.import_module(f"{folder}.{plug}")
             pluginCol = connect()["applesauce"]["plugins"] # connect to DB
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
@@ -281,7 +283,7 @@ class Manage(commands.Cog):
 
                 if validID:
                     pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { str(guildID): False }}}, upsert=True)
-                    pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES}")
                     await ctx.message.add_reaction("✅")
                 else:
                     pluginLog.error(f"{folder}.{plug}: owner invalid guildID for disabling extension")
@@ -289,7 +291,7 @@ class Manage(commands.Cog):
                     await ctx.message.add_reaction("⚠️")
             else:
                 pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { str(ctx.guild.id): False }}}, upsert=True)
-                pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
                 await ctx.message.add_reaction("✅")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unable to disable extension")
