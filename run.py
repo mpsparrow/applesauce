@@ -2,8 +2,9 @@
 Applesauce
 
 Created By: Matthew Sparrow (mattthetechguy)
+Contributor(s): Lauchmelder
 Version: v2.0
-Last Updated: August 9, 2020
+Last Updated: August 10, 2020
 Created On: October 12, 2019
 
 Licensed under GPL-3.0
@@ -106,7 +107,7 @@ if __name__ == "__main__":
 
             # tries to load plugin
             try:
-                i = importlib.import_module(f"{folder}.{plugin}")
+                i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
                 loaded = False
 
                 if i.LOAD_ON_START:
