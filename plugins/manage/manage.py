@@ -56,7 +56,7 @@ class Manage(commands.Cog):
                     except Exception:
                         enabledGuild = "⚠️"
 
-                    embed.add_field(name=f"{data['_id']} v{data['version']} {loaded}{hidden}{enabledGuild}", 
+                    embed.add_field(name=f"[{enabledGuild}] {data['_id']} v{data['version']} {loaded}{hidden}", 
                                     value=data["description"], 
                                     inline=False)
                 except TypeError:
@@ -79,13 +79,13 @@ class Manage(commands.Cog):
                 try:
                     isEnabled = x["guilds"][str(ctx.guild.id)]
                     if isEnabled:
-                        enabledGuild = "(Enabled)"
+                        enabledGuild = "✔️"
                     else:
-                        enabledGuild = ""
+                        enabledGuild = "❌"
                 except Exception:
-                    enabledGuild = ""
+                    enabledGuild = "⚠️"
 
-                embed.add_field(name=f"{x['_id']} {enabledGuild}", 
+                embed.add_field(name=f"[{enabledGuild}] {x['_id']}", 
                                 value=x["description"], 
                                 inline=False)
         await ctx.send(embed=embed)
