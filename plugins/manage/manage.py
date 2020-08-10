@@ -64,7 +64,14 @@ class Manage(commands.Cog):
                                         inline=False)
         else:
             for x in pluginCol.find({ "loaded": True, "hidden": False }):
-                embed.add_field(name=x["_id"], 
+                # checks if plugin is enabled in guild
+                try:
+                    x["guilds"][str(ctx.guild.id)]
+                    enabledGuild = " (Enabled)"
+                except Exception:
+                    enabledGuild = ""
+
+                embed.add_field(name=f"{x['_id']}{enabledGuild}", 
                                 value=x["description"], 
                                 inline=False)
         await ctx.send(embed=embed)
