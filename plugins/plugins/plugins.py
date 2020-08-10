@@ -116,13 +116,13 @@ class Plugins(commands.Cog):
 
                 if await self.bot.is_owner(ctx.author):
                     embed.add_field(name=f"Author", 
-                                    value=data["author"], inline=False)
+                                    value=data["author"], inline=True)
                     embed.add_field(name=f"Version", 
-                                    value=data["version"], inline=True)
+                                    value=data["version"], inline=False)
                     embed.add_field(name=f"Load On Start", 
                                     value=data["load_on_start"], inline=True)
                     embed.add_field(name=f"Required", 
-                                    value=data["required"], inline=False)
+                                    value=data["required"], inline=True)
                     embed.add_field(name=f"Cogs", 
                                     value=data["cog_names"], inline=False)
 
@@ -138,13 +138,13 @@ class Plugins(commands.Cog):
                 embed.add_field(name=f"ID Name", 
                                 value=plug, inline=True)
                 embed.add_field(name=f"Author", 
-                                value=i.AUTHOR, inline=False)
+                                value=i.AUTHOR, inline=True)
                 embed.add_field(name=f"Version", 
-                                value=i.VERSION, inline=True)
+                                value=i.VERSION, inline=False)
                 embed.add_field(name=f"Load On Start", 
                                 value=i.LOAD_ON_START, inline=True)
                 embed.add_field(name=f"Required", 
-                                value=i.REQUIRED, inline=False)
+                                value=i.REQUIRED, inline=True)
                 embed.add_field(name=f"Cogs", 
                                 value=i.COG_NAMES, inline=False)
                 await ctx.send(embed=embed)
@@ -260,6 +260,13 @@ class Plugins(commands.Cog):
         """
         try:
             folder = readINI("config.ini")["main"]["pluginFolder"]
+
+            # don't allow reloading of itself
+            if plug == "plugins":
+                pluginLog.error(f"{folder}.{plug}: not allowed to reload the reloading plugin >.>")
+                await ctx.message.add_reaction("❌")
+                return
+
             self.bot.reload_extension(f"{folder}.{plug}")
             i = importlib.import_module(f"{folder}.{plug}.plugininfo")
             pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
