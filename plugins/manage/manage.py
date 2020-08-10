@@ -260,7 +260,8 @@ class Manage(commands.Cog):
             pluginCol = connect()["applesauce"]["plugins"] # connect to DB
 
             if i.ALWAYS_ALLOW:
-                await ctx.send("Always allowed")
+                await ctx.message.add_reaction("✅")
+                await ctx.message.add_reaction("⚠️")
                 return
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
@@ -314,7 +315,8 @@ class Manage(commands.Cog):
             pluginCol = connect()["applesauce"]["plugins"] # connect to DB
 
             if i.ALWAYS_ALLOW:
-                await ctx.send("Always allowed")
+                await ctx.message.add_reaction("✅")
+                await ctx.message.add_reaction("⚠️")
                 return
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
