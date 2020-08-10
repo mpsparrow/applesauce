@@ -189,9 +189,9 @@ async def on_command(ctx):
         pluginData = connect()["applesauce"]["plugins"][str(ctx.command.cog).split('.')[1]]
 
         if not(pluginData["always_allow"]) and not(pluginData[str(ctx.guild.id)]):
-            pass
+            return
     except Exception:
-        pass
+        return
 
 @bot.event
 async def on_command_error(ctx, error):
