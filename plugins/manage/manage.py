@@ -44,7 +44,7 @@ class Manage(commands.Cog):
                 try:
                     data = pluginCol.find_one({ "_id": plug })
                     loaded = "📥" if data["loaded"] else "📤"
-                    hidden = "❔" if data["hidden"] else ""
+                    hidden = "❔" if data["hidden"] else "\t"
 
                     # checks if plugin is enabled in guild
                     try:
@@ -64,7 +64,7 @@ class Manage(commands.Cog):
                     try:
                         # working
                         i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-                        hidden = "❔" if i.HIDDEN else ""
+                        hidden = "❔" if i.HIDDEN else "\t"
                         embed.add_field(name=f"{hidden} {plug} v{i.VERSION} (never loaded)", 
                                         value=i.DESCRIPTION, 
                                         inline=False)
