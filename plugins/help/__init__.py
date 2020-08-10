@@ -9,6 +9,7 @@ DESCRIPTION = "An advanced help command set"
 LOAD_ON_START = True
 REQUIRED = True
 HIDDEN = False
+ALWAYS_ALLOW = True
 
 def setup(bot):
     """

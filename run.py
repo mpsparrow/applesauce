@@ -122,6 +122,7 @@ if __name__ == "__main__":
                                 "load_on_start": i.LOAD_ON_START, 
                                 "required": i.REQUIRED,
                                 "hidden": i.HIDDEN,
+                                "always_allow": i.ALWAYS_ALLOW,
                                 "loaded": loaded }
                 pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
                 startLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
@@ -183,8 +184,14 @@ async def on_ready():
 
 @bot.event
 async def on_command(ctx):
-    plugin = str(ctx.command.cog).split('.')[1]
-    print(plugin)
+    # don't allow commands if not enabled in guild
+    try:
+        pluginData = connect()["applesauce"]["plugins"][str(ctx.command.cog).split('.')[1]]
+
+        if not(pluginData["always_allow"]) and not(pluginData[str(ctx.guild.id)]):
+            pass
+    except Exception:
+        pass
 
 @bot.event
 async def on_command_error(ctx, error):
