@@ -19,7 +19,7 @@ class Plugins(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def plugin(self, ctx):
         """
-        Command group for plugin management.
+        Command group for plugin management
         :param ctx:
         """
 
@@ -37,7 +37,7 @@ class Plugins(commands.Cog):
 
         if show_unloaded and await self.bot.is_owner(ctx.author):
             for plug in next(os.walk(folder))[1]:
-                # skips '__pycache__' folder and any files
+                # skips '__pycache__' folder
                 if plug == "__pycache__":
                     continue
 

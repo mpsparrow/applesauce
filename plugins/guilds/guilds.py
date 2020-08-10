@@ -11,7 +11,8 @@ class Guilds(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(guild):
-        return
+        # sends join message with getting started information
+        await ctx.send(f"**Thanks for adding me!**\n**Prefix:** `!`\n**Help:** `!help`")
 
     @commands.Cog.listener()
     async def on_guild_remove(guild):
