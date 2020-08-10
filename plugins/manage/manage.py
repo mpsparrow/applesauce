@@ -43,20 +43,20 @@ class Manage(commands.Cog):
 
                 try:
                     data = pluginCol.find_one({ "_id": plug })
-                    loaded = "(Loaded)" if data["loaded"] else ""
-                    hidden = "(Hidden)" if data["hidden"] else ""
+                    loaded = "📥" if data["loaded"] else "📤"
+                    hidden = "❔" if data["hidden"] else "⬛"
 
                     # checks if plugin is enabled in guild
                     try:
                         isEnabled = data["guilds"][str(ctx.guild.id)]
                         if isEnabled:
-                            enabledGuild = "(Enabled)"
+                            enabledGuild = "✅"
                         else:
-                            enabledGuild = ""
+                            enabledGuild = "❌"
                     except Exception:
-                        enabledGuild = ""
+                        enabledGuild = "❌"
 
-                    embed.add_field(name=f"{data['_id']} v{data['version']} {loaded}{hidden}{enabledGuild}", 
+                    embed.add_field(name=f"{enabledGuild}{loaded}{hidden} {data['_id']} v{data['version']}", 
                                     value=data["description"], 
                                     inline=False)
                 except TypeError:
@@ -64,8 +64,8 @@ class Manage(commands.Cog):
                     try:
                         # working
                         i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-                        hidden = "(Hidden)" if i.HIDDEN else ""
-                        embed.add_field(name=f"{plug} v{i.VERSION} (never loaded){hidden}", 
+                        hidden = "❔" if i.HIDDEN else "⬛"
+                        embed.add_field(name=f"{hidden}{plug} v{i.VERSION} (never loaded)", 
                                         value=i.DESCRIPTION, 
                                         inline=False)
                     except Exception as error:
@@ -79,13 +79,13 @@ class Manage(commands.Cog):
                 try:
                     isEnabled = x["guilds"][str(ctx.guild.id)]
                     if isEnabled:
-                        enabledGuild = "(Enabled)"
+                        enabledGuild = "✅"
                     else:
-                        enabledGuild = ""
+                        enabledGuild = "❌"
                 except Exception:
-                    enabledGuild = ""
+                    enabledGuild = "❌"
 
-                embed.add_field(name=f"{x['_id']} {enabledGuild}", 
+                embed.add_field(name=f"{enabledGuild} {x['_id']}", 
                                 value=x["description"], 
                                 inline=False)
         await ctx.send(embed=embed)
