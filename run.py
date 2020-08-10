@@ -204,12 +204,14 @@ async def on_command(ctx):
     # don't allow commands if not enabled in guild
     try:
         pluginData = connect()["applesauce"]["plugins"][str(ctx.command.cog).split('.')[1]]
-
+        print(ctx)
+        print(pluginData["always_allow"])
+        print(pluginData[str(ctx.guild.id)])
         if not(pluginData["always_allow"]) and not(pluginData[str(ctx.guild.id)]):
             print("hey")
-            print(ctx)
             raise pluginNotEnabled
     except Exception:
+        print("hey2")
         raise pluginNotEnabled
 
 @bot.event
