@@ -56,7 +56,7 @@ class Manage(commands.Cog):
                     except Exception:
                         enabledGuild = "❌"
 
-                    embed.add_field(name=f"{enabledGuild} {data['_id']} v{data['version']} {loaded}{hidden}", 
+                    embed.add_field(name=f"{enabledGuild}{loaded}{hidden}\t{data['_id']} v{data['version']}", 
                                     value=data["description"], 
                                     inline=False)
                 except TypeError:
@@ -65,7 +65,7 @@ class Manage(commands.Cog):
                         # working
                         i = importlib.import_module(f"{folder}.{plug}.plugininfo")
                         hidden = "❔" if i.HIDDEN else ""
-                        embed.add_field(name=f"{plug} v{i.VERSION} (never loaded){hidden}", 
+                        embed.add_field(name=f"{hidden} {plug} v{i.VERSION} (never loaded)", 
                                         value=i.DESCRIPTION, 
                                         inline=False)
                     except Exception as error:
