@@ -1,7 +1,7 @@
 import discord
 import importlib
 from discord.ext import commands
-from utils.config import readTXT
+from utils.config import readTXT, readINI
 from utils.database.actions import connect
 
 class Debugger(commands.Cog):
@@ -49,7 +49,6 @@ class Debugger(commands.Cog):
 
         # loops through all plugin documents in plugin collection
         for plugin in pluginCol.find():
-            print(plugin)
             total += 1
             try:
                 i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
