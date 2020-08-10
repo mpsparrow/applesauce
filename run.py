@@ -126,27 +126,37 @@ if __name__ == "__main__":
                 pluginCol.update_one({ "_id": plugin }, { "$set": pluginINFO }, upsert=True)
                 startLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
                 pluginLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | Loaded: {loaded} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-            except commands.ExtensionNotFound:
+            except commands.ExtensionNotFound as error:
                 # The plugin could not be found.
                 startLog.error(f"{folder}.{plugin}: not found (ExtensionNotFound)")
+                startLog.error(error)
                 pluginLog.error(f"{folder}.{plugin}: not found (ExtensionNotFound)")
-            except commands.ExtensionAlreadyLoaded:
+                pluginLog.error(error)
+            except commands.ExtensionAlreadyLoaded as error:
                 # The plugin was already loaded.
                 startLog.info(f"{folder}.{plugin}: already loaded (ExtensionAlreadyLoaded)")
+                startLog.error(error)
                 pluginLog.info(f"{folder}.{plugin}: already loaded (ExtensionAlreadyLoaded)")
-            except commands.NoEntryPointError:
+                pluginLog.error(error)
+            except commands.NoEntryPointError as error:
                 # The plugin does not have a setup function.
                 startLog.error(f"{folder}.{plugin}: no setup function (NoEntryPointError)")
+                startLog.error(error)
                 pluginLog.error(f"{folder}.{plugin}: no setup function (NoEntryPointError)")
-            except commands.ExtensionFailed:
+                pluginLog.error(error)
+            except commands.ExtensionFailed as error:
                 # The plugin setup function has an execution error.
                 startLog.error(f"{folder}.{plugin}: execution error (ExtensionFailed)")
+                startLog.error(error)
                 pluginLog.error(f"{folder}.{plugin}: execution error (ExtensionFailed)")
+                pluginLog.error(error)
             except Exception as error:
                 try:
                     bot.unload_extension(f"{folder}.{plugin}")
                     startLog.error(f"{folder}.{plugin}: variables not properly defined. Plugin not loaded.")
+                    startLog.error(error)
                     pluginLog.error(f"{folder}.{plugin}: variables not properly defined. Plugin not loaded.")
+                    pluginLog.error(error)
 
                     if i.REQUIRED:
                         startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")

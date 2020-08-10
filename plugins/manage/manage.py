@@ -117,6 +117,7 @@ class Manage(commands.Cog):
         except Exception as error:
             self.bot.unload_extension(f"{folder}.{plug}")
             pluginLog.error(f"{folder}.{plug}: variables not properly defined. Plugin unloaded.")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
 
@@ -159,6 +160,7 @@ class Manage(commands.Cog):
             await ctx.message.add_reaction("❌")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unknown unloading plugin error.")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
 
@@ -211,6 +213,7 @@ class Manage(commands.Cog):
             await ctx.message.add_reaction("⚠️")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unknown reloading plugin error.")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
 
@@ -233,7 +236,7 @@ class Manage(commands.Cog):
 
                 try:
                     int(guildID)
-                except:
+                except ValueError:
                     validID = False
 
                 if validID:
@@ -250,6 +253,7 @@ class Manage(commands.Cog):
                 await ctx.message.add_reaction("✅")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unable to enable extension")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
 
 
@@ -272,7 +276,7 @@ class Manage(commands.Cog):
 
                 try:
                     int(guildID)
-                except:
+                except ValueError:
                     validID = False
 
                 if validID:
@@ -289,4 +293,5 @@ class Manage(commands.Cog):
                 await ctx.message.add_reaction("✅")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unable to disable extension")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
