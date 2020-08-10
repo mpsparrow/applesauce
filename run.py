@@ -205,14 +205,10 @@ async def on_command(ctx):
     try:
         pluginCol = connect()["applesauce"]["plugins"]
         pluginData = pluginCol.find_one({ "_id": str(ctx.command.cog).split('.')[1] })
-        print(ctx)
-        print(pluginData["always_allow"])
-        print(pluginData["guilds"][str(ctx.guild.id)])
+
         if not(pluginData["always_allow"]) and not(pluginData["guilds"][str(ctx.guild.id)]):
-            print("hey")
-            raise pluginNotEnabled
+            return
     except Exception:
-        print("hey2")
         raise pluginNotEnabled
 
 @bot.event
