@@ -183,8 +183,8 @@ async def on_ready():
 
 @bot.event
 async def on_command(ctx):
-    print(ctx.command.cog)
-    print(ctx)
+    plugin = ctx.command.cog.split('.')[1]
+    print(plugin)
 
 @bot.event
 async def on_command_error(ctx, error):
