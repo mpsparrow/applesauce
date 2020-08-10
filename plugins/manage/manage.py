@@ -48,7 +48,7 @@ class Manage(commands.Cog):
 
                     # checks if plugin is enabled in guild
                     try:
-                        isEnabled = x["guilds"][str(ctx.guild.id)]
+                        isEnabled = data["guilds"][str(ctx.guild.id)]
                         if isEnabled:
                             enabledGuild = " (Enabled)"
                         else:
