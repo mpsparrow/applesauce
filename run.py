@@ -206,6 +206,8 @@ async def on_command(ctx):
         pluginData = connect()["applesauce"]["plugins"][str(ctx.command.cog).split('.')[1]]
 
         if not(pluginData["always_allow"]) and not(pluginData[str(ctx.guild.id)]):
+            print("hey")
+            print(ctx)
             raise pluginNotEnabled
     except Exception:
         raise pluginNotEnabled
