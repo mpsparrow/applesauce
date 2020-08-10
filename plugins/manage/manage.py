@@ -259,9 +259,18 @@ class Manage(commands.Cog):
                     await ctx.message.add_reaction("❌")
                     await ctx.message.add_reaction("⚠️")
             else:
-                pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": True }}, upsert=True)
-                pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
-                await ctx.message.add_reaction("✅")
+                if i.HIDDEN:
+                    if await self.bot.is_owner(ctx.author):
+                        pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": True }}, upsert=True)
+                        pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
+                        await ctx.message.add_reaction("✅")
+                    else:
+                        pluginLog.error(f"{folder}.{plug}: unable to enable hidden extension")
+                        await ctx.message.add_reaction("❌")
+                else:
+                    pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": True }}, upsert=True)
+                    pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
+                    await ctx.message.add_reaction("✅")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unable to enable extension")
             pluginLog.error(error)
@@ -300,9 +309,18 @@ class Manage(commands.Cog):
                     await ctx.message.add_reaction("❌")
                     await ctx.message.add_reaction("⚠️")
             else:
-                pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": False }}, upsert=True)
-                pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
-                await ctx.message.add_reaction("✅")
+                if i.HIDDEN:
+                    if await self.bot.is_owner(ctx.author):
+                        pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": False }}, upsert=True)
+                        pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
+                        await ctx.message.add_reaction("✅")
+                    else:
+                        pluginLog.error(f"{folder}.{plug}: unable to disable hidden extension")
+                        await ctx.message.add_reaction("❌")
+                else:
+                    pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": False }}, upsert=True)
+                    pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
+                    await ctx.message.add_reaction("✅")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unable to disable extension")
             pluginLog.error(error)
