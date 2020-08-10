@@ -50,11 +50,11 @@ class Manage(commands.Cog):
                     try:
                         isEnabled = data["guilds"][str(ctx.guild.id)]
                         if isEnabled:
-                            enabledGuild = "✔️"
+                            enabledGuild = "✅"
                         else:
                             enabledGuild = "❌"
                     except Exception:
-                        enabledGuild = "⚠️"
+                        enabledGuild = "❌"
 
                     embed.add_field(name=f"[{enabledGuild}] {data['_id']} v{data['version']} {loaded}{hidden}", 
                                     value=data["description"], 
@@ -79,11 +79,11 @@ class Manage(commands.Cog):
                 try:
                     isEnabled = x["guilds"][str(ctx.guild.id)]
                     if isEnabled:
-                        enabledGuild = "✔️"
+                        enabledGuild = "✅"
                     else:
                         enabledGuild = "❌"
                 except Exception:
-                    enabledGuild = "⚠️"
+                    enabledGuild = "❌"
 
                 embed.add_field(name=f"[{enabledGuild}] {x['_id']}", 
                                 value=x["description"], 
