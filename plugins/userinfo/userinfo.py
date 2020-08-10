@@ -17,7 +17,7 @@ class Userinfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="userinfo", description="Get information about discord users", usage="userinfo <user>", aliases=["palyer", "user"])
+    @commands.command(name="userinfo", description="Get information about discord users", usage="userinfo <user>", aliases=["player", "user"])
     @is_guild_enabled()
     async def userinfo(self, ctx: commands.Context, user: discord.Member = None):
         if user == None:

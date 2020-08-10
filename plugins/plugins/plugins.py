@@ -8,7 +8,7 @@ from utils.database.actions import connect
 from utils.logger import pluginLog
 from utils.config import readINI
 
-class Manage(commands.Cog):
+class Plugins(commands.Cog):
     """
     Plugin management commands
     """
