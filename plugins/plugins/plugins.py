@@ -108,9 +108,7 @@ class Plugins(commands.Cog):
                 except Exception:
                     enabledGuild = "❌"
 
-                embed=discord.Embed(title=f"{data['plugin_name']} {enabledGuild}{loaded}{hidden}", color=0xc1c100)
-                embed.add_field(name=f"Description", 
-                                value=data["description"], inline=False)
+                embed=discord.Embed(title=f"{data['plugin_name']} {enabledGuild}{loaded}{hidden}", description=data["description"], color=0xc1c100)
                 embed.add_field(name=f"ID Name", 
                                 value=data["_id"], inline=True)
 
@@ -118,35 +116,42 @@ class Plugins(commands.Cog):
                     embed.add_field(name=f"Author", 
                                     value=data["author"], inline=True)
                     embed.add_field(name=f"Version", 
-                                    value=data["version"], inline=False)
+                                    value=data["version"], inline=True)
+                    load_on_start = "✅" if data["load_on_start"] else "❌"
                     embed.add_field(name=f"Load On Start", 
-                                    value=data["load_on_start"], inline=True)
+                                    value=load_on_start, inline=True)
+                    required = "✅" if data["required"] else "❌"
                     embed.add_field(name=f"Required", 
-                                    value=data["required"], inline=True)
+                                    value=required, inline=True)
+                    cogString = ""
+                    for cog in data["cog_names"]:
+                        cogString += f"`{cog}`, "
                     embed.add_field(name=f"Cogs", 
-                                    value=data["cog_names"], inline=False)
-
+                                    value=cogString[:-2], inline=False)
                 await ctx.send(embed=embed)
         except TypeError:
             # not in database
             if await self.bot.is_owner(ctx.author):
                 i = importlib.import_module(f"{folder}.{plug}.plugininfo")
                 hidden = "❔" if i.HIDDEN else ""
-                embed=discord.Embed(title=f"{plug} {hidden} (never loaded)", color=0xc1c100)
-                embed.add_field(name=f"Description", 
-                                value=i.DESCRIPTION, inline=False)
+                embed=discord.Embed(title=f"{plug} {hidden} (never loaded)", description=i.DESCRIPTION, color=0xc1c100)
                 embed.add_field(name=f"ID Name", 
                                 value=plug, inline=True)
                 embed.add_field(name=f"Author", 
                                 value=i.AUTHOR, inline=True)
                 embed.add_field(name=f"Version", 
-                                value=i.VERSION, inline=False)
+                                value=i.VERSION, inline=True)
+                load_on_start = "✅" if i.LOAD_ON_START else "❌"
                 embed.add_field(name=f"Load On Start", 
-                                value=i.LOAD_ON_START, inline=True)
+                                value=load_on_start, inline=True)
+                required = "✅" if i.REQUIRED else "❌"
                 embed.add_field(name=f"Required", 
-                                value=i.REQUIRED, inline=True)
+                                value=required, inline=True)
+                cogString = ""
+                for cog in i.COG_NAMES:
+                    cogString += f"`{cog}`, "
                 embed.add_field(name=f"Cogs", 
-                                value=i.COG_NAMES, inline=False)
+                                value=cogString[:-2], inline=False)
                 await ctx.send(embed=embed)
 
     @plugin.command(name="load", description="Load a plugin", usage="<plugin name>", aliases=["l"])
