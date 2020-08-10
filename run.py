@@ -182,6 +182,23 @@ async def on_ready():
     else:
         log.info(f"Reconnected! {bot.user.name} | {bot.user.id}")
 
+class pluginNotEnabled(Exception):
+    """
+    Raised when a plugin is not enabled so the command cannot execute
+    """
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            log.error(f"pluginNotEnabled, {self.message}")
+            return f"pluginNotEnabled, {self.message}"
+        log.error("pluginNotEnabled has been raised")
+        return "pluginNotEnabled has been raised"
+
 @bot.event
 async def on_command(ctx):
     # don't allow commands if not enabled in guild
@@ -189,12 +206,15 @@ async def on_command(ctx):
         pluginData = connect()["applesauce"]["plugins"][str(ctx.command.cog).split('.')[1]]
 
         if not(pluginData["always_allow"]) and not(pluginData[str(ctx.guild.id)]):
-            return
+            raise pluginNotEnabled
     except Exception:
-        return
+        raise pluginNotEnabled
 
 @bot.event
 async def on_command_error(ctx, error):
+    if isinstance(error, pluginNotEnabled):
+        # plugin is not enabled so command won't run
+        pass
     pass
 
 # Starts bot with Discord token from config.ini
