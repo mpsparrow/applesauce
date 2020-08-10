@@ -43,20 +43,20 @@ class Manage(commands.Cog):
 
                 try:
                     data = pluginCol.find_one({ "_id": plug })
-                    loaded = "Loaded" if data["loaded"] else "Unloaded"
+                    loaded = "{Loaded)" if data["loaded"] else ""
                     hidden = "(Hidden)" if data["hidden"] else ""
 
                     # checks if plugin is enabled in guild
                     try:
                         isEnabled = data["guilds"][str(ctx.guild.id)]
                         if isEnabled:
-                            enabledGuild = " (Enabled)"
+                            enabledGuild = "(Enabled)"
                         else:
                             enabledGuild = ""
                     except Exception:
                         enabledGuild = ""
 
-                    embed.add_field(name=f"{data['_id']} v{data['version']} ({loaded}){hidden}{enabledGuild}", 
+                    embed.add_field(name=f"{data['_id']} v{data['version']} {loaded}{hidden}{enabledGuild}", 
                                     value=data["description"], 
                                     inline=False)
                 except TypeError:
@@ -79,13 +79,13 @@ class Manage(commands.Cog):
                 try:
                     isEnabled = x["guilds"][str(ctx.guild.id)]
                     if isEnabled:
-                        enabledGuild = " (Enabled)"
+                        enabledGuild = "(Enabled)"
                     else:
                         enabledGuild = ""
                 except Exception:
                     enabledGuild = ""
 
-                embed.add_field(name=f"{x['_id']}{enabledGuild}", 
+                embed.add_field(name=f"{x['_id']} {enabledGuild}", 
                                 value=x["description"], 
                                 inline=False)
         await ctx.send(embed=embed)
