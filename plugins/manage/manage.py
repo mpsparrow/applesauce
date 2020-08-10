@@ -227,7 +227,7 @@ class Manage(commands.Cog):
         """
         try:
             folder = readINI("config.ini")["main"]["pluginFolder"]
-            pluginData = connect()["applesauce"]["plugins"] # connect to DB
+            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
                 validID = True
@@ -267,7 +267,7 @@ class Manage(commands.Cog):
         """
         try:
             folder = readINI("config.ini")["main"]["pluginFolder"]
-            pluginData = connect()["applesauce"]["plugins"] # connect to DB
+            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
                 validID = True
