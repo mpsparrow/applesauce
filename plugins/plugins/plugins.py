@@ -117,22 +117,26 @@ class Plugins(commands.Cog):
             pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Loaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             await ctx.message.add_reaction("✅")
-        except commands.ExtensionNotFound:
+        except commands.ExtensionNotFound as error:
             # The plugin could not be found
             pluginLog.error(f"{folder}.{plug}: not found (ExtensionNotFound)")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
-        except commands.ExtensionAlreadyLoaded:
+        except commands.ExtensionAlreadyLoaded as error:
             # The plugin was already loaded
             pluginLog.info(f"{folder}.{plug}: already loaded (ExtensionAlreadyLoaded)")
+            pluginLog.error(error)
             await ctx.message.add_reaction("✅")
-        except commands.NoEntryPointError:
+        except commands.NoEntryPointError as error:
             # The plugin does not have a setup function
             pluginLog.error(f"{folder}.{plug}: no setup function (NoEntryPointError)")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
-        except commands.ExtensionFailed:
+        except commands.ExtensionFailed as error:
             # The plugin setup function has an execution error
             pluginLog.error(f"{folder}.{plug}: execution error (ExtensionFailed)")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
         except Exception as error:
@@ -175,9 +179,10 @@ class Plugins(commands.Cog):
             pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Unloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             await ctx.message.add_reaction("✅")
-        except commands.ExtensionNotLoaded:
+        except commands.ExtensionNotLoaded as error:
             # The plugin was not found or unloaded
             pluginLog.error(f"{folder}.{plug}: unable to be found and unloaded. (ExtensionNotLoaded)")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
         except Exception as error:
             pluginLog.error(f"{folder}.{plug}: unknown unloading plugin error.")
@@ -212,24 +217,28 @@ class Plugins(commands.Cog):
             pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Reloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             await ctx.message.add_reaction("✅")
-        except commands.ExtensionNotLoaded:
+        except commands.ExtensionNotLoaded as error:
             # The plugin doesn't exist
             pluginLog.error(f"{folder}.{plug}: not found (ExtensionNotLoaded)")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
-        except commands.ExtensionNotFound:
+        except commands.ExtensionNotFound as error:
             # The plugin did exist at one point but now doesn't
             # Was probably loaded but than deleted
             pluginLog.info(f"{folder}.{plug}: not found (ExtensionNotFound)")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
-        except commands.NoEntryPointError:
+        except commands.NoEntryPointError as error:
             # The plugin does not have a setup function
             pluginLog.error(f"{folder}.{plug}: no setup function (NoEntryPointError)")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
-        except commands.ExtensionFailed:
+        except commands.ExtensionFailed as error:
             # The plugin setup function has an execution error
             pluginLog.error(f"{folder}.{plug}: execution error (ExtensionFailed)")
+            pluginLog.error(error)
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
         except Exception as error:
