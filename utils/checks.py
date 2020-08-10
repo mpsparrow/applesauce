@@ -2,6 +2,7 @@ import pymongo
 import discord
 from discord.ext import commands
 from utils.database.actions import connect
+from utils.config import readINI
 
 def is_guild_enabled():
     """
@@ -13,7 +14,7 @@ def is_guild_enabled():
         :param ctx:
         """
         try:
-            pluginCol = connect()["applesauce"]["plugins"]
+            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
             pluginData = pluginCol.find_one({ "_id": str(ctx.command.cog).split('.')[1] })
 
             if pluginData["guilds"][str(ctx.guild.id)]:

@@ -31,7 +31,7 @@ class Manage(commands.Cog):
         :param ctx:
         :param show_unloaded: show unloaded plugins for owner
         """
-        pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+        pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
         embed=discord.Embed(title='Plugins', color=0xc1c100)
         folder = readINI("config.ini")["main"]["pluginFolder"]
 
@@ -103,7 +103,7 @@ class Manage(commands.Cog):
             folder = readINI("config.ini")["main"]["pluginFolder"]
             self.bot.load_extension(f"{folder}.{plug}")
             i = importlib.import_module(f"{folder}.{plug}")
-            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
             pluginINFO = { "_id": plug, 
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
@@ -161,7 +161,7 @@ class Manage(commands.Cog):
                 return
 
             self.bot.unload_extension(f"{folder}.{plug}")
-            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
             pluginINFO = { "_id": plug, 
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
@@ -198,7 +198,7 @@ class Manage(commands.Cog):
             folder = readINI("config.ini")["main"]["pluginFolder"]
             self.bot.reload_extension(f"{folder}.{plug}")
             i = importlib.import_module(f"{folder}.{plug}")
-            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
             pluginINFO = { "_id": plug, 
                             "plugin_name": i.PLUGIN_NAME,
                             "cog_names": i.COG_NAMES,
@@ -249,7 +249,7 @@ class Manage(commands.Cog):
         try:
             folder = readINI("config.ini")["main"]["pluginFolder"]
             i = importlib.import_module(f"{folder}.{plug}")
-            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
                 validID = True
@@ -299,7 +299,7 @@ class Manage(commands.Cog):
         try:
             folder = readINI("config.ini")["main"]["pluginFolder"]
             i = importlib.import_module(f"{folder}.{plug}")
-            pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
 
             if guildID is not None and await self.bot.is_owner(ctx.author):
                 validID = True

@@ -94,7 +94,7 @@ if __name__ == "__main__":
     if args.p:
         startLog.info("Starting Plugins")
 
-        pluginCol = connect()["applesauce"]["plugins"] # connect to DB
+        pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
         pluginCol.update_many({ "loaded": True }, { "$set": { "loaded": False }}) # set all plugins to not loaded
         folder = readINI("config.ini")["main"]["pluginFolder"]
 
