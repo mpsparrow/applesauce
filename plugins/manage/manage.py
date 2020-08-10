@@ -43,7 +43,7 @@ class Manage(commands.Cog):
 
                 try:
                     data = pluginCol.find_one({ "_id": plug })
-                    loaded = "{Loaded)" if data["loaded"] else ""
+                    loaded = "(Loaded)" if data["loaded"] else ""
                     hidden = "(Hidden)" if data["hidden"] else ""
 
                     # checks if plugin is enabled in guild

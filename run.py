@@ -181,5 +181,14 @@ async def on_ready():
     else:
         log.info(f"Reconnected! {bot.user.name} | {bot.user.id}")
 
+@bot.event
+async def on_command(ctx):
+    print(ctx.command.cog)
+    print(ctx)
+
+@bot.event
+async def on_command_error(ctx, error):
+    pass
+
 # Starts bot with Discord token from config.ini
 bot.run(readINI("config.ini")["main"]["discordToken"])
