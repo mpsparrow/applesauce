@@ -213,3 +213,78 @@ class Manage(commands.Cog):
             pluginLog.error(f"{folder}.{plug}: unknown reloading plugin error.")
             await ctx.message.add_reaction("❌")
             await ctx.message.add_reaction("⚠️")
+
+    @plugin.command(name="enable", description="Enable a plugin in a guild", usage="<plugin name>", aliases=["e"])
+    @commands.has_permissions(manage_guild=True)
+    async def enable(self, ctx, plug, guildID=None):
+        """
+        Enable a plugin in a guild
+        :param ctx:
+        :param str plug: Plugin name
+        """
+        try:
+            pluginData = connect()["applesauce"]["plugins"] # connect to DB
+
+            if guildID is not None and await self.bot.is_owner(ctx.author):
+                validID = True
+                if len(str(guildID)) != 18:
+                    validID = False
+
+                try:
+                    int(guildID)
+                except:
+                    validID = False
+
+                if validID:
+                    pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { int(guildID): True }}}, upsert=True)
+                    pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {int(guildID)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    await ctx.message.add_reaction("✅")
+                else:
+                    pluginLog.error(f"{folder}.{plug}: owner invalid guildID for enabling extension")
+                    await ctx.message.add_reaction("❌")
+                    await ctx.message.add_reaction("⚠️")
+            else:
+                pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { int(ctx.guild.id): True }}}, upsert=True)
+                pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {int(ctx.guild.id)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                await ctx.message.add_reaction("✅")
+        except Exception as error:
+            pluginLog.error(f"{folder}.{plug}: unable to enable extension")
+            await ctx.message.add_reaction("❌")
+
+
+    @plugin.command(name="disable", description="Disable a plugin in a guild", usage="<plugin name>", aliases=["d"])
+    @commands.has_permissions(manage_guild=True)
+    async def disable(self, ctx, plug, guildID=None):
+        """
+        Disable a plugin in a guild
+        :param ctx:
+        :param str plug: Plugin name
+        """
+        try:
+            pluginData = connect()["applesauce"]["plugins"] # connect to DB
+
+            if guildID is not None and await self.bot.is_owner(ctx.author):
+                validID = True
+                if len(str(guildID)) != 18:
+                    validID = False
+
+                try:
+                    int(guildID)
+                except:
+                    validID = False
+
+                if validID:
+                    pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { int(guildID): False }}}, upsert=True)
+                    pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {int(guildID)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                    await ctx.message.add_reaction("✅")
+                else:
+                    pluginLog.error(f"{folder}.{plug}: owner invalid guildID for disabling extension")
+                    await ctx.message.add_reaction("❌")
+                    await ctx.message.add_reaction("⚠️")
+            else:
+                pluginCol.update_one({ "_id": plug }, { "$set": { "guild": { int(ctx.guild.id): False }}}, upsert=True)
+                pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {int(ctx.guild.id)} | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+                await ctx.message.add_reaction("✅")
+        except Exception as error:
+            pluginLog.error(f"{folder}.{plug}: unable to disable extension")
+            await ctx.message.add_reaction("❌")
