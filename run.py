@@ -207,8 +207,8 @@ async def on_command(ctx):
         pluginData = pluginCol.find_one({ "_id": str(ctx.command.cog).split('.')[1] })
         print(ctx)
         print(pluginData["always_allow"])
-        print(pluginData[str(ctx.guild.id)])
-        if not(pluginData["always_allow"]) and not(pluginData[str(ctx.guild.id)]):
+        print(pluginData["guilds"][str(ctx.guild.id)])
+        if not(pluginData["always_allow"]) and not(pluginData["guilds"][str(ctx.guild.id)]):
             print("hey")
             raise pluginNotEnabled
     except Exception:
