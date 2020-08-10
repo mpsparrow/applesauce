@@ -183,7 +183,7 @@ async def on_ready():
 
 @bot.event
 async def on_command(ctx):
-    plugin = ctx.command.cog.split('.')[1]
+    plugin = str(ctx.command.cog).split('.')[1]
     print(plugin)
 
 @bot.event
