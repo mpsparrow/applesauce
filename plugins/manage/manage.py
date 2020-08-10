@@ -44,7 +44,7 @@ class Manage(commands.Cog):
                 try:
                     data = pluginCol.find_one({ "_id": plug })
                     loaded = "📥" if data["loaded"] else "📤"
-                    hidden = "❔" if data["hidden"] else "\t\t"
+                    hidden = "❔" if data["hidden"] else "⬛"
 
                     # checks if plugin is enabled in guild
                     try:
@@ -56,7 +56,7 @@ class Manage(commands.Cog):
                     except Exception:
                         enabledGuild = "❌"
 
-                    embed.add_field(name=f"{enabledGuild}{loaded}{hidden}\t{data['_id']} v{data['version']}", 
+                    embed.add_field(name=f"{enabledGuild}{loaded}{hidden} {data['_id']} v{data['version']}", 
                                     value=data["description"], 
                                     inline=False)
                 except TypeError:
@@ -64,7 +64,7 @@ class Manage(commands.Cog):
                     try:
                         # working
                         i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-                        hidden = "❔" if i.HIDDEN else "\t\t"
+                        hidden = "❔" if i.HIDDEN else "⬛"
                         embed.add_field(name=f"{hidden}{plug} v{i.VERSION} (never loaded)", 
                                         value=i.DESCRIPTION, 
                                         inline=False)
