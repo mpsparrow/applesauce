@@ -49,11 +49,12 @@ class Debugger(commands.Cog):
 
         # loops through all plugin documents in plugin collection
         for plugin in pluginCol.find():
+            print(plugin)
             total += 1
             try:
-                i = importlib.import_module(f"{folder}.{plugin["_id"]}.plugininfo")
+                i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
             except ModuleNotFoundError:
-                pluginCol.delete_one({ "_id": plugin["_id"] })
+                pluginCol.delete_one({ "_id": plugin })
                 removed += 1
 
         await ctx.send(f"Removed {removed}/{total}")
