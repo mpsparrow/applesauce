@@ -66,8 +66,11 @@ class Manage(commands.Cog):
             for x in pluginCol.find({ "loaded": True, "hidden": False }):
                 # checks if plugin is enabled in guild
                 try:
-                    x["guilds"][str(ctx.guild.id)]
-                    enabledGuild = " (Enabled)"
+                    isEnabled = x["guilds"][str(ctx.guild.id)]
+                    if isEnabled:
+                        enabledGuild = " (Enabled)"
+                    else:
+                        enabledGuild = ""
                 except Exception:
                     enabledGuild = ""
 
