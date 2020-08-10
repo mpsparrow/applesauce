@@ -43,7 +43,6 @@ class Debugger(commands.Cog):
         """
         pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
         folder = readINI("config.ini")["main"]["pluginFolder"]
-
         removed = 0
         total = 0
 
@@ -51,7 +50,7 @@ class Debugger(commands.Cog):
         for plugin in pluginCol.find():
             total += 1
             try:
-                i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
+                i = importlib.import_module(f"{folder}.{plugin['_id']}.plugininfo")
             except ModuleNotFoundError:
                 pluginCol.delete_one({ "_id": plugin })
                 removed += 1
