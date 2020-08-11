@@ -46,13 +46,14 @@ class Debugger(commands.Cog):
         """
         Get version numbers of libraries and stuff
         """
-        libraries = ["discord", "pymongo", "argparse", "logging"]
         versionStr = "```"
         versionStr += f"python: {sys.version[:5]}\n"
         versionStr += f"os: {sys.platform}\n"
-        for lib in libraries:
-            versionStr += f"{lib}: {lib.__version__}\n"
-        versionStr = versionStr[:-2] + "```"
+        versionStr += f"discord: {discord.__version__}\n"
+        versionStr += f"pymongo: {pymongo.__version__}\n"
+        versionStr += f"argparse: {argparse.__version__}\n"
+        versionStr += f"logging: {logging.__version__}"  
+        versionStr = "```"    
         await ctx.send(versionStr)
 
     @debug.command(name="dbCleaner", description="Cleans database of invalid plugins", aliases=["cleaner", "clean"])
