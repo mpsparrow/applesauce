@@ -25,7 +25,7 @@ class Guilds(commands.Cog):
             guildCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["guilds"]
             guildINFO = { "_id": guild.id,
                         "guild_name": guild.name,
-                        "owner_id": guild.owner,
+                        "owner_id": guild.owner_id,
                         "region": guild.region,
                         "preferred_locale": guild.preferred_locale,
                         "icon_url": guild.icon_url,
@@ -38,7 +38,8 @@ class Guilds(commands.Cog):
             guildCol.update_one({ "_id": guild.id }, { "$set": guildINFO }, upsert=True)
             guildLog.info(f"{guild.id}: Added information to database")
         except Exception as error:
-            guildLog.info(f"{guild.id}: Failed to add information to database")
+            guildLog.error(f"{guild.id}: Failed to add information to database")
+            guildLog.error(error)
 
         # sends join message with getting started information
         try:
@@ -56,7 +57,8 @@ class Guilds(commands.Cog):
             guildCol.delete_one({ "_id": guild.id })
             guildLog.info(f"{guild.id}: Removed information from database on_guild_remove")
         except Exception as error:
-            guildLog.info(f"{guild.id}: Failed to remove information from database on_guild_remove")
+            guildLog.error(f"{guild.id}: Failed to remove information from database on_guild_remove")
+            guildLog.error(error)
 
     @commands.Cog.listener()
     async def on_guild_update(self, before, after):
@@ -64,7 +66,7 @@ class Guilds(commands.Cog):
             guildCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["guilds"]
             guildINFO = { "_id": after.id,
                         "guild_name": after.name,
-                        "owner_id": after.owner,
+                        "owner_id": after.owner_id,
                         "region": after.region,
                         "preferred_locale": after.preferred_locale,
                         "icon_url": after.icon_url,
@@ -77,6 +79,7 @@ class Guilds(commands.Cog):
             guildCol.update_one({ "_id": after.id }, { "$set": guildINFO }, upsert=True)
         except Exception as error:
             guildLog.error(f"{after.id}: Failed to update guild information")
+            guildLog.error(error)
 
     @commands.group(name="guild", description="Guild management", usage="<action>", aliases=["g"], invoked_subcommand=True)
     @commands.has_permissions(manage_guild=True)
