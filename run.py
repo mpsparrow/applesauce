@@ -178,7 +178,7 @@ if __name__ == "__main__":
                             os._exit(1)
                     except Exception:
                         # not an actual plugin
-                        continue
+                        pass
     else:
         startLog.info("Skipped Plugin Loading")
 
