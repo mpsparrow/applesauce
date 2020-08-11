@@ -3,11 +3,14 @@ from discord.ext import commands
 from utils.database.actions import connect
 from utils.logger import guildLog
 from utils.config import readINI
+from utils.prefix import prefix
 
 emote_reactions = { 
     "failed": "❌",
     "success": "✅"
 }
+
+remove_information_on_leave = True
 
 class Guilds(commands.Cog):
     """
@@ -43,24 +46,25 @@ class Guilds(commands.Cog):
         # sends join message with getting started information
         try:
             try:
-                guildData = guildCol.find_one({ "_id": guild.id })
-                await guild.system_channel.send(f"**Thanks for adding me!**\n**Prefix:** `{guildData['prefix']}`\n**Help:** `{guildData['prefix']}help`")
+                await guild.system_channel.send(f"**Thanks for adding me!**\n**Prefix:** `{prefix(guild.id)}`\n**Help:** `{prefix(guild.id)}help`")
             except Exception:
-                await guild.system_channel.send(f"**Thanks for adding me!**\n**Prefix:** `{readINI('config.ini')['main']['defaultPrefix']}`\n**Help:** `{readINI('config.ini')['main']['defaultPrefix']}help`")
-            else:
                 await guild.system_channel.send(f"**Thanks for adding me!**")
         except Exception:
             guildLog.error(f"{guild.id}: No system channel set")
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        try:
-            guildCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["guilds"]
-            guildCol.delete_one({ "_id": guild.id })
-            guildLog.info(f"{guild.id}: Removed information from database on_guild_remove")
-        except Exception as error:
-            guildLog.error(f"{guild.id}: Failed to remove information from database on_guild_remove")
-            guildLog.error(error)
+        guildLog.info(f"{guild.id}: Successfully left :(")
+
+        # removes information from database
+        if remove_information_on_leave:
+            try:
+                guildCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["guilds"]
+                guildCol.delete_one({ "_id": guild.id })
+                guildLog.info(f"{guild.id}: Removed information from database on_guild_remove")
+            except Exception as error:
+                guildLog.error(f"{guild.id}: Failed to remove information from database on_guild_remove")
+                guildLog.error(error)
 
     @commands.Cog.listener()
     async def on_guild_update(self, before, after):
