@@ -1,3 +1,8 @@
+import os
+import sys
+import pymongo
+import argparse
+import logging
 import discord
 import importlib
 from discord.ext import commands
@@ -34,6 +39,21 @@ class Debugger(commands.Cog):
         Outputs startup.log
         """
         await ctx.send(f"```{readTXT('logs/startup.log')}```")
+
+    @debug.command(name="versions", description="Outputs startup.log", aliases=["version", "v"])
+    @commands.is_owner()
+    async def versions(self, ctx):
+        """
+        Get version numbers of libraries and stuff
+        """
+        libraries = ["discord", "pymongo", "argparse", "logging"]
+        versionStr = "```"
+        versionStr += f"python: {sys.version[:5]}\n"
+        versionStr += f"os: {sys.platform}\n"
+        for lib in libraries:
+            versionStr += f"{lib}: {lib.__version__}\n"
+        versionStr = versionStr[:-2] + "```"
+        await ctx.send(versionStr)
 
     @debug.command(name="dbCleaner", description="Cleans database of invalid plugins", aliases=["cleaner", "clean"])
     @commands.is_owner()
