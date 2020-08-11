@@ -82,7 +82,7 @@ class Plugins(commands.Cog):
 
     @plugin.command(name="info", description="List all loaded plugins", usage="<plugin name>", aliases=["i", "information"])
     @commands.has_permissions(manage_guild=True)
-    async def info(self, ctx, plug):
+    async def info(self, ctx, plug, show_full: bool=False):
         """
         List information about a specific plugin
         :param ctx:
@@ -94,7 +94,7 @@ class Plugins(commands.Cog):
         try:
             data = pluginCol.find_one({ "_id": plug })
 
-            if data["loaded"] or await self.bot.is_owner(ctx.author):
+            if data["loaded"] or (await self.bot.is_owner(ctx.author) and show_full):
                 loaded = "📥" if data["loaded"] else "📤"
                 hidden = "❔" if data["hidden"] else ""
 
@@ -125,15 +125,15 @@ class Plugins(commands.Cog):
                     for cog in data["cog_names"]:
                         cogString += f"`{cog}`, "
                     embed.add_field(name=f"Cogs", 
-                                    value=cogString[:-2], inline=False)
+                                    value=cogString[:-2], inline=True)
                     embed.set_footer(text=f"Created by {data['author']}")
                 else:
                     embed.add_field(name=f"ID Name", 
-                                    value=data["_id"], inline=True)
+                                    value=data["_id"], inline=False)
                 await ctx.send(embed=embed)
         except TypeError:
             # not in database
-            if await self.bot.is_owner(ctx.author):
+            if await self.bot.is_owner(ctx.author) and show_full:
                 i = importlib.import_module(f"{folder}.{plug}.plugininfo")
                 hidden = "❔" if i.HIDDEN else ""
                 embed=discord.Embed(title=f"{plug} {hidden} (never loaded)", description=i.DESCRIPTION, color=0xc1c100)
@@ -151,8 +151,14 @@ class Plugins(commands.Cog):
                 for cog in i.COG_NAMES:
                     cogString += f"`{cog}`, "
                 embed.add_field(name=f"Cogs", 
-                                value=cogString[:-2], inline=False)
+                                value=cogString[:-2], inline=True)
                 embed.set_footer(text=f"Created by {i.AUTHOR}")
+                await ctx.send(embed=embed)
+            else:
+                i = importlib.import_module(f"{folder}.{plug}.plugininfo")
+                embed=discord.Embed(title=f"{plug} (never loaded)", description=i.DESCRIPTION, color=0xc1c100)
+                embed.add_field(name=f"ID Name", 
+                                value=plug, inline=False)
                 await ctx.send(embed=embed)
 
     @plugin.command(name="load", description="Load a plugin", usage="<plugin name>", aliases=["l"])
