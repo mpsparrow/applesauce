@@ -56,9 +56,8 @@ def get_prefix(bot, message):
         guildCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["guilds"]
         guildData = guildCol.find_one({ "_id": str(message.guild.id) })
         return guildData["prefix"]
-    except Exception as error:
+    except NoneType:
         # returns config.ini default prefix
-        log.error(error)
         return readINI("config.ini")["main"]["defaultPrefix"]
 
 if __name__ == "__main__":
@@ -79,7 +78,7 @@ if __name__ == "__main__":
     # system logs discord.log
     if args.d:
         # debugging mode if arg
-        logging.basicConfig(filename="logs/discord.log", level=logging.DEBUG, 
+        logging.basicConfig(filename="logs/discord.log", level=logging.INFO, 
                             format="%(asctime)s %(levelname)s %(message)s (%(pathname)s - %(funcName)s - %(lineno)d)")
         
         # log debug information
