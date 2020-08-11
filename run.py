@@ -54,7 +54,7 @@ def get_prefix(bot, message):
     try:
         # looks for the location of a prefix in the database
         guildCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["guilds"]
-        guildData = guildCol.find_one({ "_id": str(message.guild.id) })
+        guildData = guildCol.find_one({ "_id": message.guild.id })
         return guildData["prefix"]
     except Exception:
         # returns config.ini default prefix
