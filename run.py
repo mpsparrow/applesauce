@@ -1,4 +1,4 @@
-'''
+"""
 Applesauce
 
 Created By: Matthew Sparrow (mattthetechguy)
@@ -11,7 +11,7 @@ Licensed under GPL-3.0
 (LICENSE.txt for more info)
 
 https://github.com/mpsparrow/applesauce
-'''
+"""
 import os
 import sys
 import pymongo
