@@ -176,7 +176,7 @@ if __name__ == "__main__":
                         if i.REQUIRED:
                             startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
                             os._exit(1)
-                    except Exception:
+                    except TypeError:
                         # not an actual plugin
                         pass
     else:
