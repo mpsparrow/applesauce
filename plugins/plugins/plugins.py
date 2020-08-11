@@ -9,16 +9,16 @@ from utils.logger import pluginLog
 from utils.config import readINI
 
 emote_reactions = { 
-    failed: "❌",
-    success: "✅",
-    warning: "⚠️",
-    loaded: "📥",
-    unloaded: "📤",
-    enabled: "✅",
-    disabled: "❌",
-    hidden: "❔",
-    unhidden: "⬛",
-    blank: "⬛"
+    "failed": "❌",
+    "success": "✅",
+    "warning": "⚠️",
+    "loaded": "📥",
+    "unloaded": "📤",
+    "enabled": "✅",
+    "disabled": "❌",
+    "hidden": "❔",
+    "unhidden": "⬛",
+    "blank": "⬛"
 }
 
 class Plugins(commands.Cog):
