@@ -2,6 +2,7 @@ import os
 import discord
 import pymongo
 import importlib
+import math
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from utils.database.actions import connect
@@ -17,9 +18,111 @@ emote_reactions = {
     "enabled": "✅",
     "disabled": "❌",
     "hidden": "❔",
-    "unhidden": "⬛",
+    "shown": "⬛",
     "blank": "⬛"
 }
+
+class Plugin():
+    """
+    Represents a plugin
+    """
+    def __init__(self, name, version, enabled, loaded, hidden, description):
+        self.name = name
+        self.version = version
+        self.enabled = enabled
+        self.loaded = loaded
+        self.hidden = hidden
+        self.description = description
+
+class PluginManager():
+    """
+        An object representing the plugin manager in discord.
+        Used for reaction based navigation etc
+    """
+    def __init__(self, owner, verbose, isBotOwner, guildID):
+        self.owner = owner
+        self.verbose = verbose
+        self.isBotOwner = isBotOwner
+        self.guildID = guildID
+
+        self.pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
+        self.folder = readINI("config.ini")["main"]["pluginFolder"]
+
+        self.plugins = []
+        self.loadPluginList()
+
+        self.total_pages = math.ceil(len(self.plugins) / 8)
+        self.current_page = 0
+
+    def makeEmbed(self):
+        embed = discord.Embed(
+            title = "Plugins",
+            color = 0xc1c100
+        )
+        
+        for i in range(8):
+            try:
+                plugin = self.plugins[self.current_page + i]
+                if self.verbose:
+                    embed.add_field(
+                        name=f"{plugin.enabled}{plugin.loaded}{plugin.hidden} {plugin.name} (v{plugin.version})",
+                        value=plugin.description,
+                        inline=False
+                    )
+                else:
+                    embed.add_field(
+                        name=f"{plugin.enabled} {plugin.name}",
+                        value=plugin.description,
+                        inline=False
+                    )
+
+            except:
+                break
+
+        return embed
+
+    def loadPluginList(self):
+        if self.verbose and self.isBotOwner:
+            for plug in next(os.walk(self.folder))[1]:
+                # skips '__pycache__' folder
+                if plug == "__pycache__":
+                    continue
+
+                try:
+                    data = self.pluginCol.find_one({ "_id": plug })
+                    loaded = emote_reactions["loaded"] if data["loaded"] else emote_reactions["shown"]
+                    hidden = emote_reactions["hidden"] if data["hidden"] else emote_reactions["shown"]
+
+                    # checks if plugin is enabled in guild
+                    try:
+                        isEnabled = data["guilds"][str(self.guildID)]
+                        if isEnabled:
+                            enabledGuild = emote_reactions["enabled"]
+                        else:
+                            enabledGuild = emote_reactions["disabled"]
+                    except Exception:
+                        enabledGuild = emote_reactions["disabled"]
+
+                    self.plugins.append(Plugin(data['_id'], data['version'], enabledGuild, loaded, hidden, data['description']))
+                except TypeError:
+                    # not in database
+                    i = importlib.import_module(f"{self.folder}.{plug}.plugininfo")
+                    hidden = emote_reactions["hidden"] if i.HIDDEN else emote_reactions["shown"]
+                    self.plugins.append(Plugin(plug, i.VERSION, emote_reactions["blank"], emote_reactions["blank"], hidden, i.DESCRIPTION))
+        else:
+            for x in self.pluginCol.find({ "loaded": True, "hidden": False }):
+                # checks if plugin is enabled in guild
+                try:
+                    isEnabled = x["guilds"][str(self.guildID)]
+                    if isEnabled:
+                        enabledGuild = emote_reactions["enabled"]
+                    else:
+                        enabledGuild = emote_reactions["disabled"]
+                except Exception:
+                    enabledGuild = emote_reactions["disabled"]
+
+                self.plugins.append(Plugin(x['_id'], "", enabledGuild, emote_reactions["blank"], emote_reactions["blank"], x['description']))
+
 
 class Plugins(commands.Cog):
     """
@@ -27,6 +130,7 @@ class Plugins(commands.Cog):
     """
     def __init__(self, bot):
         self.bot = bot
+        self.activeObject = None
 
     @commands.group(name="plugin", description="Plugin management", usage="<action>", aliases=["p", "plug"], invoked_subcommand=True)
     @commands.has_permissions(manage_guild=True)
@@ -44,54 +148,14 @@ class Plugins(commands.Cog):
         :param ctx:
         :param show_unloaded: show unloaded plugins for owner
         """
-        pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
-        embed=discord.Embed(title="Plugins", color=0xc1c100)
-        folder = readINI("config.ini")["main"]["pluginFolder"]
+        self.activeObject = PluginManager(
+            ctx.author, 
+            show_unloaded, 
+            await self.bot.is_owner(ctx.author),
+            ctx.guild.id
+        )
 
-        if show_unloaded and await self.bot.is_owner(ctx.author):
-            for plug in next(os.walk(folder))[1]:
-                # skips '__pycache__' folder
-                if plug == "__pycache__":
-                    continue
-
-                try:
-                    data = pluginCol.find_one({ "_id": plug })
-                    loaded = emote_reactions["loaded"] if data["loaded"] else emote_reactions["unloaded"]
-                    hidden = emote_reactions["hidden"] if data["hidden"] else emote_reactions["unhidden"]
-
-                    # checks if plugin is enabled in guild
-                    try:
-                        isEnabled = data["guilds"][str(ctx.guild.id)]
-                        if isEnabled:
-                            enabledGuild = emote_reactions["enabled"]
-                        else:
-                            enabledGuild = emote_reactions["disabled"]
-                    except Exception:
-                        enabledGuild = emote_reactions["disabled"]
-
-                    embed.add_field(name=f"{enabledGuild}{loaded}{hidden} {data['_id']}  (v{data['version']})", 
-                                    value=data["description"], inline=False)
-                except TypeError:
-                    # not in database
-                    i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-                    hidden = f"{emote_reactions['blank']}{emote_reactions['blank']}{emote_reactions['hidden']}" if i.HIDDEN else f"{emote_reactions['blank']}{emote_reactions['blank']}{emote_reactions['unhidden']}"
-                    embed.add_field(name=f"{hidden} {plug} v{i.VERSION} (never loaded)", 
-                                    value=i.DESCRIPTION, inline=False)
-        else:
-            for x in pluginCol.find({ "loaded": True, "hidden": False }):
-                # checks if plugin is enabled in guild
-                try:
-                    isEnabled = x["guilds"][str(ctx.guild.id)]
-                    if isEnabled:
-                        enabledGuild = emote_reactions["enabled"]
-                    else:
-                        enabledGuild = emote_reactions["disabled"]
-                except Exception:
-                    enabledGuild = emote_reactions["disabled"]
-
-                embed.add_field(name=f"{enabledGuild} {x['_id']}", 
-                                value=x["description"], inline=False)
-        await ctx.send(embed=embed)
+        await ctx.send(embed=self.activeObject.makeEmbed())
 
     @plugin.command(name="info", description="List all loaded plugins", usage="<plugin name>", aliases=["i", "information"])
     @commands.has_permissions(manage_guild=True)
