@@ -88,7 +88,7 @@ class Guilds(commands.Cog):
 
     @guild.command(name="prefix", description="Change guild prefix", usage="<prefix>", aliases=["p"])
     @commands.has_permissions(manage_guild=True)
-    async def prefix(self, ctx, prefix, *):
+    async def prefix(self, ctx, *, prefix):
         """
         Change guild prefix
         :param ctx:
