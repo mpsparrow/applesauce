@@ -45,7 +45,7 @@ class Guilds(commands.Cog):
             guildData = guildCol.find_one({ "_id": guild.id })
             await ctx.send(f"**Thanks for adding me!**\n**Prefix:** `{guildData['prefix']}`\n**Help:** `{guildData['prefix']}help`")
         except Exception:
-            await ctx.send(f"**Thanks for adding me!**\n**Prefix:** `{readINI("config.ini")['main']['defaultPrefix']}`\n**Help:** `{readINI("config.ini")['main']['defaultPrefix']}help`")
+            await ctx.send(f"**Thanks for adding me!**\n**Prefix:** `{readINI('config.ini')['main']['defaultPrefix']}`\n**Help:** `{readINI('config.ini')['main']['defaultPrefix']}help`")
         else:
             await ctx.send(f"**Thanks for adding me!**")
 
