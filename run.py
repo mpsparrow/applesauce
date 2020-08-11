@@ -172,9 +172,13 @@ if __name__ == "__main__":
                     startLog.error(f"{folder}.{plugin}: {error}")
                     pluginLog.error(f"{folder}.{plugin}: {error}")
                 finally:
-                    if i.REQUIRED:
-                        startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
-                        os._exit(1)
+                    try:
+                        if i.REQUIRED:
+                            startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
+                            os._exit(1)
+                    except Exception:
+                        # not an actual plugin
+                        continue
     else:
         startLog.info("Skipped Plugin Loading")
 
