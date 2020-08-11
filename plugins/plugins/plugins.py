@@ -94,10 +94,7 @@ class Plugins(commands.Cog):
         try:
             data = pluginCol.find_one({ "_id": plug })
 
-            if data["loaded"] or (await self.bot.is_owner(ctx.author) and show_full):
-                loaded = "📥" if data["loaded"] else "📤"
-                hidden = "❔" if data["hidden"] else ""
-
+            if data["loaded"] or await self.bot.is_owner(ctx.author):
                 # checks if plugin is enabled in guild
                 try:
                     isEnabled = data["guilds"][str(ctx.guild.id)]
@@ -108,9 +105,10 @@ class Plugins(commands.Cog):
                 except Exception:
                     enabledGuild = "❌"
 
-                embed=discord.Embed(title=f"{data['plugin_name']} {enabledGuild}{loaded}{hidden}", description=data["description"], color=0xc1c100)
-
-                if await self.bot.is_owner(ctx.author):
+                if await self.bot.is_owner(ctx.author) and show_full:
+                    loaded = "📥" if data["loaded"] else "📤"
+                    hidden = "❔" if data["hidden"] else ""
+                    embed=discord.Embed(title=f"{data['plugin_name']} {enabledGuild}{loaded}{hidden}", description=data["description"], color=0xc1c100)
                     embed.add_field(name=f"Version", 
                                     value=data["version"], inline=True)
                     load_on_start = "✅" if data["load_on_start"] else "❌"
@@ -128,6 +126,7 @@ class Plugins(commands.Cog):
                                     value=cogString[:-2], inline=True)
                     embed.set_footer(text=f"Created by {data['author']}")
                 else:
+                    embed=discord.Embed(title=f"{data['plugin_name']} {enabledGuild}", description=data["description"], color=0xc1c100)
                     embed.add_field(name=f"ID Name", 
                                     value=data["_id"], inline=False)
                 await ctx.send(embed=embed)
