@@ -22,6 +22,13 @@ emote_reactions = {
     "blank": "⬛"
 }
 
+nav_emotes = {
+    "right": "➡️",
+    "left": "⬅️"
+}
+
+PLUGINS_PER_PAGE = 2
+
 class Plugin():
     """
     Represents a plugin
@@ -51,8 +58,20 @@ class PluginManager():
         self.plugins = []
         self.loadPluginList()
 
-        self.total_pages = math.ceil(len(self.plugins) / 8)
+        self.total_pages = math.ceil(len(self.plugins) / PLUGINS_PER_PAGE)
         self.current_page = 0
+
+        self.messageID = 0
+
+    def next(self):
+        self.current_page += 1
+        if self.current_page >= self.total_pages:
+            self.current_page = 0
+
+    def prev(self):
+        self.current_page -= 1
+        if self.current_page < 0:
+            self.current_page = self.total_pages - 1
 
     def makeEmbed(self):
         embed = discord.Embed(
@@ -60,9 +79,9 @@ class PluginManager():
             color = 0xc1c100
         )
         
-        for i in range(8):
+        for i in range(PLUGINS_PER_PAGE):
             try:
-                plugin = self.plugins[self.current_page + i]
+                plugin = self.plugins[self.current_page * PLUGINS_PER_PAGE + i]
                 if self.verbose:
                     embed.add_field(
                         name=f"{plugin.enabled}{plugin.loaded}{plugin.hidden} {plugin.name} (v{plugin.version})",
@@ -78,6 +97,8 @@ class PluginManager():
 
             except:
                 break
+
+        embed.set_footer(text=f"{self.current_page + 1}/{self.total_pages}")
 
         return embed
 
@@ -132,6 +153,30 @@ class Plugins(commands.Cog):
         self.bot = bot
         self.activeObject = None
 
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        message = reaction.message
+        if message.id != self.activeObject.messageID:
+            return
+
+        if user == self.bot.user:
+            return
+
+        if user.id != self.activeObject.owner.id:
+            return
+
+        if reaction.me:
+            if reaction.emoji == nav_emotes["left"]:
+                self.activeObject.prev()
+                await reaction.remove(user)
+
+            if reaction.emoji == nav_emotes["right"]:
+                self.activeObject.next()
+                await reaction.remove(user)
+
+        embed = self.activeObject.makeEmbed()
+        await message.edit(embed=embed)
+
     @commands.group(name="plugin", description="Plugin management", usage="<action>", aliases=["p", "plug"], invoked_subcommand=True)
     @commands.has_permissions(manage_guild=True)
     async def plugin(self, ctx):
@@ -155,7 +200,13 @@ class Plugins(commands.Cog):
             ctx.guild.id
         )
 
-        await ctx.send(embed=self.activeObject.makeEmbed())
+        msg = await ctx.send(embed=self.activeObject.makeEmbed())
+
+        if self.activeObject.total_pages > 1:
+            await msg.add_reaction(nav_emotes["left"])
+            await msg.add_reaction(nav_emotes["right"])
+
+        self.activeObject.messageID = msg.id
 
     @plugin.command(name="info", description="List all loaded plugins", usage="<plugin name>", aliases=["i", "information"])
     @commands.has_permissions(manage_guild=True)
