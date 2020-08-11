@@ -158,14 +158,10 @@ if __name__ == "__main__":
                     pluginLog.error(f"{folder}.{plugin}: variables not properly defined. Plugin not loaded.")
                     pluginLog.error(error)
                     bot.unload_extension(f"{folder}.{plugin}")
-
-                    if i.REQUIRED:
-                        startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
-                        os._exit(1)
                 except Exception as error:
                     startLog.error(f"{folder}.{plugin}: {error}")
                     pluginLog.error(f"{folder}.{plugin}: {error}")
-
+                finally:
                     if i.REQUIRED:
                         startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
                         os._exit(1)
@@ -181,9 +177,11 @@ async def on_ready():
         firstRun = True
 
     if firstRun:
+        # first time
         startLog.info(f"Connected! {bot.user.name} | {bot.user.id}")
         firstRun = False
     else:
+        # reconnecting
         log.info(f"Reconnected! {bot.user.name} | {bot.user.id}")
 
 @bot.event
