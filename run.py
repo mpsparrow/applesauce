@@ -1,16 +1,17 @@
 """
 Applesauce
 
-Created By: Matthew Sparrow (mattthetechguy)
+Created By: Matthew (mattthetechguy)
 Contributor(s): Lauchmelder
 Version: v2.0
-Last Updated: August 10, 2020
+Last Updated: August 11, 2020
 Created On: October 12, 2019
 
 Licensed under GPL-3.0
 (LICENSE.txt for more info)
 
 https://github.com/mpsparrow/applesauce
+https://github.com/mpsparrow/applesauce/wiki
 """
 import os
 import sys
@@ -43,6 +44,22 @@ parser.add_argument("-o", "-outputlog", action="store_true",
 parser.add_argument("-p", "-skipplugins", action="store_false",
                     help="skips the loading of all plugins")
 args = parser.parse_args()
+
+def get_prefix(bot, message):
+    """
+    Gets prefix
+    :param bot:
+    :param message:
+    """
+    try:
+        # looks for the location of a prefix in the database
+        guildCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["guilds"]
+        guildData = guildCol.find_one({ "_id": str(message.guild.id) })
+        return guildData["prefix"]
+    except Exception as error:
+        # returns config.ini default prefix
+        log.error(error)
+        return readINI("config.ini")["main"]["defaultPrefix"]
 
 if __name__ == "__main__":
     # outputs startLog (startup.log) to console
@@ -77,7 +94,7 @@ if __name__ == "__main__":
                             format="%(asctime)s %(levelname)s %(message)s") 
 
     # defines bot
-    bot = commands.Bot(command_prefix=readINI("config.ini")["main"]["defaultPrefix"], case_insensitive=True)
+    bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
     # startup checks
     if args.c:
