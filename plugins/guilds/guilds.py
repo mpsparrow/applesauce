@@ -42,12 +42,15 @@ class Guilds(commands.Cog):
 
         # sends join message with getting started information
         try:
-            guildData = guildCol.find_one({ "_id": guild.id })
-            await ctx.send(f"**Thanks for adding me!**\n**Prefix:** `{guildData['prefix']}`\n**Help:** `{guildData['prefix']}help`")
+            try:
+                guildData = guildCol.find_one({ "_id": guild.id })
+                await guild.system_channel.send(f"**Thanks for adding me!**\n**Prefix:** `{guildData['prefix']}`\n**Help:** `{guildData['prefix']}help`")
+            except Exception:
+                await guild.system_channel.send(f"**Thanks for adding me!**\n**Prefix:** `{readINI('config.ini')['main']['defaultPrefix']}`\n**Help:** `{readINI('config.ini')['main']['defaultPrefix']}help`")
+            else:
+                await guild.system_channel.send(f"**Thanks for adding me!**")
         except Exception:
-            await ctx.send(f"**Thanks for adding me!**\n**Prefix:** `{readINI('config.ini')['main']['defaultPrefix']}`\n**Help:** `{readINI('config.ini')['main']['defaultPrefix']}help`")
-        else:
-            await ctx.send(f"**Thanks for adding me!**")
+            guildLog.error(f"{guild.id}: No system channel set")
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
