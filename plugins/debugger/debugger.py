@@ -53,7 +53,7 @@ class Debugger(commands.Cog):
         versionStr += f"pymongo: {pymongo.__version__}\n"
         versionStr += f"argparse: {argparse.__version__}\n"
         versionStr += f"logging: {logging.__version__}"  
-        versionStr = "```"    
+        versionStr += "```"    
         await ctx.send(versionStr)
 
     @debug.command(name="dbCleaner", description="Cleans database of invalid plugins", aliases=["cleaner", "clean"])
