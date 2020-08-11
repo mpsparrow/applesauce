@@ -27,7 +27,7 @@ nav_emotes = {
     "left": "⬅️"
 }
 
-PLUGINS_PER_PAGE = 2
+PLUGINS_PER_PAGE = 8
 
 class Plugin():
     """
