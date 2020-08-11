@@ -1,0 +1,11 @@
+#### REQUIREMENTS ####
+# These version number requierements are kept very strict to ensure no capability issues.
+# This only includes the required libraries for the base framework and included plugins of Applesauce.
+
+# install with: pip install -r requirements.txt
+
+pymongo == 3.10.1
+discord.py == 1.4.1
+argparse == 1.1
+logging == 0.5.1.2
+json
