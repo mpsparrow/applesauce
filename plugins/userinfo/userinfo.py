@@ -20,6 +20,11 @@ class Userinfo(commands.Cog):
     @commands.command(name="userinfo", description="Get information about discord users", usage="userinfo <user>", aliases=["player", "user"])
     @is_guild_enabled()
     async def userinfo(self, ctx: commands.Context, *, user: discord.Member = None):
+        """
+        Get information about discord users
+        :param ctx:
+        :param user: discord.Member
+        """
         if user is None:
             user = ctx.author
 

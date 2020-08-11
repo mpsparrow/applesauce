@@ -47,8 +47,8 @@ class Debugger(commands.Cog):
         Get version numbers of libraries and stuff
         """
         versionStr = "```"
-        versionStr += f"python: {sys.version[:5]}\n"
         versionStr += f"os: {sys.platform}\n"
+        versionStr += f"python: {sys.version[:5]}\n"
         versionStr += f"discord: {discord.__version__}\n"
         versionStr += f"pymongo: {pymongo.__version__}\n"
         versionStr += f"argparse: {argparse.__version__}\n"
