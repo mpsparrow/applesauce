@@ -20,7 +20,7 @@ def is_guild_enabled():
             if pluginData["guilds"][str(ctx.guild.id)]:
                 try:
                     guildCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["guilds"]
-                    guildData = guildCol.find_one({ "_id": str(ctx.guild.id) })
+                    guildData = guildCol.find_one({ "_id": ctx.guild.id })
                     if guildData["ignore"][str(ctx.author.id)]:
                         return False
                     return True
