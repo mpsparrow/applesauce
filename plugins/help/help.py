@@ -122,7 +122,7 @@ class Help(commands.Cog):
 
                     if len(comStr) > 0:
                         cogData = self.bot.get_cog(cog)
-                        embed.add_field(name=cog.qualified_name, value=, inline=False)
+                        embed.add_field(name=cog.qualified_name, value=comStr, inline=False)
             else:
                 await self.plugin_invalid(ctx)
         except Exception:
