@@ -206,30 +206,3 @@ class Help(commands.Cog):
             else:
                 # need at least 2 params
                 await self.item_help(ctx, prefix)
-
-            # old detection system
-            """
-            command = self.bot.get_command(helpItem)
-            cog = self.bot.get_cog(helpItem)
-
-            if command is not None:
-                # is a command/subcommand/group
-                if command.parent is not None:
-                    # must be a subcommand
-                    await self.subcommand(command)
-                await self.command(command)
-            elif cog is not None:
-                # is a cog
-                await self.cog(ctx, cog)
-            else:
-                # either a plugin or isn't anything
-                pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
-                pluginData = pluginCol.find_one({ "_id": helpItem })
-
-                if pluginData is not None:
-                    # plugin
-                    await self.plugin(ctx, pluginData)
-                else:
-                    # who knows what it is then
-                    await self.error(ctx)
-            """

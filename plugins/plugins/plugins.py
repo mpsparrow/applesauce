@@ -342,7 +342,7 @@ class PluginManager():
                         inline=False
                     )
 
-            except:
+            except Exception:
                 break
 
         embed.set_footer(text=f"Latest status: {''.join(self.current_status)}\t\t{self.current_page + 1}/{self.total_pages}")
