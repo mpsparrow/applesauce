@@ -32,15 +32,14 @@ class TriviaSession:
         for question in self.quiz.questions:
             i += 1
             await self.render_question(question, i)
-            time.sleep(5)
-            print("jksjdksd")
+            time.sleep(10)
 
         self.parent.activeObjects.pop(self.ctx.guild.id, None)
 
     async def render_question(self, q, i):
         title = ""
         if q.type == "boolean":
-            title += "True or False?"
+            title += "True or False? "
         title += q.question
 
         embed = discord.Embed(
@@ -56,20 +55,12 @@ class TriviaSession:
                 if k == true_position:
                     embed.add_field(name = f"{chr(65 + k)}. {q.answer}", value="\u200b", inline=False)
                 else:
-                    embed.add_field(name = f"{chr(65 + k)}. {q.wrong_answers[k]}", value="\u200b", inline=False)
-                    k += 1
+                    embed.add_field(name = f"{chr(65 + k)}. {q.wrong_answers[j]}", value="\u200b", inline=False)
+                    j += 1
 
         embed.set_footer(text=f"{q.category} | {q.difficulty}")
 
         self.current_msg = await self.ctx.send(embed=embed)
-        if q.type == "multiple":
-            await self.current_msg.add_reaction(reaction_emotes["A"])
-            await self.current_msg.add_reaction(reaction_emotes["B"])
-            await self.current_msg.add_reaction(reaction_emotes["C"])
-            await self.current_msg.add_reaction(reaction_emotes["D"])
-        else:
-            await self.current_msg.add_reaction(reaction_emotes["True"])
-            await self.current_msg.add_reaction(reaction_emotes["False"])
 
 
 
