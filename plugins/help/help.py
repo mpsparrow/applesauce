@@ -152,37 +152,20 @@ class Help(commands.Cog):
                 if plugin == "__pycache__":
                     continue
 
-                cogStr = ""
-
                 try:
                     pluginData = pluginCol.find_one({ "_id": plugin })
                     
                     if pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
+                        cogStr = ""
+
                         for cog in pluginData["cog_names"]:
                             cogData = self.bot.get_cog(cog)
-                            comStr = f"**  Cog: {cogData.qualified_name}**\n"
-
-                            for command in cogData.walk_commands():
-                                # checks if subcommand
-                                if " " in command.qualified_name:
-                                    continue
-                                
-                                # can user run the command
-                                try:
-                                    await command.can_run(ctx)
-                                except commands.CommandError:
-                                    # cannot run
-                                    continue
-                                
-                                if command.usage is not None:
-                                    comStr += f"`  {prefix}{command.name} {command.usage}` - {command.description}\n"
-                                else:
-                                    comStr += f"`  {prefix}{command.name}` - {command.description}\n"
-
-                            if comStr.count("\n") > 1:
-                                cogStr += comStr
+                            cogStr += f"`{cogData.qualified_name}`, "
                     
-                        embed.add_field(name=f"Plugin: {plugin}", value=cogStr, inline=False)
+                        if cogStr.count("`") > 2:
+                            embed.add_field(name=f"Plugin: {plugin}", value=f"Cogs: {cogStr}", inline=False)
+                        else:
+                            embed.add_field(name=f"Plugin: {plugin}", value=f"Cog: {cogStr}", inline=False)
                 except TypeError:
                     # not a plugin
                     pass
