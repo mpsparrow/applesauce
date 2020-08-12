@@ -110,14 +110,15 @@ class PluginManager():
             if becomeLoaded:
                 self.parent.bot.load_extension(f"{self.folder}.{plug.name}")
                 plug.loaded = emote_reactions["loaded"]
+                loadedDB = True
             else:
                 if i.REQUIRED:
                     self.updateStatus("warning")
-                    # await ctx.send("Required plugins cannot be unloaded")
                     return
                 
                 self.parent.bot.unload_extension(f"{self.folder}.{plug.name}")
                 plug.loaded = emote_reactions["unloaded"]
+                loadedDB = False
 
             pluginINFO = { "_id": plug.name, 
                             "plugin_name": i.PLUGIN_NAME,
@@ -128,9 +129,9 @@ class PluginManager():
                             "load_on_start": i.LOAD_ON_START, 
                             "required": i.REQUIRED,
                             "hidden": i.HIDDEN,
-                            "loaded": True }
+                            "loaded": loadedDB }
             self.pluginCol.update_one({ "_id": plug.name }, { "$set": pluginINFO }, upsert=True)
-            pluginLog.info(f"Loaded: {plug.name} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+            pluginLog.info(f"{'Loaded' if loadedDB else 'Unloaded'}: {plug.name} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             self.updateStatus("success")
         except commands.ExtensionNotFound as error:
             # The plugin could not be found
@@ -181,40 +182,32 @@ class PluginManager():
                 return
 
             self.parent.bot.reload_extension(f"{self.folder}.{plug.name}")
-            i = importlib.import_module(f"{self.folder}.{plug.name}.plugininfo")
-            pluginINFO = { "_id": plug.name, 
-                            "plugin_name": i.PLUGIN_NAME,
-                            "cog_names": i.COG_NAMES,
-                            "version": i.VERSION,
-                            "author": i.AUTHOR,
-                            "description": i.DESCRIPTION,
-                            "load_on_start": i.LOAD_ON_START, 
-                            "required": i.REQUIRED,
-                            "hidden": i.HIDDEN,
-                            "loaded": True }
-            self.pluginCol.update_one({ "_id": plug.name }, { "$set": pluginINFO }, upsert=True)
             pluginLog.info(f"Reloaded: {plug.name} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             self.updateStatus("success")
         except commands.ExtensionNotLoaded as error:
             # The plugin doesn't exist
             pluginLog.error(f"{self.folder}.{plug.name}: not found (ExtensionNotLoaded)")
             pluginLog.error(error)
+            self.pluginCol.update_one({ "_id": plug.name }, { "$set": { "loaded": False } }, upsert=True)
             self.updateStatus("failed")
         except commands.ExtensionNotFound as error:
             # The plugin did exist at one point but now doesn't
             # Was probably loaded but than deleted
             pluginLog.info(f"{self.folder}.{plug.name}: not found (ExtensionNotFound)")
             pluginLog.error(error)
+            self.pluginCol.update_one({ "_id": plug.name }, { "$set": { "loaded": False } }, upsert=True)
             self.updateStatus("failed", "warning")
         except commands.NoEntryPointError as error:
             # The plugin does not have a setup function
             pluginLog.error(f"{self.folder}.{plug.name}: no setup function (NoEntryPointError)")
             pluginLog.error(error)
+            self.pluginCol.update_one({ "_id": plug.name }, { "$set": { "loaded": False } }, upsert=True)
             self.updateStatus("failed", "warning")
         except commands.ExtensionFailed as error:
             # The plugin setup function has an execution error
             pluginLog.error(f"{self.folder}.{plug.name}: execution error (ExtensionFailed)")
             pluginLog.error(error)
+            self.pluginCol.update_one({ "_id": plug.name }, { "$set": { "loaded": False } }, upsert=True)
             self.updateStatus("failed", "warning")
         except Exception as error:
             pluginLog.error(f"{self.folder}.{plug.name}: unknown reloading plugin error.")
@@ -273,7 +266,7 @@ class PluginManager():
                     plug.enabled = emote_reactions["enabled"] if becomeEnabled else emote_reactions["disabled"]
                     self.updateStatus("success")
         except Exception as error:
-            pluginLog.error(f"{self.folder}.{plug.name}: unable to enable extension")
+            pluginLog.error(f"{self.folder}.{plug.name}: unable to enable/disable extension")
             pluginLog.error(error)
             self.updateStatus("failed")
 
@@ -368,7 +361,7 @@ class PluginManager():
 
                 try:
                     data = self.pluginCol.find_one({ "_id": plug })
-                    loaded = emote_reactions["loaded"] if data["loaded"] else emote_reactions["shown"]
+                    loaded = emote_reactions["loaded"] if data["loaded"] else emote_reactions["unloaded"]
                     hidden = emote_reactions["hidden"] if data["hidden"] else emote_reactions["shown"]
 
                     # checks if plugin is enabled in guild
@@ -408,20 +401,22 @@ class Plugins(commands.Cog):
     """
     def __init__(self, bot):
         self.bot = bot
-        self.activeObject = None
+        self.activeObjects = {}
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         """
         Handles navigation through the manager
         """
+        message = reaction.message
+        guildid = message.guild.id
+        
         # If there is no message to go along with the manager, do nothing
-        if self.activeObject.messageHandle is None:
+        if self.activeObjects[guildid].messageHandle is None:
             return
 
-        message = reaction.message
         # If the reaction is not on the embed, do nothing
-        if message.id != self.activeObject.messageHandle.id:
+        if message.id != self.activeObjects[guildid].messageHandle.id:
             return
 
         # If the user is a bot, do nothing
@@ -429,54 +424,55 @@ class Plugins(commands.Cog):
             return
 
         # If the reacting user is not the owner of the embed, do nothing
-        if user.id != self.activeObject.owner.id:
+        if user.id != self.activeObjects[guildid].owner.id:
             return
 
         # If the user sent this reaction, do this
         if reaction.me:
             # Prev page
             if reaction.emoji == nav_emotes["left"]:
-                self.activeObject.prev()
+                self.activeObjects[guildid].prev()
                 await reaction.remove(user)
 
             # Next page
             if reaction.emoji == nav_emotes["right"]:
-                self.activeObject.next()
+                self.activeObjects[guildid].next()
                 await reaction.remove(user)
 
             # Cursor up
             if reaction.emoji == nav_emotes["up"]:
-                self.activeObject.up()
+                self.activeObjects[guildid].up()
                 await reaction.remove(user)
 
             # Cursor down
             if reaction.emoji == nav_emotes["down"]:
-                self.activeObject.down()
+                self.activeObjects[guildid].down()
                 await reaction.remove(user)
 
             # Enable/Disable plugin
             if reaction.emoji == nav_emotes["enable"]:
-                self.activeObject.toggleEnable()
+                self.activeObjects[guildid].toggleEnable()
                 await reaction.remove(user)
 
-            # Reload plugin
-            if reaction.emoji == nav_emotes["reload"]:
-                self.activeObject.reload()
-                await reaction.remove(user)
+            if self.activeObjects[guildid].verbose:
+                # Reload plugin
+                if reaction.emoji == nav_emotes["reload"]:
+                    self.activeObjects[guildid].reload()
+                    await reaction.remove(user)
 
-            # Load/Unload plugin
-            if reaction.emoji == nav_emotes["load"]:
-                self.activeObject.toggleLoad()
-                await reaction.remove(user)
+                # Load/Unload plugin
+                if reaction.emoji == nav_emotes["load"]:
+                    self.activeObjects[guildid].toggleLoad()
+                    await reaction.remove(user)
 
         # Update embed
-        await self.activeObject.updateEmbed()
+        await self.activeObjects[guildid].updateEmbed()
 
     async def createActiveObject(self, ctx, show_unloaded: bool = False):
         """
         Creates a new PluginManager and makes it the active object
         """
-        self.activeObject = PluginManager(
+        self.activeObjects[ctx.guild.id] = PluginManager(
             self,
             ctx.author, 
             show_unloaded, 
@@ -484,7 +480,7 @@ class Plugins(commands.Cog):
             ctx.guild.id
         )
 
-    @commands.group(name="plugin", description="Plugin management", usage="<action>", aliases=["p", "plug"], invoked_subcommand=True)
+    @commands.group(name="plugin", description="Group for plugin management commands", usage="<subcommand>", aliases=["p", "plug"], invoked_subcommand=True)
     @commands.has_permissions(manage_guild=True)
     async def plugin(self, ctx):
         """
@@ -504,10 +500,10 @@ class Plugins(commands.Cog):
         await self.createActiveObject(ctx, show_unloaded)
 
         # Create message for active object
-        msg = await ctx.send(embed=self.activeObject.makeEmbed())
+        msg = await ctx.send(embed=self.activeObjects[ctx.guild.id].makeEmbed())
 
         # If there are more than one page, create page navigators
-        if self.activeObject.total_pages > 1:
+        if self.activeObjects[ctx.guild.id].total_pages > 1:
             await msg.add_reaction(nav_emotes["left"])
             await msg.add_reaction(nav_emotes["right"])
 
@@ -515,13 +511,13 @@ class Plugins(commands.Cog):
         await msg.add_reaction(nav_emotes["up"])
         await msg.add_reaction(nav_emotes["down"])
         await msg.add_reaction(nav_emotes["enable"])
-        await msg.add_reaction(nav_emotes["reload"])
 
         if show_unloaded:
+            await msg.add_reaction(nav_emotes["reload"])
             await msg.add_reaction(nav_emotes["load"])
 
         # Set this new message as the active object's message
-        self.activeObject.messageHandle = msg
+        self.activeObjects[ctx.guild.id].messageHandle = msg
 
     @plugin.command(name="info", description="List all loaded plugins", usage="<plugin name>", aliases=["i", "information"])
     @commands.has_permissions(manage_guild=True)
@@ -613,18 +609,18 @@ class Plugins(commands.Cog):
         :param str plug: Plugin name
         """
         # Create new active object (this won't be rendered)
-        if self.activeObject is None:
+        if ctx.guild.id not in self.activeObjects:
             await self.createActiveObject(ctx)
 
         # Force load the plugin
-        self.activeObject.toggleLoad(plug, True)
+        self.activeObjects[ctx.guild.id].toggleLoad(plug, True)
 
         # Fetch status emotes and react
-        for status in self.activeObject.current_status:
+        for status in self.activeObjects[ctx.guild.id].current_status:
             await ctx.message.add_reaction(status)
 
         # Update embed
-        await self.activeObject.updateEmbed()
+        await self.activeObjects[ctx.guild.id].updateEmbed()
 
 
     @plugin.command(name="unload", description="Unload a plugin", usage="<plugin name>", aliases=["u"])
@@ -637,18 +633,18 @@ class Plugins(commands.Cog):
         :param str plug: Plugin name
         """
         # Create new active object (this won't be rendered)
-        if self.activeObject is None:
+        if ctx.guild.id not in self.activeObjects:
             await self.createActiveObject(ctx)
 
         # Force unload the plugin
-        self.activeObject.toggleLoad(plug, False)
+        self.activeObjects[ctx.guild.id].toggleLoad(plug, False)
 
         # Fetch status emotes and react
-        for status in self.activeObject.current_status:
+        for status in self.activeObjects[ctx.guild.id].current_status:
             await ctx.message.add_reaction(status)
 
         # Update embed
-        await self.activeObject.updateEmbed()
+        await self.activeObjects[ctx.guild.id].updateEmbed()
 
     @plugin.command(name="reload", description="Reload a plugin", usage="<plugin name>", aliases=["r"])
     @commands.is_owner()
@@ -660,18 +656,18 @@ class Plugins(commands.Cog):
         :param str plug: Plugin name
         """
         # Create new active object (this won't be rendered)
-        if self.activeObject is None:
+        if ctx.guild.id not in self.activeObjects:
             await self.createActiveObject(ctx)
 
         # Force reload the plugin
-        self.activeObject.reload(plug)
+        self.activeObjects[ctx.guild.id].reload(plug)
 
         # Fetch status emotes and react
-        for status in self.activeObject.current_status:
+        for status in self.activeObjects[ctx.guild.id].current_status:
             await ctx.message.add_reaction(status)
 
         # Update embed
-        await self.activeObject.updateEmbed()
+        await self.activeObjects[ctx.guild.id].updateEmbed()
 
     @plugin.command(name="enable", description="Enable a plugin in a guild", usage="<plugin name>", aliases=["e"])
     @commands.has_permissions(manage_guild=True)
@@ -682,18 +678,18 @@ class Plugins(commands.Cog):
         :param str plug: Plugin name
         """
         # Create new active object (this won't be rendered)
-        if self.activeObject is None:
+        if ctx.guild.id not in self.activeObjects:
             await self.createActiveObject(ctx)
 
         # Force enable the plugin
-        self.activeObject.toggleEnable(plug, True)
+        self.activeObjects[ctx.guild.id].toggleEnable(plug, True)
 
         # Fetch status emotes and react
-        for status in self.activeObject.current_status:
+        for status in self.activeObjects[ctx.guild.id].current_status:
             await ctx.message.add_reaction(status)
         
         # Update embed
-        await self.activeObject.updateEmbed()
+        await self.activeObjects[ctx.guild.id].updateEmbed()
 
 
     @plugin.command(name="disable", description="Disable a plugin in a guild", usage="<plugin name>", aliases=["d"])
@@ -705,15 +701,15 @@ class Plugins(commands.Cog):
         :param str plug: Plugin name
         """
         # Create new active object (this won't be rendered)
-        if self.activeObject is None:
+        if ctx.guild.id not in self.activeObjects:
             await self.createActiveObject(ctx)
 
         # Force disable the plugin
-        self.activeObject.toggleEnable(plug, False)
+        self.activeObjects[ctx.guild.id].toggleEnable(plug, False)
 
         # Fetch status emotes and react
-        for status in self.activeObject.current_status:
+        for status in self.activeObjects[ctx.guild.id].current_status:
             await ctx.message.add_reaction(status)
 
         # Update embed
-        await self.activeObject.updateEmbed()
+        await self.activeObjects[ctx.guild.id].updateEmbed()
