@@ -4,7 +4,7 @@ Applesauce
 Created By: Matthew (mattthetechguy)
 Contributor(s): Lauchmelder
 Version: v2.0
-Last Updated: August 11, 2020
+Last Updated: August 12, 2020
 Created On: October 12, 2019
 
 Licensed under GPL-3.0
@@ -109,6 +109,7 @@ if __name__ == "__main__":
         pluginCol.update_many({ "loaded": True }, { "$set": { "loaded": False }}) # set all plugins to not loaded
         folder = readINI("config.ini")["main"]["pluginFolder"]
 
+        # walk through all folders in the plugins folder
         for plugin in next(os.walk(folder))[1]:
 
             # skips '__pycache__' folder
@@ -161,6 +162,12 @@ if __name__ == "__main__":
                 startLog.error(error)
                 pluginLog.error(f"{folder}.{plugin}: execution error (ExtensionFailed)")
                 pluginLog.error(error)
+            except ModuleNotFoundError as error:
+                # The plugin has no plugininfo.
+                startLog.error(f"{folder}.{plugin}: no plugininfo (ModuleNotFoundError)")
+                startLog.error(error)
+                pluginLog.error(f"{folder}.{plugin}: no plugininfo (ModuleNotFoundError)")
+                pluginLog.error(error)
             except Exception as error:
                 try:
                     startLog.error(f"{folder}.{plugin}: variables not properly defined. Plugin not loaded.")
@@ -173,10 +180,11 @@ if __name__ == "__main__":
                     pluginLog.error(f"{folder}.{plugin}: {error}")
                 finally:
                     try:
+                        i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
                         if i.REQUIRED:
                             startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
                             os._exit(1)
-                    except TypeError:
+                    except Exception:
                         # not an actual plugin
                         pass
     else:
