@@ -101,13 +101,15 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            if pluginData[ctx.guild.id] and pluginData["loaded"]:
+            if pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
                 embed=discord.Embed(title=pluginData["plugin_name"], description=pluginData["description"], color=0xc1c100)
                 for cog in pluginData["cog_names"]:
+                    print(cog)
                     cogData = self.bot.get_cog(cog)
                     comStr = ""
 
                     for command in cogData.walk_commands():
+                        print(command)
                         # checks if subcommand
                         if " " in command:
                             continue
