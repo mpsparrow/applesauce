@@ -145,8 +145,9 @@ class Help(commands.Cog):
                                 color=0xc1c100)
 
             pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
+            folder = readINI("config.ini")["main"]["pluginFolder"]
 
-            for plugin in next(os.walk(self.folder))[1]:
+            for plugin in next(os.walk(folder))[1]:
                 # skips '__pycache__' folder
                 if plugin == "__pycache__":
                     continue
