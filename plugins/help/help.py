@@ -104,9 +104,10 @@ class Help(commands.Cog):
             if pluginData[ctx.guild.id] and pluginData["loaded"]:
                 embed=discord.Embed(title=pluginData["plugin_name"], description=pluginData["description"], color=0xc1c100)
                 for cog in pluginData["cog_names"]:
+                    cogData = self.bot.get_cog(cog)
                     comStr = ""
 
-                    for command in cog.walk_commands():
+                    for command in cogData.walk_commands():
                         # checks if subcommand
                         if " " in command:
                             continue
@@ -121,8 +122,7 @@ class Help(commands.Cog):
                         comStr += f"`{prefix}{command} {command.usage}` - {command.description}\n"
 
                     if len(comStr) > 0:
-                        cogData = self.bot.get_cog(cog)
-                        embed.add_field(name=cog.qualified_name, value=comStr, inline=False)
+                        embed.add_field(name=cogData.qualified_name, value=comStr, inline=False)
             else:
                 await self.plugin_invalid(ctx)
         except Exception:
@@ -136,7 +136,7 @@ class Help(commands.Cog):
         """
         try:
             embed=discord.Embed(title="Help", 
-                                description="`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`", 
+                                description=f"`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`", 
                                 color=0xc1c100)
             # embed.add_field(name="", value="", inline=False)
             await ctx.send(embed=embed)
