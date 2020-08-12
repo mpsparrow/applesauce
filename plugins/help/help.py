@@ -123,9 +123,12 @@ class Help(commands.Cog):
 
                     if len(comStr) > 0:
                         embed.add_field(name=cogData.qualified_name, value=comStr, inline=False)
+
+                await ctx.send(embed=embed)
             else:
                 await self.plugin_invalid(ctx)
-        except Exception:
+        except Exception as error:
+            print(error)
             await self.plugin_invalid(ctx)
 
     async def all(self, ctx, prefix):
