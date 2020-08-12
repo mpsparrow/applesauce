@@ -140,12 +140,10 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            embed=discord.Embed(title="Help", 
-                                description=f"`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`\n\n**__Plugins__**", 
-                                color=0xc1c100)
-
             pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
             folder = readINI("config.ini")["main"]["pluginFolder"]
+
+            helpStr = ""
 
             for plugin in next(os.walk(folder))[1]:
                 # skips '__pycache__' folder
@@ -163,12 +161,15 @@ class Help(commands.Cog):
                             cogStr += f"`{cogData.qualified_name}`, "
                     
                         if cogStr.count("`") > 2:
-                            embed.add_field(name=f"{plugin}", value=f"Cogs: {cogStr[:-2]}", inline=True)
+                            helpStr += f"**{plugin}** | Cogs: {cogStr[:-2]}\n"
                         else:
-                            embed.add_field(name=f"{plugin}", value=f"Cog: {cogStr[:-2]}", inline=True)
+                            helpStr += f"**{plugin}** | Cogs: {cogStr[:-2]}\n"
                 except TypeError:
                     # not a plugin
                     pass
+            embed=discord.Embed(title="Help", 
+                                description=f"`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`\n\n**__Plugins__**\n{helpStr}", 
+                                color=0xc1c100)
             await ctx.send(embed=embed)
         except Exception:
             await self.error(ctx)
