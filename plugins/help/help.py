@@ -141,7 +141,7 @@ class Help(commands.Cog):
         """
         try:
             embed=discord.Embed(title="Help", 
-                                description=f"`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`\n**__Plugins__**", 
+                                description=f"`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`\n\n**__Plugins__**", 
                                 color=0xc1c100)
 
             pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
@@ -163,9 +163,9 @@ class Help(commands.Cog):
                             cogStr += f"`{cogData.qualified_name}`, "
                     
                         if cogStr.count("`") > 2:
-                            embed.add_field(name=f"{plugin}", value=f"Cogs: {cogStr[:-2]}", inline=False)
+                            embed.add_field(name=f"{plugin}", value=f"Cogs: {cogStr[:-2]}", inline=True)
                         else:
-                            embed.add_field(name=f"{plugin}", value=f"Cog: {cogStr[:-2]}", inline=False)
+                            embed.add_field(name=f"{plugin}", value=f"Cog: {cogStr[:-2]}", inline=True)
                 except TypeError:
                     # not a plugin
                     pass
