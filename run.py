@@ -30,6 +30,7 @@ from utils.config import readINI
 from utils.startchecks import startupChecks
 from utils.logger import startLog, clearLogs, pluginLog, log
 from utils.database.actions import connect
+from utils.prefix import prefix
 
 # command line arguments assigning
 parser = argparse.ArgumentParser(description="Applesauce - modular Discord bot framework based on discord.py")
@@ -51,14 +52,7 @@ def get_prefix(bot, message):
     :param bot:
     :param message:
     """
-    try:
-        # looks for the location of a prefix in the database
-        guildCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["guilds"]
-        guildData = guildCol.find_one({ "_id": message.guild.id })
-        return guildData["prefix"]
-    except Exception:
-        # returns config.ini default prefix
-        return readINI("config.ini")["main"]["defaultPrefix"]
+    return prefix(message.guild.id)
 
 if __name__ == "__main__":
     # outputs startLog (startup.log) to console
@@ -178,9 +172,13 @@ if __name__ == "__main__":
                     startLog.error(f"{folder}.{plugin}: {error}")
                     pluginLog.error(f"{folder}.{plugin}: {error}")
                 finally:
-                    if i.REQUIRED:
-                        startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
-                        os._exit(1)
+                    try:
+                        if i.REQUIRED:
+                            startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
+                            os._exit(1)
+                    except TypeError:
+                        # not an actual plugin
+                        pass
     else:
         startLog.info("Skipped Plugin Loading")
 

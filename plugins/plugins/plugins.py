@@ -496,6 +496,7 @@ class Plugins(commands.Cog):
         :param ctx:
         :param show_unloaded: show unloaded plugins for owner
         """
+
         # Make new active object
         await self.createActiveObject(ctx, show_unloaded)
 

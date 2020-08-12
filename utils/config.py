@@ -1,6 +1,3 @@
-"""
-Config read/write functions for INI and JSON
-"""
 import json
 import configparser
 from utils.logger import log
