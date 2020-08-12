@@ -104,14 +104,12 @@ class Help(commands.Cog):
             if pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
                 embed=discord.Embed(title=pluginData["plugin_name"], description=pluginData["description"], color=0xc1c100)
                 for cog in pluginData["cog_names"]:
-                    print(cog)
                     cogData = self.bot.get_cog(cog)
                     comStr = ""
 
                     for command in cogData.walk_commands():
-                        print(command)
                         # checks if subcommand
-                        if " " in command.name:
+                        if " " in command.full_parent_name:
                             continue
                         
                         # can user run the command
@@ -124,13 +122,12 @@ class Help(commands.Cog):
                         comStr += f"`{prefix}{command.name} {command.usage}` - {command.description}\n"
 
                     if len(comStr) > 0:
-                        embed.add_field(name=cogData.qualified_name, value=comStr, inline=False)
+                        embed.add_field(name=f"Cog: {cogData.qualified_name}", value=comStr, inline=False)
 
                 await ctx.send(embed=embed)
             else:
                 await self.plugin_invalid(ctx)
-        except Exception as er:
-            print(er)
+        except Exception:
             await self.plugin_invalid(ctx)
 
     async def all(self, ctx, prefix):
