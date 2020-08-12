@@ -376,10 +376,14 @@ class PluginManager():
 
                     self.plugins.append(Plugin(data['_id'], data['version'], enabledGuild, loaded, hidden, data['description']))
                 except TypeError:
-                    # not in database
-                    i = importlib.import_module(f"{self.folder}.{plug}.plugininfo")
-                    hidden = emote_reactions["hidden"] if i.HIDDEN else emote_reactions["shown"]
-                    self.plugins.append(Plugin(plug, i.VERSION, emote_reactions["blank"], emote_reactions["blank"], hidden, i.DESCRIPTION))
+                    try:
+                        # not in database
+                        i = importlib.import_module(f"{self.folder}.{plug}.plugininfo")
+                        hidden = emote_reactions["hidden"] if i.HIDDEN else emote_reactions["shown"]
+                        self.plugins.append(Plugin(plug, i.VERSION, emote_reactions["blank"], emote_reactions["blank"], hidden, i.DESCRIPTION))
+                    except ModuleNotFoundError:
+                        # not a real plugin
+                        pass
         else:
             for x in self.pluginCol.find({ "loaded": True, "hidden": False }):
                 # checks if plugin is enabled in guild
