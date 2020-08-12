@@ -118,9 +118,11 @@ class Help(commands.Cog):
                         except commands.CommandError:
                             # cannot run
                             continue
-
-                        comStr += f"`{prefix}{command.name} {command.usage}` - {command.description}\n"
-
+                        
+                        if command.usage is not None:
+                            comStr += f"`{prefix}{command.name} {command.usage}` - {command.description}\n"
+                        else:
+                            comStr += f"`{prefix}{command.name}` - {command.description}\n"
                     if len(comStr) > 0:
                         embed.add_field(name=f"Cog: {cogData.qualified_name}", value=comStr, inline=False)
 
