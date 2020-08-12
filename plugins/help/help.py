@@ -101,9 +101,32 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            await ctx.send("a plugin")
+            if pluginData[ctx.guild.id] and pluginData["loaded"]:
+                embed=discord.Embed(title=pluginData["plugin_name"], description=pluginData["description"], color=0xc1c100)
+                for cog in pluginData["cog_names"]:
+                    comStr = ""
+
+                    for command in cog.walk_commands():
+                        # checks if subcommand
+                        if " " in command:
+                            continue
+                        
+                        # can user run the command
+                        try:
+                            await command.can_run(ctx)
+                        except commands.CommandError:
+                            # cannot run
+                            continue
+
+                        comStr += f"`{prefix}{command} {command.usage}` - {command.description}\n"
+
+                    if len(comStr) > 0:
+                        cogData = self.bot.get_cog(cog)
+                        embed.add_field(name=cog.qualified_name, value=, inline=False)
+            else:
+                await self.plugin_invalid(ctx)
         except Exception:
-            await self.error(ctx)
+            await self.plugin_invalid(ctx)
 
     async def all(self, ctx, prefix):
         """
@@ -112,12 +135,11 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            """
-            embed=discord.Embed(title="Help", description="", color=0xc1c100)
-            embed.add_field(name="", value="", inline=False)
+            embed=discord.Embed(title="Help", 
+                                description="`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`", 
+                                color=0xc1c100)
+            # embed.add_field(name="", value="", inline=False)
             await ctx.send(embed=embed)
-            """
-            await ctx.send("main help")
         except Exception:
             await self.error(ctx)
 
@@ -148,7 +170,7 @@ class Help(commands.Cog):
             itemSplit = helpItem.strip().split(" ")
             itemType = itemSplit[0].lower()
 
-            if len(itemSplit) >= 2:
+            if len(itemSplit) > 1:
                 item = " ".join(itemSplit[1:])
 
                 if itemType in ["command", "commands", "com", "group", "groups", "subcommand"]:
