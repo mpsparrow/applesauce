@@ -51,10 +51,10 @@ class PluginManager():
         An object representing the plugin manager in discord.
         Used for reaction based navigation etc
     """
-    def __init__(self, owner, verbose, bot, isBotOwner, guildID):
+    def __init__(self, parent, owner, verbose, isBotOwner, guildID):
+        self.parent = parent
         self.owner = owner
         self.verbose = verbose
-        self.bot = bot
         self.isBotOwner = isBotOwner,
         self.guildID = guildID
 
@@ -68,24 +68,38 @@ class PluginManager():
         self.current_page = 0
         self.selected_item = 0
 
-        self.messageID = 0
-        self.current_status = emote_reactions["blank"]
+        self.messageHandle = None
+        self.current_status = [emote_reactions["blank"]]
+
+    def getPluginByName(self, name: str) -> Plugin:
+        for plugin in self.plugins:
+            if plugin.name == name:
+                return plugin
+
+        return None
 
     def updateStatus(self, *newStatus):
-        self.current_status = ""
+        self.current_status.clear()
         for status in newStatus:
-            self.current_status += emote_reactions[status]
+            self.current_status.append(emote_reactions[status])
 
-    def toggleLoad(self):
+    def toggleLoad(self, pluginOverride: str = None, loadOverride: bool = None):
         try:
-            plug = self.plugins[self.current_page * PLUGINS_PER_PAGE + self.selected_item]
-            becomeLoaded = (plug.loaded != emote_reactions["loaded"])
+            if pluginOverride is None:
+                plug = self.plugins[self.current_page * PLUGINS_PER_PAGE + self.selected_item]
+            else:
+                plug = self.getPluginByName(pluginOverride)
+
+            if loadOverride is None:
+                becomeLoaded = (plug.loaded != emote_reactions["loaded"])
+            else:
+                becomeLoaded = loadOverride
 
             #self.bot.load_extension(f"{self.folder}.{plug.name}")
             i = importlib.import_module(f"{self.folder}.{plug.name}.plugininfo")
 
             if becomeLoaded:
-                self.bot.load_extension(f"{self.folder}.{plug.name}")
+                self.parent.bot.load_extension(f"{self.folder}.{plug.name}")
                 plug.loaded = emote_reactions["loaded"]
             else:
                 if i.REQUIRED:
@@ -93,7 +107,7 @@ class PluginManager():
                     # await ctx.send("Required plugins cannot be unloaded")
                     return
                 
-                self.bot.unload_extension(f"{self.folder}.{plug.name}")
+                self.parent.bot.unload_extension(f"{self.folder}.{plug.name}")
                 plug.loaded = emote_reactions["unloaded"]
 
             pluginINFO = { "_id": plug.name, 
@@ -135,21 +149,25 @@ class PluginManager():
             pluginLog.error(error)
             self.updateStatus("failed", "warning")
         except Exception as error:
-            self.bot.unload_extension(f"{self.folder}.{plug.name}")
+            self.parent.bot.unload_extension(f"{self.folder}.{plug.name}")
             pluginLog.error(f"{self.folder}.{plug.name}: variables not properly defined. Plugin unloaded.")
             pluginLog.error(error)
             self.updateStatus("failed", "warning")
 
-    def reload(self):
+    def reload(self, pluginOverride: str = None):
         try:
-            plug = self.plugins[self.current_page * PLUGINS_PER_PAGE + self.selected_item]
+            if pluginOverride is None:
+                plug = self.plugins[self.current_page * PLUGINS_PER_PAGE + self.selected_item]
+            else:
+                plug = self.getPluginByName(pluginOverride)
+
             # don't allow reloading of itself
             if plug.name == "plugins":
                 pluginLog.error(f"{self.folder}.{plug.name}: not allowed to reload the reloading plugin >.>")
                 self.updateStatus("failed")
                 return
 
-            self.bot.reload_extension(f"{self.folder}.{plug.name}")
+            self.parent.bot.reload_extension(f"{self.folder}.{plug.name}")
             i = importlib.import_module(f"{self.folder}.{plug.name}.plugininfo")
             pluginINFO = { "_id": plug.name, 
                             "plugin_name": i.PLUGIN_NAME,
@@ -190,10 +208,18 @@ class PluginManager():
             pluginLog.error(error)
             self.updateStatus("failed", "warning")
 
-    def toggleEnable(self):
+    def toggleEnable(self, pluginOverride: str = None, enableOverride: bool = None):
         try:
-            plug = self.plugins[self.current_page * PLUGINS_PER_PAGE + self.selected_item]
-            becomeEnabled = (plug.enabled == emote_reactions["disabled"])
+            if pluginOverride is None:
+                plug = self.plugins[self.current_page * PLUGINS_PER_PAGE + self.selected_item]
+            else:
+                plug = self.getPluginByName(pluginOverride)
+
+            if enableOverride is None:
+                becomeEnabled = (plug.enabled == emote_reactions["disabled"])
+            else:
+                becomeEnabled = enableOverride
+                   
             i = importlib.import_module(f"{self.folder}.{plug.name}.plugininfo")
             if self.guildID is not None and self.isBotOwner:
                 validID = True
@@ -258,6 +284,12 @@ class PluginManager():
         if self.current_page < 0:
             self.current_page = self.total_pages - 1
 
+    async def updateEmbed(self):
+        if self.messageHandle is None:
+            return
+
+        await self.messageHandle.edit(embed=self.makeEmbed())
+
     def makeEmbed(self):
         embed = discord.Embed(
             title = "Plugins",
@@ -283,7 +315,7 @@ class PluginManager():
             except:
                 break
 
-        embed.set_footer(text=f"Latest status: {self.current_status}\t\t{self.current_page + 1}/{self.total_pages}")
+        embed.set_footer(text=f"Latest status: {''.join(self.current_status)}\t\t{self.current_page + 1}/{self.total_pages}")
 
         return embed
 
@@ -340,8 +372,11 @@ class Plugins(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
+        if self.activeObject.messageHandle is None:
+            return
+
         message = reaction.message
-        if message.id != self.activeObject.messageID:
+        if message.id != self.activeObject.messageHandle.id:
             return
 
         if user == self.bot.user:
@@ -382,6 +417,15 @@ class Plugins(commands.Cog):
         embed = self.activeObject.makeEmbed()
         await message.edit(embed=embed)
 
+    async def createActiveObject(self, ctx, show_unloaded: bool = False):
+        self.activeObject = PluginManager(
+            self,
+            ctx.author, 
+            show_unloaded, 
+            await self.bot.is_owner(ctx.author),
+            ctx.guild.id
+        )
+
     @commands.group(name="plugin", description="Plugin management", usage="<action>", aliases=["p", "plug"], invoked_subcommand=True)
     @commands.has_permissions(manage_guild=True)
     async def plugin(self, ctx):
@@ -398,13 +442,7 @@ class Plugins(commands.Cog):
         :param ctx:
         :param show_unloaded: show unloaded plugins for owner
         """
-        self.activeObject = PluginManager(
-            ctx.author, 
-            show_unloaded, 
-            self.bot,
-            await self.bot.is_owner(ctx.author),
-            ctx.guild.id
-        )
+        await self.createActiveObject(ctx, show_unloaded)
 
         msg = await ctx.send(embed=self.activeObject.makeEmbed())
 
@@ -420,7 +458,7 @@ class Plugins(commands.Cog):
         if show_unloaded:
             await msg.add_reaction(nav_emotes["load"])
 
-        self.activeObject.messageID = msg.id
+        self.activeObject.messageHandle = msg
 
     @plugin.command(name="info", description="List all loaded plugins", usage="<plugin name>", aliases=["i", "information"])
     @commands.has_permissions(manage_guild=True)
@@ -511,52 +549,14 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
-        try:
-            folder = readINI("config.ini")["main"]["pluginFolder"]
-            self.bot.load_extension(f"{folder}.{plug}")
-            i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
-            pluginINFO = { "_id": plug, 
-                            "plugin_name": i.PLUGIN_NAME,
-                            "cog_names": i.COG_NAMES,
-                            "version": i.VERSION,
-                            "author": i.AUTHOR,
-                            "description": i.DESCRIPTION,
-                            "load_on_start": i.LOAD_ON_START, 
-                            "required": i.REQUIRED,
-                            "hidden": i.HIDDEN,
-                            "loaded": True }
-            pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
-            pluginLog.info(f"Loaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-            await ctx.message.add_reaction(emote_reactions["success"])
-        except commands.ExtensionNotFound as error:
-            # The plugin could not be found
-            pluginLog.error(f"{folder}.{plug}: not found (ExtensionNotFound)")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-        except commands.ExtensionAlreadyLoaded as error:
-            # The plugin was already loaded
-            pluginLog.info(f"{folder}.{plug}: already loaded (ExtensionAlreadyLoaded)")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["success"])
-        except commands.NoEntryPointError as error:
-            # The plugin does not have a setup function
-            pluginLog.error(f"{folder}.{plug}: no setup function (NoEntryPointError)")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-            await ctx.message.add_reaction(emote_reactions["warning"])
-        except commands.ExtensionFailed as error:
-            # The plugin setup function has an execution error
-            pluginLog.error(f"{folder}.{plug}: execution error (ExtensionFailed)")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-            await ctx.message.add_reaction(emote_reactions["warning"])
-        except Exception as error:
-            self.bot.unload_extension(f"{folder}.{plug}")
-            pluginLog.error(f"{folder}.{plug}: variables not properly defined. Plugin unloaded.")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-            await ctx.message.add_reaction(emote_reactions["warning"])
+        if self.activeObject is None:
+            await self.createActiveObject(ctx)
+
+        self.activeObject.toggleLoad(plug, True)
+        for status in self.activeObject.current_status:
+            await ctx.message.add_reaction(status)
+        await self.activeObject.updateEmbed()
+
 
     @plugin.command(name="unload", description="Unload a plugin", usage="<plugin name>", aliases=["u"])
     @commands.is_owner()
@@ -567,40 +567,13 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
-        try:
-            folder = readINI("config.ini")["main"]["pluginFolder"]
-            i = importlib.import_module(f"{folder}.{plug}.plugininfo")
+        if self.activeObject is None:
+            await self.createActiveObject(ctx)
 
-            if i.REQUIRED:
-                await ctx.message.add_reaction(emote_reactions["warning"])
-                await ctx.send("Required plugins cannot be unloaded")
-                return
-
-            self.bot.unload_extension(f"{folder}.{plug}")
-            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
-            pluginINFO = { "_id": plug, 
-                            "plugin_name": i.PLUGIN_NAME,
-                            "cog_names": i.COG_NAMES,
-                            "version": i.VERSION,
-                            "author": i.AUTHOR,
-                            "description": i.DESCRIPTION,
-                            "load_on_start": i.LOAD_ON_START, 
-                            "required": i.REQUIRED,
-                            "hidden": i.HIDDEN,
-                            "loaded": False }
-            pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
-            pluginLog.info(f"Unloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-            await ctx.message.add_reaction(emote_reactions["success"])
-        except commands.ExtensionNotLoaded as error:
-            # The plugin was not found or unloaded
-            pluginLog.error(f"{folder}.{plug}: unable to be found and unloaded. (ExtensionNotLoaded)")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-        except Exception as error:
-            pluginLog.error(f"{folder}.{plug}: unknown unloading plugin error.")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-            await ctx.message.add_reaction(emote_reactions["warning"])
+        self.activeObject.toggleLoad(plug, False)
+        for status in self.activeObject.current_status:
+            await ctx.message.add_reaction(status)
+        await self.activeObject.updateEmbed()
 
     @plugin.command(name="reload", description="Reload a plugin", usage="<plugin name>", aliases=["r"])
     @commands.is_owner()
@@ -611,60 +584,13 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
-        try:
-            folder = readINI("config.ini")["main"]["pluginFolder"]
+        if self.activeObject is None:
+            await self.createActiveObject(ctx)
 
-            # don't allow reloading of itself
-            if plug == "plugins":
-                pluginLog.error(f"{folder}.{plug}: not allowed to reload the reloading plugin >.>")
-                await ctx.message.add_reaction(emote_reactions["failed"])
-                return
-
-            self.bot.reload_extension(f"{folder}.{plug}")
-            i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
-            pluginINFO = { "_id": plug, 
-                            "plugin_name": i.PLUGIN_NAME,
-                            "cog_names": i.COG_NAMES,
-                            "version": i.VERSION,
-                            "author": i.AUTHOR,
-                            "description": i.DESCRIPTION,
-                            "load_on_start": i.LOAD_ON_START, 
-                            "required": i.REQUIRED,
-                            "hidden": i.HIDDEN,
-                            "loaded": True }
-            pluginCol.update_one({ "_id": plug }, { "$set": pluginINFO }, upsert=True)
-            pluginLog.info(f"Reloaded: {plug} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
-            await ctx.message.add_reaction(emote_reactions["success"])
-        except commands.ExtensionNotLoaded as error:
-            # The plugin doesn't exist
-            pluginLog.error(f"{folder}.{plug}: not found (ExtensionNotLoaded)")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-        except commands.ExtensionNotFound as error:
-            # The plugin did exist at one point but now doesn't
-            # Was probably loaded but than deleted
-            pluginLog.info(f"{folder}.{plug}: not found (ExtensionNotFound)")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-            await ctx.message.add_reaction(emote_reactions["warning"])
-        except commands.NoEntryPointError as error:
-            # The plugin does not have a setup function
-            pluginLog.error(f"{folder}.{plug}: no setup function (NoEntryPointError)")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-            await ctx.message.add_reaction(emote_reactions["warning"])
-        except commands.ExtensionFailed as error:
-            # The plugin setup function has an execution error
-            pluginLog.error(f"{folder}.{plug}: execution error (ExtensionFailed)")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-            await ctx.message.add_reaction(emote_reactions["warning"])
-        except Exception as error:
-            pluginLog.error(f"{folder}.{plug}: unknown reloading plugin error.")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
-            await ctx.message.add_reaction(emote_reactions["warning"])
+        self.activeObject.reload(plug)
+        for status in self.activeObject.current_status:
+            await ctx.message.add_reaction(status)
+        await self.activeObject.updateEmbed()
 
     @plugin.command(name="enable", description="Enable a plugin in a guild", usage="<plugin name>", aliases=["e"])
     @commands.has_permissions(manage_guild=True)
@@ -674,46 +600,13 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
-        try:
-            folder = readINI("config.ini")["main"]["pluginFolder"]
-            i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
+        if self.activeObject is None:
+            await self.createActiveObject(ctx)
 
-            if guildID is not None and await self.bot.is_owner(ctx.author):
-                validID = True
-                if len(str(guildID)) != 18:
-                    validID = False
-
-                try:
-                    int(guildID)
-                except ValueError:
-                    validID = False
-
-                if validID:
-                    pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(guildID)}": True }}, upsert=True)
-                    pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES}")
-                    await ctx.message.add_reaction(emote_reactions["success"])
-                else:
-                    pluginLog.error(f"{folder}.{plug}: owner invalid guildID for enabling extension")
-                    await ctx.message.add_reaction(emote_reactions["failed"])
-                    await ctx.message.add_reaction(emote_reactions["warning"])
-            else:
-                if i.HIDDEN:
-                    if await self.bot.is_owner(ctx.author):
-                        pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": True }}, upsert=True)
-                        pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
-                        await ctx.message.add_reaction(emote_reactions["success"])
-                    else:
-                        pluginLog.error(f"{folder}.{plug}: unable to enable hidden extension")
-                        await ctx.message.add_reaction(emote_reactions["failed"])
-                else:
-                    pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": True }}, upsert=True)
-                    pluginLog.info(f"Enabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
-                    await ctx.message.add_reaction(emote_reactions["success"])
-        except Exception as error:
-            pluginLog.error(f"{folder}.{plug}: unable to enable extension")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
+        self.activeObject.toggleEnable(plug, True)
+        for status in self.activeObject.current_status:
+            await ctx.message.add_reaction(status)
+        await self.activeObject.updateEmbed()
 
 
     @plugin.command(name="disable", description="Disable a plugin in a guild", usage="<plugin name>", aliases=["d"])
@@ -724,43 +617,10 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
-        try:
-            folder = readINI("config.ini")["main"]["pluginFolder"]
-            i = importlib.import_module(f"{folder}.{plug}.plugininfo")
-            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
+        if self.activeObject is None:
+            await self.createActiveObject(ctx)
 
-            if guildID is not None and await self.bot.is_owner(ctx.author):
-                validID = True
-                if len(str(guildID)) != 18:
-                    validID = False
-
-                try:
-                    int(guildID)
-                except ValueError:
-                    validID = False
-
-                if validID:
-                    pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(guildID)}": False }}, upsert=True)
-                    pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(guildID)} | Cogs: {i.COG_NAMES}")
-                    await ctx.message.add_reaction(emote_reactions["success"])
-                else:
-                    pluginLog.error(f"{folder}.{plug}: owner invalid guildID for disabling extension")
-                    await ctx.message.add_reaction(emote_reactions["failed"])
-                    await ctx.message.add_reaction(emote_reactions["warning"])
-            else:
-                if i.HIDDEN:
-                    if await self.bot.is_owner(ctx.author):
-                        pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": False }}, upsert=True)
-                        pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
-                        await ctx.message.add_reaction(emote_reactions["success"])
-                    else:
-                        pluginLog.error(f"{folder}.{plug}: unable to disable hidden extension")
-                        await ctx.message.add_reaction(emote_reactions["failed"])
-                else:
-                    pluginCol.update_one({ "_id": plug }, { "$set": { f"guilds.{str(ctx.guild.id)}": False }}, upsert=True)
-                    pluginLog.info(f"Disabled: {plug} ({i.PLUGIN_NAME}) | Guild: {str(ctx.guild.id)} | Cogs: {i.COG_NAMES}")
-                    await ctx.message.add_reaction(emote_reactions["success"])
-        except Exception as error:
-            pluginLog.error(f"{folder}.{plug}: unable to disable extension")
-            pluginLog.error(error)
-            await ctx.message.add_reaction(emote_reactions["failed"])
+        self.activeObject.toggleEnable(plug, False)
+        for status in self.activeObject.current_status:
+            await ctx.message.add_reaction(status)
+        await self.activeObject.updateEmbed()
