@@ -111,7 +111,7 @@ class Help(commands.Cog):
                     for command in cogData.walk_commands():
                         print(command)
                         # checks if subcommand
-                        if " " in command:
+                        if " " in command.name:
                             continue
                         
                         # can user run the command
@@ -121,7 +121,7 @@ class Help(commands.Cog):
                             # cannot run
                             continue
 
-                        comStr += f"`{prefix}{command} {command.usage}` - {command.description}\n"
+                        comStr += f"`{prefix}{command.name} {command.usage}` - {command.description}\n"
 
                     if len(comStr) > 0:
                         embed.add_field(name=cogData.qualified_name, value=comStr, inline=False)
