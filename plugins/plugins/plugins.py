@@ -57,7 +57,7 @@ class PluginManager():
         self.parent = parent
         self.owner = owner
         self.verbose = verbose
-        self.isBotOwner = isBotOwner,
+        self.isBotOwner = isBotOwner
         self.guildID = guildID
 
         self.pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
