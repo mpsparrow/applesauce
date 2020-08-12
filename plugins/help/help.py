@@ -145,8 +145,8 @@ class Help(commands.Cog):
             # display main help information
             await self.all(ctx, prefix)
         else:
-            itemSplit = helpItem.strip().lower().split(" ")
-            itemType = itemSplit[0]
+            itemSplit = helpItem.strip().split(" ")
+            itemType = itemSplit[0].lower()
 
             if len(itemSplit) >= 2:
                 item = " ".join(itemSplit[1:])
