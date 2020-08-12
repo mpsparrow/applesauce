@@ -9,6 +9,7 @@ from utils.database.actions import connect
 from utils.logger import pluginLog
 from utils.config import readINI
 
+# Emotes used to display the status of operations
 emote_reactions = { 
     "failed": "❌",
     "success": "✅",
@@ -22,6 +23,7 @@ emote_reactions = {
     "blank": "⬛"
 }
 
+# Emotes used for navigation
 nav_emotes = {
     "right": "➡️",
     "left": "⬅️",
@@ -71,6 +73,7 @@ class PluginManager():
         self.messageHandle = None
         self.current_status = [emote_reactions["blank"]]
 
+    # Returns a plugin matching the name
     def getPluginByName(self, name: str) -> Plugin:
         for plugin in self.plugins:
             if plugin.name == name:
@@ -78,12 +81,18 @@ class PluginManager():
 
         return None
 
+    # Updates the current, latest status of the manager
     def updateStatus(self, *newStatus):
         self.current_status.clear()
         for status in newStatus:
             self.current_status.append(emote_reactions[status])
 
     def toggleLoad(self, pluginOverride: str = None, loadOverride: bool = None):
+        """
+        Loads/Unloads the currently selected plugin depending on its state
+        :param str pluginOverride: Forces the function to use the specified plugin
+        :param bool loadOverride: Forces the function to either load or unload
+        """
         try:
             if pluginOverride is None:
                 plug = self.plugins[self.current_page * PLUGINS_PER_PAGE + self.selected_item]
@@ -155,6 +164,10 @@ class PluginManager():
             self.updateStatus("failed", "warning")
 
     def reload(self, pluginOverride: str = None):
+        """
+        Reloads the currently selected plugin
+        param: str pluginOverride: Forces the function to reload the specified plugin
+        """
         try:
             if pluginOverride is None:
                 plug = self.plugins[self.current_page * PLUGINS_PER_PAGE + self.selected_item]
@@ -209,6 +222,11 @@ class PluginManager():
             self.updateStatus("failed", "warning")
 
     def toggleEnable(self, pluginOverride: str = None, enableOverride: bool = None):
+        """
+        Enabled/Disables the currently selected plugin depending on its current state
+        param: str pluginOverride: Forces the function to use the specified plugin
+        param: bool enableOverride: Forces the function to either enable or disable the plugin
+        """
         try:
             if pluginOverride is None:
                 plug = self.plugins[self.current_page * PLUGINS_PER_PAGE + self.selected_item]
@@ -260,6 +278,9 @@ class PluginManager():
             self.updateStatus("failed")
 
     def up(self):
+        """
+        Moves the slection cursor up
+        """
         self.selected_item -= 1
         if self.selected_item < 0:
             if self.current_page < self.total_pages - 1:
@@ -268,29 +289,45 @@ class PluginManager():
                 self.selected_item = len(self.plugins) - (self.total_pages - 1) * PLUGINS_PER_PAGE - 1
 
     def down(self):
+        """
+        Moves the selection cursor down
+        """
         self.selected_item += 1
         if self.selected_item >= PLUGINS_PER_PAGE or (self.current_page * PLUGINS_PER_PAGE) + self.selected_item >= len(self.plugins):
             self.selected_item = 0
 
     def next(self):
+        """
+        Goes to the next page
+        """
         self.current_page += 1
         self.selected_item = 0
         if self.current_page >= self.total_pages:
             self.current_page = 0
 
     def prev(self):
+        """
+        Goes to the previous page
+        """
         self.current_page -= 1
         self.selected_item = 0
         if self.current_page < 0:
             self.current_page = self.total_pages - 1
 
     async def updateEmbed(self):
+        """
+        Updates the current active embed with new information
+        """
+        # Only update if this PluginManager has a message to be displayed to
         if self.messageHandle is None:
             return
 
         await self.messageHandle.edit(embed=self.makeEmbed())
 
     def makeEmbed(self):
+        """
+        Creates a new embed from current information
+        """
         embed = discord.Embed(
             title = "Plugins",
             color = 0xc1c100
@@ -320,6 +357,9 @@ class PluginManager():
         return embed
 
     def loadPluginList(self):
+        """
+        Loads all present plugins into the plugin array
+        """
         if self.verbose and self.isBotOwner:
             for plug in next(os.walk(self.folder))[1]:
                 # skips '__pycache__' folder
@@ -372,52 +412,70 @@ class Plugins(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
+        """
+        Handles navigation through the manager
+        """
+        # If there is no message to go along with the manager, do nothing
         if self.activeObject.messageHandle is None:
             return
 
         message = reaction.message
+        # If the reaction is not on the embed, do nothing
         if message.id != self.activeObject.messageHandle.id:
             return
 
+        # If the user is a bot, do nothing
         if user == self.bot.user:
             return
 
+        # If the reacting user is not the owner of the embed, do nothing
         if user.id != self.activeObject.owner.id:
             return
 
+        # If the user sent this reaction, do this
         if reaction.me:
+            # Prev page
             if reaction.emoji == nav_emotes["left"]:
                 self.activeObject.prev()
                 await reaction.remove(user)
 
+            # Next page
             if reaction.emoji == nav_emotes["right"]:
                 self.activeObject.next()
                 await reaction.remove(user)
 
+            # Cursor up
             if reaction.emoji == nav_emotes["up"]:
                 self.activeObject.up()
                 await reaction.remove(user)
 
+            # Cursor down
             if reaction.emoji == nav_emotes["down"]:
                 self.activeObject.down()
                 await reaction.remove(user)
 
+            # Enable/Disable plugin
             if reaction.emoji == nav_emotes["enable"]:
                 self.activeObject.toggleEnable()
                 await reaction.remove(user)
 
+            # Reload plugin
             if reaction.emoji == nav_emotes["reload"]:
                 self.activeObject.reload()
                 await reaction.remove(user)
 
+            # Load/Unload plugin
             if reaction.emoji == nav_emotes["load"]:
                 self.activeObject.toggleLoad()
                 await reaction.remove(user)
 
-        embed = self.activeObject.makeEmbed()
-        await message.edit(embed=embed)
+        # Update embed
+        await self.activeObject.updateEmbed()
 
     async def createActiveObject(self, ctx, show_unloaded: bool = False):
+        """
+        Creates a new PluginManager and makes it the active object
+        """
         self.activeObject = PluginManager(
             self,
             ctx.author, 
@@ -442,14 +500,18 @@ class Plugins(commands.Cog):
         :param ctx:
         :param show_unloaded: show unloaded plugins for owner
         """
+        # Make new active object
         await self.createActiveObject(ctx, show_unloaded)
 
+        # Create message for active object
         msg = await ctx.send(embed=self.activeObject.makeEmbed())
 
+        # If there are more than one page, create page navigators
         if self.activeObject.total_pages > 1:
             await msg.add_reaction(nav_emotes["left"])
             await msg.add_reaction(nav_emotes["right"])
 
+        # Add more controls
         await msg.add_reaction(nav_emotes["up"])
         await msg.add_reaction(nav_emotes["down"])
         await msg.add_reaction(nav_emotes["enable"])
@@ -458,6 +520,7 @@ class Plugins(commands.Cog):
         if show_unloaded:
             await msg.add_reaction(nav_emotes["load"])
 
+        # Set this new message as the active object's message
         self.activeObject.messageHandle = msg
 
     @plugin.command(name="info", description="List all loaded plugins", usage="<plugin name>", aliases=["i", "information"])
@@ -549,12 +612,18 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
+        # Create new active object (this won't be rendered)
         if self.activeObject is None:
             await self.createActiveObject(ctx)
 
+        # Force load the plugin
         self.activeObject.toggleLoad(plug, True)
+
+        # Fetch status emotes and react
         for status in self.activeObject.current_status:
             await ctx.message.add_reaction(status)
+
+        # Update embed
         await self.activeObject.updateEmbed()
 
 
@@ -567,12 +636,18 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
+        # Create new active object (this won't be rendered)
         if self.activeObject is None:
             await self.createActiveObject(ctx)
 
+        # Force unload the plugin
         self.activeObject.toggleLoad(plug, False)
+
+        # Fetch status emotes and react
         for status in self.activeObject.current_status:
             await ctx.message.add_reaction(status)
+
+        # Update embed
         await self.activeObject.updateEmbed()
 
     @plugin.command(name="reload", description="Reload a plugin", usage="<plugin name>", aliases=["r"])
@@ -584,12 +659,18 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
+        # Create new active object (this won't be rendered)
         if self.activeObject is None:
             await self.createActiveObject(ctx)
 
+        # Force reload the plugin
         self.activeObject.reload(plug)
+
+        # Fetch status emotes and react
         for status in self.activeObject.current_status:
             await ctx.message.add_reaction(status)
+
+        # Update embed
         await self.activeObject.updateEmbed()
 
     @plugin.command(name="enable", description="Enable a plugin in a guild", usage="<plugin name>", aliases=["e"])
@@ -600,12 +681,18 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
+        # Create new active object (this won't be rendered)
         if self.activeObject is None:
             await self.createActiveObject(ctx)
 
+        # Force enable the plugin
         self.activeObject.toggleEnable(plug, True)
+
+        # Fetch status emotes and react
         for status in self.activeObject.current_status:
             await ctx.message.add_reaction(status)
+        
+        # Update embed
         await self.activeObject.updateEmbed()
 
 
@@ -617,10 +704,16 @@ class Plugins(commands.Cog):
         :param ctx:
         :param str plug: Plugin name
         """
+        # Create new active object (this won't be rendered)
         if self.activeObject is None:
             await self.createActiveObject(ctx)
 
+        # Force disable the plugin
         self.activeObject.toggleEnable(plug, False)
+
+        # Fetch status emotes and react
         for status in self.activeObject.current_status:
             await ctx.message.add_reaction(status)
+
+        # Update embed
         await self.activeObject.updateEmbed()
