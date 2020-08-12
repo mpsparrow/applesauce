@@ -30,9 +30,9 @@ class Quiz():
         "Cartoons": 32
     }
 
-    topic_list = list(topics.keys())
+    topic_list = [x.lower() for x in list(topics.keys())]
 
-    difficulties = ["Easy", "Medium", "Hard"]
+    difficulties = ["easy", "aedium", "hard"]
 
     def __init__(self, topic, num_questions, difficulty):
         self.topic = topic
