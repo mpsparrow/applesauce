@@ -109,7 +109,7 @@ class Help(commands.Cog):
 
                     for command in cogData.walk_commands():
                         # checks if subcommand
-                        if " " in command.full_parent_name:
+                        if " " in command.qualified_name:
                             continue
                         
                         # can user run the command
