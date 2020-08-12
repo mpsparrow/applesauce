@@ -127,8 +127,8 @@ class Help(commands.Cog):
                 await ctx.send(embed=embed)
             else:
                 await self.plugin_invalid(ctx)
-        except Exception as error:
-            print(error)
+        except Exception as er:
+            print(er)
             await self.plugin_invalid(ctx)
 
     async def all(self, ctx, prefix):
