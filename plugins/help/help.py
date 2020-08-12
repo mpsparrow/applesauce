@@ -121,13 +121,13 @@ class Help(commands.Cog):
         except Exception:
             await self.error(ctx)
 
-    async def itemtype_help(self, ctx, prefix):
+    async def item_help(self, ctx, prefix):
         """
-        itemType helpf
+        item help
         :param ctx:
         :param str prefix: command prefix for guild
         """
-        embed=discord.Embed(title="Invalid Item Type", 
+        embed=discord.Embed(title="Invalid Item", 
                             description=f"**Please Use**\n`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`", 
                             color=0xf84722)
         await ctx.send(embed=embed)
@@ -146,7 +146,7 @@ class Help(commands.Cog):
             await self.all(ctx, prefix)
         else:
             itemSplit = helpItem.strip().lower().split(" ")
-            itemType = [0]
+            itemType = itemSplit[0]
 
             if len(itemSplit) >= 2:
                 item = " ".join(itemSplit[1:])
@@ -176,7 +176,10 @@ class Help(commands.Cog):
                         await self.cog_invalid(ctx)
                 else:
                     # itemType didn't match
-                    await self.itemtype_help(ctx, prefix)
+                    await self.item_help(ctx, prefix)
+            else:
+                # need at least 2 params
+                await self.item_help(ctx, prefix)
 
             # old detection system
             """
