@@ -4,6 +4,7 @@ import time
 import random
 from utils.checks import is_guild_enabled
 from .triviaAPI import topic_list, topics, difficulties, Quiz
+import asyncio
 
 default_topic = topic_list[0]
 default_amount = 10
@@ -20,24 +21,70 @@ reaction_emotes = {
     "False": "❌"
 }
 
+choices = ["a", "b", "c", "d"]
+
 class TriviaSession:
     def __init__(self, ctx, quiz, parent):
         self.quiz = quiz
         self.ctx = ctx
         self.parent = parent
+        self.bot = self.parent.bot
         self.current_msg = None
+        self.correct_choice = -1
+        self.points = {}
 
     async def start(self):
+        self.points = {}
         i = 0
+
         for question in self.quiz.questions:
+            wrong_users = []
+            def check(message):
+                if message.author in wrong_users:
+                    return False
+                if message.content.lower() == question.answer.lower() or message.content.lower() == choices[self.correct_choice]:
+                    return True
+                if (message.content.lower() in [x.lower() for x in question.wrong_answers]) or (message.content.lower() in choices and question.type != "boolean"):
+                    wrong_users.append(message.author)
+                    return False
+                
+            def idle(message):
+                return False
+
             i += 1
             await self.render_question(question, i)
-            time.sleep(10)
+            try:
+                message = await self.bot.wait_for("message", check=check, timeout=10.0)
+            except asyncio.TimeoutError:
+                await self.ctx.send(f"The correct answer is \"{question.answer}\". Nobody gets points.")
+            else:
+                await self.ctx.send(f"{message.author.name} is correct! 1 point to you.")
+                if message.author.name not in self.points:
+                    self.points[message.author.name] = 0
+                self.points[message.author.name] += 1
 
+            try:
+                msg = await self.bot.wait_for("message", check=idle, timeout=2.0)
+            except asyncio.TimeoutError:
+                continue
+            else:
+                # Wtf happened that it got here??
+                continue
+
+        sorted_scoreboard = sorted(self.points.items(), key=lambda x: x[1], reverse=True)
+        scoreboard = "```Scoreboard: \n\n"
+        i = 1
+        for element in sorted_scoreboard:
+            scoreboard += f"{i}. {element[0]}\t\t\t{element[1]}\n"
+            i += 1
+        scoreboard += "```"
+
+        await self.ctx.send(scoreboard)
         self.parent.activeObjects.pop(self.ctx.guild.id, None)
 
     async def render_question(self, q, i):
         title = ""
+        self.correct_choice = -1
         if q.type == "boolean":
             title += "True or False? "
         title += q.question
@@ -53,15 +100,15 @@ class TriviaSession:
             j = 0
             for k in range(0, 4):
                 if k == true_position:
-                    embed.add_field(name = f"{chr(65 + k)}. {q.answer}", value="\u200b", inline=False)
+                    embed.add_field(name = f"{choices[k]}. {q.answer}", value="\u200b", inline=False)
+                    self.correct_choice = k
                 else:
-                    embed.add_field(name = f"{chr(65 + k)}. {q.wrong_answers[j]}", value="\u200b", inline=False)
+                    embed.add_field(name = f"{choices[k]}. {q.wrong_answers[j]}", value="\u200b", inline=False)
                     j += 1
 
         embed.set_footer(text=f"{q.category} | {q.difficulty}")
 
         self.current_msg = await self.ctx.send(embed=embed)
-
 
 
 class Trivia(commands.Cog):
@@ -139,5 +186,5 @@ class Trivia(commands.Cog):
         
         quiz = Quiz(topic, amount, difficulty)
         session = TriviaSession(ctx, quiz, self)
-        await session.start()
         self.activeObjects[ctx.guild.id] = session
+        await session.start()
