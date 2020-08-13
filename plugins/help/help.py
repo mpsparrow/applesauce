@@ -90,7 +90,27 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            await ctx.send("a cog")
+            embed=discord.Embed(title=cog.qualified_name, description=cog.description, color=0xc1c100)
+            comStr = ""
+            
+            for command in cog.walk_commands():
+                # checks if subcommand
+                if " " in command.qualified_name:
+                    continue
+                
+                # can user run the command
+                try:
+                    await command.can_run(ctx)
+                except commands.CommandError:
+                    # cannot run
+                    continue
+                
+                if command.usage is not None:
+                    comStr += f"`{prefix}{command.name} {command.usage}` - {command.description}\n"
+                else:
+                    comStr += f"`{prefix}{command.name}` - {command.description}\n"
+
+            embed.add_field(name=f"Commands", value=comStr, inline=False)
         except Exception:
             await self.error(ctx)
 
