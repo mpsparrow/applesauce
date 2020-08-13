@@ -1,5 +1,5 @@
 import requests
-import xml.etree.cElementTree as cET
+import defusedxml.cElementTree as cET
 from urllib.parse import quote_plus
 from utils.config import readINI
 from utils.logger import log
@@ -18,7 +18,7 @@ class WolframResult:
         self.error = "Failed to reach Wolfram|Alpha. Tell the bot provider to check their logs."
         self.didyoumean = None
 
-        if self.root == None:
+        if self.root is None:
             return
 
         self.success = True if (self.root.get("success") == "true") else False
