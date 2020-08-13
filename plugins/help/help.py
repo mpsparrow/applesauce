@@ -133,11 +133,12 @@ class Help(commands.Cog):
         except Exception:
             await self.plugin_invalid(ctx)
 
-    async def all(self, ctx, prefix):
+    async def all(self, ctx, prefix, show_all: bool = False):
         """
         all help embed
         :param ctx:
         :param str prefix: command prefix for guild
+        :param bool show_all: Show all hidden cogs
         """
         try:
             pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
@@ -163,7 +164,7 @@ class Help(commands.Cog):
                         if cogStr.count("`") > 2:
                             helpStr += f"**{plugin}** | Cogs: {cogStr[:-2]}\n"
                         else:
-                            helpStr += f"**{plugin}** | Cogs: {cogStr[:-2]}\n"
+                            helpStr += f"**{plugin}** | Cog: {cogStr[:-2]}\n"
                 except TypeError:
                     # not a plugin
                     pass
@@ -184,6 +185,17 @@ class Help(commands.Cog):
                             description=f"**Please Use**\n`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`", 
                             color=0xf84722)
         await ctx.send(embed=embed)
+
+    @commands.command(name="helpall", description="Help command that shows all plugins (hidden or not)", aliases=["ha"])
+    @commands.is_owner()
+    async def helpall(self, ctx):
+        """
+        Help command (displays all plugins)
+        :param ctx:
+        :param str helpItem: item that needs help
+        """
+        prefix = getPrefix(ctx.guild.id)
+        await self.all(ctx, prefix, show_all=True)
 
     @commands.command(name="help", description="Help command", usage="<plugin/command>", aliases=["h"])
     async def help(self, ctx, *, helpItem: str=None):
@@ -233,3 +245,15 @@ class Help(commands.Cog):
             else:
                 # need at least 2 params
                 await self.item_help(ctx, prefix)
+
+    @commands.command(name="setup", description="Bot setup instructions")
+    @commands.has_permissions(manage_guild=True)
+    async def setup(self, ctx):
+        """
+        Setup instructions 
+        :param ctx:
+        """
+        embed=discord.Embed(title="Setup Instructions", 
+                            description=f"", 
+                            color=0xf84722)
+        await ctx.send(embed=embed)
