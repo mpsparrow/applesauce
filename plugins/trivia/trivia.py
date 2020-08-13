@@ -231,13 +231,14 @@ class Trivia(commands.Cog):
 
         # Allow people with specific guild permissions to end trivia
         if ctx.message.author != activeSession.owner:
-            embed = discord.Embed(
-                    title = "Trivia Error",
-                    description = f"Only {activeSession.owner.name} can stop this trivia session",
-                    color = 0xf84722
-                )
-            await ctx.send(embed=embed)
-            return
+            if not ctx.author.permissions_in(ctx.channel).manage_guild:
+                embed = discord.Embed(
+                        title = "Trivia Error",
+                        description = f"Only {activeSession.owner.name} can stop this trivia session",
+                        color = 0xf84722
+                    )
+                await ctx.send(embed=embed)
+                return
 
         activeSession.stop = True
         self.activeObjects.pop(ctx.guild.id)     
