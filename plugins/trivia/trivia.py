@@ -79,7 +79,11 @@ class TriviaSession:
             try:
                 message = await self.bot.wait_for("message", check=check, timeout=time_in_seconds)
             except asyncio.TimeoutError:
-                await self.ctx.send(f"The correct answer is \"{question.answer}\". Nobody gets points.")
+                correct_answer_text = ""
+                if question.type == "multiple":
+                    correct_answer_text += f"{choices[self.correct_choice].upper()}. "
+                correct_answer_text += question.answer
+                await self.ctx.send(f"The correct answer is **{correct_answer_text}**. Nobody gets points.")
             else:
                 await self.ctx.send(f"{message.author.name} is correct! 1 point to you.")
                 if message.author.name not in self.points:
@@ -231,7 +235,7 @@ class Trivia(commands.Cog):
 
         # Allow people with specific guild permissions to end trivia
         if ctx.message.author != activeSession.owner:
-            if not ctx.author.permissions_in(ctx.channel).manage_guild:
+            if not ctx.author.permissions_in(ctx.channel).administrator:
                 embed = discord.Embed(
                         title = "Trivia Error",
                         description = f"Only {activeSession.owner.name} can stop this trivia session",
