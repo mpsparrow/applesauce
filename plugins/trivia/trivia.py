@@ -61,6 +61,8 @@ class TriviaSession:
 
             wrong_users = []
             def check(message):
+                if message.channel != self.ctx.channel:
+                    return False
                 if message.author in wrong_users:
                     return False
                 if message.content.lower() == question.answer.lower() or message.content.lower() == choices[self.correct_choice]:
