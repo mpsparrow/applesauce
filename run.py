@@ -121,13 +121,14 @@ if __name__ == "__main__":
 
             # tries to load plugin
             try:
-                i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
-                loaded = False
-
                 if args.a:
                     if os.path.exists(f"{folder}/{plugin}/requirements.txt"):
                         startLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | requirements.txt found... Installing packages")
                         subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", f"{folder}/{plugin}/requirements.txt"])
+
+
+                i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
+                loaded = False
 
                 if i.LOAD_ON_START:
                     bot.load_extension(f"{folder}.{plugin}")
