@@ -105,7 +105,6 @@ class PluginManager():
             else:
                 becomeLoaded = loadOverride
 
-            #self.bot.load_extension(f"{self.folder}.{plug.name}")
             i = importlib.import_module(f"{self.folder}.{plug.name}.plugininfo")
 
             if becomeLoaded:
@@ -183,7 +182,8 @@ class PluginManager():
                 return
 
             self.parent.bot.reload_extension(f"{self.folder}.{plug.name}")
-            pluginLog.info(f"Reloaded: {plug.name} ({i.PLUGIN_NAME}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
+            i = importlib.import_module(f"{self.folder}.{plug.name}.plugininfo")
+            pluginLog.info(f"Reloaded: {plug.name} ({plug.plugin_name}) | Cogs: {i.COG_NAMES} | Version: {i.VERSION}")
             self.updateStatus("success")
         except commands.ExtensionNotLoaded as error:
             # The plugin doesn't exist
