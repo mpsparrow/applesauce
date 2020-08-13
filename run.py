@@ -15,6 +15,7 @@ https://github.com/mpsparrow/applesauce/wiki
 """
 import os
 import sys
+import subprocess
 import pymongo
 import argparse
 import logging
@@ -44,6 +45,8 @@ parser.add_argument("-o", "-outputlog", action="store_true",
                     help="outputs startup.log to console")
 parser.add_argument("-p", "-skipplugins", action="store_false",
                     help="skips the loading of all plugins")
+parser.add_argument("-a", "-autoinstall", action="store_true",
+                    help="automatically installs requirements for plugins (Be careful!)")
 args = parser.parse_args()
 
 def get_prefix(bot, message):
@@ -120,6 +123,11 @@ if __name__ == "__main__":
             try:
                 i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
                 loaded = False
+
+                if args.a:
+                    if os.path.exists(f"{folder}/{plugin}/requirements.txt"):
+                        startLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | requirements.txt found... Installing packages")
+                        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", f"{folder}/{plugin}/requirements.txt"])
 
                 if i.LOAD_ON_START:
                     bot.load_extension(f"{folder}.{plugin}")
