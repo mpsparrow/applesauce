@@ -40,8 +40,9 @@ class Plugin():
     """
     Represents a plugin
     """
-    def __init__(self, name, version, enabled, loaded, hidden, description):
+    def __init__(self, name, plugin_name, version, enabled, loaded, hidden, description):
         self.name = name
+        self.plugin_name = plugin_name
         self.version = version
         self.enabled = enabled
         self.loaded = loaded
@@ -331,13 +332,13 @@ class PluginManager():
                 plugin = self.plugins[self.current_page * PLUGINS_PER_PAGE + i]
                 if self.verbose:
                     embed.add_field(
-                        name=f"{'‣ ' if i == self.selected_item else ''}{plugin.enabled}{plugin.loaded}{plugin.hidden} {plugin.name} (v{plugin.version})",
+                        name=f"{'‣ ' if i == self.selected_item else ''}{plugin.enabled}{plugin.loaded}{plugin.hidden} {plugin.plugin_name} ({plugin.name} v{plugin.version})",
                         value=plugin.description,
                         inline=False
                     )
                 else:
                     embed.add_field(
-                        name=f"{'‣ ' if i == self.selected_item else ''}{plugin.enabled} {plugin.name}",
+                        name=f"{'‣ ' if i == self.selected_item else ''}{plugin.enabled} {plugin.plugin_name}",
                         value=plugin.description,
                         inline=False
                     )
@@ -374,13 +375,13 @@ class PluginManager():
                     except Exception:
                         enabledGuild = emote_reactions["disabled"]
 
-                    self.plugins.append(Plugin(data['_id'], data['version'], enabledGuild, loaded, hidden, data['description']))
+                    self.plugins.append(Plugin(data['_id'], data['plugin_name'], data['version'], enabledGuild, loaded, hidden, data['description']))
                 except TypeError:
                     try:
                         # not in database
                         i = importlib.import_module(f"{self.folder}.{plug}.plugininfo")
                         hidden = emote_reactions["hidden"] if i.HIDDEN else emote_reactions["shown"]
-                        self.plugins.append(Plugin(plug, i.VERSION, emote_reactions["blank"], emote_reactions["blank"], hidden, i.DESCRIPTION))
+                        self.plugins.append(Plugin(plug, i.PLUGIN_NAME, i.VERSION, emote_reactions["blank"], emote_reactions["blank"], hidden, i.DESCRIPTION))
                     except ModuleNotFoundError:
                         # not a real plugin
                         pass
@@ -396,7 +397,7 @@ class PluginManager():
                 except Exception:
                     enabledGuild = emote_reactions["disabled"]
 
-                self.plugins.append(Plugin(x['_id'], "", enabledGuild, emote_reactions["blank"], emote_reactions["blank"], x['description']))
+                self.plugins.append(Plugin(x['_id'], x['plugin_name'], "", enabledGuild, emote_reactions["blank"], emote_reactions["blank"], x['description']))
 
 
 class Plugins(commands.Cog):
@@ -414,6 +415,10 @@ class Plugins(commands.Cog):
         """
         message = reaction.message
         guildid = message.guild.id
+
+        # If there is no activeObject for the guild, do nothing
+        if guildid not in self.activeObjects:
+            return
         
         # If there is no message to go along with the manager, do nothing
         if self.activeObjects[guildid].messageHandle is None:
