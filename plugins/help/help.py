@@ -8,7 +8,7 @@ from utils.prefix import prefix as getPrefix
 
 class Help(commands.Cog):
     """
-    Custom commands
+    Help commands
     """
     def __init__(self, bot):
         self.bot = bot
@@ -54,9 +54,28 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            await ctx.send("a command")
+            if command.enabled and not command.hidden:
+                embed=discord.Embed(title=command.name, description=command.description, color=0xc1c100)
+
+                # Displays command usage
+                if command.usage is None:
+                    embed.add_field(name="Usage", value=f"`{prefix}{command.name}`", inline=False)
+                else:
+                    embed.add_field(name="Usage", value=f"`{prefix}{command.name} {command.usage}`", inline=False)
+
+                # Add in aliases if they exist
+                if len(command.aliases) != 0:
+                    aliasStr = ""
+                    for alias in command.aliases:
+                        aliasStr += f"`{alias}`, "
+
+                    embed.add_field(name="Aliases", value=aliasStr[:-2], inline=False)
+                embed.set_footer(text="Type: Command")
+                await ctx.send(embed=embed)
+            else:
+                await self.command_invalid(ctx)
         except Exception:
-            await self.error(ctx)
+            await self.command_invalid(ctx)
 
     async def subcommand(self, ctx, subcommand, prefix):
         """
@@ -66,9 +85,28 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            await ctx.send("a subcommand")
+            if subcommand.enabled and not subcommand.hidden:
+                embed=discord.Embed(title=subcommand.qualified_name, description=subcommand.description, color=0xc1c100)
+
+                # Displays subcommand usage
+                if subcommand.usage is None:
+                    embed.add_field(name="Usage", value=f"`{prefix}{subcommand.qualified_name}`", inline=False)
+                else:
+                    embed.add_field(name="Usage", value=f"`{prefix}{subcommand.qualified_name} {subcommand.usage}`", inline=False)
+
+                # Add in aliases if they exist
+                if len(subcommand.aliases) != 0:
+                    aliasStr = ""
+                    for alias in subcommand.aliases:
+                        aliasStr += f"`{alias}`, "
+
+                    embed.add_field(name="Aliases", value=aliasStr[:-2], inline=False)
+                embed.set_footer(text="Type: Subcommand")
+                await ctx.send(embed=embed)
+            else:
+                await self.command_invalid(ctx)
         except Exception:
-            await self.error(ctx)
+            await self.command_invalid(ctx)
 
     async def group(self, ctx, group, prefix):
         """
@@ -78,9 +116,36 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            await ctx.send("a group")
+            if group.enabled and not group.hidden:
+                embed=discord.Embed(title=group.qualified_name, description=group.description, color=0xc1c100)
+
+                # Displays command usage
+                if group.usage is None:
+                    embed.add_field(name="Usage", value=f"`{prefix}{group.qualified_name} <subcommand>`", inline=False)
+                else:
+                    embed.add_field(name="Usage", value=f"`{prefix}{group.qualified_name} {group.usage}`", inline=False)
+
+                # Add aliases if they exist
+                if len(group.aliases) != 0:
+                    aliasStr = ""
+                    for alias in group.aliases:
+                        aliasStr += f"`{alias}`, "
+
+                    embed.add_field(name="Aliases", value=aliasStr[:-2], inline=False)
+
+                subcommandStr = ""
+
+                for subcommand in group.commands:
+                    subcommandStr += f"`{subcommand.name} {subcommand.usage}`\n"
+                    
+                embed.add_field(name="Subcommands", value=subcommandStr, inline=False)
+
+                embed.set_footer(text="Type: Group")
+                await ctx.send(embed=embed)
+            else:
+                await self.command_invalid(ctx)
         except Exception:
-            await self.error(ctx)
+            await self.command_invalid(ctx)
 
     async def cog(self, ctx, cog, prefix):
         """
@@ -90,12 +155,16 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            embed=discord.Embed(title=cog.qualified_name, description=cog.description, color=0xc1c100)
+            embed=discord.Embed(title=f"Cog: {cog.qualified_name}", description=cog.description, color=0xc1c100)
             comStr = ""
             
             for command in cog.walk_commands():
                 # checks if subcommand
                 if " " in command.qualified_name:
+                    continue
+
+                # checks if command is hidden or disabled
+                if command.hidden and not command.enabled:
                     continue
                 
                 # can user run the command
@@ -111,6 +180,7 @@ class Help(commands.Cog):
                     comStr += f"`{prefix}{command.name}` - {command.description}\n"
 
             embed.add_field(name=f"Commands", value=comStr, inline=False)
+            await ctx.send(embed=embed)
         except Exception:
             await self.error(ctx)
 
@@ -123,7 +193,7 @@ class Help(commands.Cog):
         """
         try:
             if pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
-                embed=discord.Embed(title=pluginData["plugin_name"], description=pluginData["description"], color=0xc1c100)
+                embed=discord.Embed(title=f"Plugin: {pluginData['plugin_name']}", description=pluginData["description"], color=0xc1c100)
                 for cog in pluginData["cog_names"]:
                     cogData = self.bot.get_cog(cog)
                     comStr = ""
@@ -239,31 +309,63 @@ class Help(commands.Cog):
             # display main help information
             await self.all(ctx, prefix)
         else:
+            # Splits the tag from the rest of the helpItem input
             itemSplit = helpItem.strip().split(" ")
             itemType = itemSplit[0].lower()
 
+            # If a tag and an item were given
             if len(itemSplit) > 1:
                 item = " ".join(itemSplit[1:])
 
+                # Checking what type of input it is that requires help
+                # Types: command, cog, plugin
+                # command needs to then check for: command, subcommand, group
                 if itemType in ["command", "commands", "com", "group", "groups", "subcommand"]:
+                    # Is some type of command
                     command = self.bot.get_command(item)
 
-                    if command is not None:
-                        await ctx.send("some command")
-                    else:
+                    # can user run the command
+                    try:
+                        await command.can_run(ctx)
+                    except commands.CommandError:
+                        # cannot run
+                        await self.command_invalid(ctx)
+                        return
+
+                    try:
+                        # What type of command is it? subcommand, command, group
+                        if command.root_parent is not None:
+                            # subcommand
+                            await self.subcommand(ctx, command, prefix)
+                        else:
+                            try:
+                                x = command.commands
+                                # group
+                                await self.group(ctx, command, prefix)
+                            except Exception:
+                                # command
+                                await self.command(ctx, command, prefix)
+                    except Exception as error:
                         await self.command_invalid(ctx)
 
                 elif itemType in ["p", "plugin", "plugins", "plug"]:
+                    # Is a plugin
                     pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
                     pluginData = pluginCol.find_one({ "_id": item })
 
+                    # Checks if plugin exists
                     if pluginData is not None:
-                        await self.plugin(ctx, pluginData, prefix)
+                        if pluginData["guilds"][ctx.guild.id]:
+                            await self.plugin(ctx, pluginData, prefix)
+                        else:
+                            await self.plugin_invalid(ctx)
                     else:
                         await self.plugin_invalid(ctx)
                 elif itemType in ["cog"]:
+                    # Is a cog
                     cog = self.bot.get_cog(item)
 
+                    # Checks if cog exists
                     if cog is not None:
                         await self.cog(ctx, cog, prefix)
                     else:
