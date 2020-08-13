@@ -238,7 +238,7 @@ class Trivia(commands.Cog):
             if not ctx.author.permissions_in(ctx.channel).administrator:
                 embed = discord.Embed(
                         title = "Trivia Error",
-                        description = f"Only {activeSession.owner.name} can stop this trivia session",
+                        description = f"Only {activeSession.owner.name} or an administrator can stop this trivia session",
                         color = 0xf84722
                     )
                 await ctx.send(embed=embed)
