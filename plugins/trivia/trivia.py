@@ -12,6 +12,8 @@ default_diff = difficulties[0]
 
 max_questions = 20
 
+time_in_seconds = 10.0
+
 reaction_emotes = {
     "A": "🇦",
     "B": "🇧",
@@ -23,21 +25,40 @@ reaction_emotes = {
 
 choices = ["a", "b", "c", "d"]
 
+desc = ""
+desc += f"• You have {time_in_seconds} seconds to answer each question\n"
+desc += "• Whoever gives the correct answer first gets one point\n"
+desc += "• There are two types of questions: Yes/No, and multiple choice\n"
+desc += f"• Multiple choice questions can be answered by typing the correct answer, or by typing the correct enumerator ({', '.join(choices)})\n"
+desc += f"• Answering with the WRONG choice will give you 0 points instantly. Don't even try spamming the answers\n"
+
+rules = discord.Embed(
+    title = "Rules",
+    color = 0xc1c100,
+    description=desc
+)
+
 class TriviaSession:
     def __init__(self, ctx, quiz, parent):
         self.quiz = quiz
         self.ctx = ctx
+        self.owner = self.ctx.message.author
         self.parent = parent
         self.bot = self.parent.bot
         self.current_msg = None
         self.correct_choice = -1
         self.points = {}
 
+        self.stop = False
+
     async def start(self):
         self.points = {}
         i = 0
 
         for question in self.quiz.questions:
+            if self.stop:
+                break
+
             wrong_users = []
             def check(message):
                 if message.author in wrong_users:
@@ -54,7 +75,7 @@ class TriviaSession:
             i += 1
             await self.render_question(question, i)
             try:
-                message = await self.bot.wait_for("message", check=check, timeout=10.0)
+                message = await self.bot.wait_for("message", check=check, timeout=time_in_seconds)
             except asyncio.TimeoutError:
                 await self.ctx.send(f"The correct answer is \"{question.answer}\". Nobody gets points.")
             else:
@@ -100,10 +121,10 @@ class TriviaSession:
             j = 0
             for k in range(0, 4):
                 if k == true_position:
-                    embed.add_field(name = f"{choices[k]}. {q.answer}", value="\u200b", inline=False)
+                    embed.add_field(name = f"{choices[k].upper()}. {q.answer}", value="\u200b", inline=False)
                     self.correct_choice = k
                 else:
-                    embed.add_field(name = f"{choices[k]}. {q.wrong_answers[j]}", value="\u200b", inline=False)
+                    embed.add_field(name = f"{choices[k].upper()}. {q.wrong_answers[j]}", value="\u200b", inline=False)
                     j += 1
 
         embed.set_footer(text=f"{q.category} | {q.difficulty}")
@@ -188,3 +209,38 @@ class Trivia(commands.Cog):
         session = TriviaSession(ctx, quiz, self)
         self.activeObjects[ctx.guild.id] = session
         await session.start()
+
+    @trivia.command(name="stop", description="Stop a game of trivia")
+    @is_guild_enabled()
+    async def stop(self, ctx):
+        """
+        Stops a game of trivia
+        """
+        if ctx.guild.id not in list(self.activeObjects.keys()):
+            embed = discord.Embed(
+                    title = "Trivia Error",
+                    description = f"There's no trivia session running",
+                    color = 0xf84722
+                )
+            await ctx.send(embed=embed)
+            return
+
+        activeSession = self.activeObjects[ctx.guild.id]
+
+        # Allow people with specific guild permissions to end trivia
+        if ctx.message.author != activeSession.owner:
+            embed = discord.Embed(
+                    title = "Trivia Error",
+                    description = f"Only {activeSession.owner.name} can stop this trivia session",
+                    color = 0xf84722
+                )
+            await ctx.send(embed=embed)
+            return
+
+        activeSession.stop = True
+        self.activeObjects.pop(ctx.guild.id)     
+
+    @trivia.command(name="rules", description="Display trivia rules", aliases=["r"])
+    @is_guild_enabled()
+    async def rules(self, ctx):
+        await ctx.send(embed=rules)
