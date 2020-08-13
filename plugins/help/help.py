@@ -154,9 +154,9 @@ class Help(commands.Cog):
                 try:
                     pluginData = pluginCol.find_one({ "_id": plugin })
 
-                    if show_all:
-                        cogStr = ""
+                    cogStr = ""
 
+                    if show_all and pluginData["loaded"]:
                         for cog in pluginData["cog_names"]:
                             cogData = self.bot.get_cog(cog)
                             cogStr += f"`{cogData.qualified_name}`, "
@@ -166,8 +166,6 @@ class Help(commands.Cog):
                         else:
                             helpStr += f"**{plugin}** | Cog: {cogStr[:-2]}\n"
                     elif pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
-                        cogStr = ""
-
                         for cog in pluginData["cog_names"]:
                             cogData = self.bot.get_cog(cog)
                             cogStr += f"`{cogData.qualified_name}`, "
@@ -266,5 +264,5 @@ class Help(commands.Cog):
         """
         embed=discord.Embed(title="Setup Instructions", 
                             description=f"Still need to fill this in.... Prefix: {getPrefix(ctx.guild.id)}", 
-                            color=0xf84722)
+                            color=0xc1c100)
         await ctx.send(embed=embed)
