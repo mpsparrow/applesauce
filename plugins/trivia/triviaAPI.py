@@ -75,5 +75,3 @@ class Quiz():
 
         for question in data["results"]:
             self.questions.append(Question(question))
-
-        
