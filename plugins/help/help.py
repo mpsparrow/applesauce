@@ -136,7 +136,10 @@ class Help(commands.Cog):
                 subcommandStr = ""
 
                 for subcommand in group.commands:
-                    subcommandStr += f"`{subcommand.name} {subcommand.usage}`\n"
+                    if subcommand.usage is None:
+                        subcommandStr += f"`{sumcommand.name}`\n"
+                    else:
+                        subcommandStr += f"`{subcommand.name} {subcommand.usage}`\n"
                     
                 embed.add_field(name="Subcommands", value=subcommandStr, inline=False)
 
@@ -155,7 +158,7 @@ class Help(commands.Cog):
         :param str prefix: command prefix for guild
         """
         try:
-            embed=discord.Embed(title=f"Cog: {cog.qualified_name}", description=cog.description, color=0xc1c100)
+            embed=discord.Embed(title=f"{cog.qualified_name}", description=cog.description, color=0xc1c100)
             comStr = ""
             
             for command in cog.walk_commands():
@@ -180,6 +183,7 @@ class Help(commands.Cog):
                     comStr += f"`{prefix}{command.name}` - {command.description}\n"
 
             embed.add_field(name=f"Commands", value=comStr, inline=False)
+            embed.set_footer(text="Type: Cog")
             await ctx.send(embed=embed)
         except Exception:
             await self.error(ctx)
@@ -193,7 +197,7 @@ class Help(commands.Cog):
         """
         try:
             if pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
-                embed=discord.Embed(title=f"Plugin: {pluginData['plugin_name']}", description=pluginData["description"], color=0xc1c100)
+                embed=discord.Embed(title=f"{pluginData['plugin_name']}", description=pluginData["description"], color=0xc1c100)
                 for cog in pluginData["cog_names"]:
                     cogData = self.bot.get_cog(cog)
                     comStr = ""
@@ -217,6 +221,7 @@ class Help(commands.Cog):
                     if len(comStr) > 0:
                         embed.add_field(name=f"Cog: {cogData.qualified_name}", value=comStr, inline=False)
 
+                embed.set_footer(text="Type: Plugin")
                 await ctx.send(embed=embed)
             else:
                 await self.plugin_invalid(ctx)
@@ -296,7 +301,7 @@ class Help(commands.Cog):
         prefix = getPrefix(ctx.guild.id)
         await self.all(ctx, prefix, show_all=True)
 
-    @commands.command(name="help", description="Help command", usage="<plugin/command>", aliases=["h"])
+    @commands.command(name="help", description="Help command", usage="<command/cog/plugin>", aliases=["h"])
     async def help(self, ctx, *, helpItem: str=None):
         """
         Help command
@@ -355,7 +360,7 @@ class Help(commands.Cog):
 
                     # Checks if plugin exists
                     if pluginData is not None:
-                        if pluginData["guilds"][ctx.guild.id]:
+                        if pluginData["guilds"][str(ctx.guild.id)]:
                             await self.plugin(ctx, pluginData, prefix)
                         else:
                             await self.plugin_invalid(ctx)
