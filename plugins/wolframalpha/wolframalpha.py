@@ -192,7 +192,15 @@ class WolframAlpha(commands.Cog):
             await ctx.send(embed=embed)
             return
 
+        embed = discord.Embed(
+            title = "Wolfram|Alpha",
+            description = "Querying Wolfram|Alpha... Hold on",
+            colour = 0xc1c100
+        )
+        load_msg = await ctx.send(embed=embed)
         result = WolframResult(query)
+        await load_msg.delete()
+
         if not result.success:
             if result.didyoumean is None:
                 embed = discord.Embed(
