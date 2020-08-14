@@ -231,39 +231,32 @@ class Help(commands.Cog):
         except Exception:
             await self.plugin_invalid(ctx)
 
-    async def all(self, ctx, prefix, show_all: bool = False):
+    async def all(self, ctx, prefix):
         """
-        all help embed
+        Main help
         :param ctx:
         :param str prefix: command prefix for guild
         :param bool show_all: Show all hidden cogs
         """
         try:
             pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
-            folder = readINI("config.ini")["main"]["pluginFolder"]
-
             helpStr = ""
 
-            for plugin in next(os.walk(folder))[1]:
+            # loops through all plugins
+            for plugin in next(os.walk(readINI("config.ini")["main"]["pluginFolder"]))[1]:
                 # skips '__pycache__' folder
                 if plugin == "__pycache__":
                     continue
 
-                try:
-                    pluginData = pluginCol.find_one({ "_id": plugin })
+                pluginData = pluginCol.find_one({ "_id": plugin })
+                cogStr = ""
 
-                    cogStr = ""
+                if pluginData is not None:
+                    # Is in the database
+                    if pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
+                        # Is enabled and loaded
 
-                    if show_all and pluginData["loaded"]:
-                        for cog in pluginData["cog_names"]:
-                            cogData = self.bot.get_cog(cog)
-                            cogStr += f"`{cogData.qualified_name}`, "
-                    
-                        if cogStr.count("`") > 2:
-                            helpStr += f"**{plugin}** | Cogs: {cogStr[:-2]}\n"
-                        else:
-                            helpStr += f"**{plugin}** | Cog: {cogStr[:-2]}\n"
-                    elif pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
+                        # Loop through cogs
                         for cog in pluginData["cog_names"]:
                             cogData = self.bot.get_cog(cog)
                             count = 0
@@ -288,14 +281,12 @@ class Help(commands.Cog):
 
                             if count > 0:
                                 cogStr += f"`{cogData.qualified_name}`, "
-                    
-                        if cogStr.count("`") > 2:
-                            helpStr += f"**{plugin}** | Cogs: {cogStr[:-2]}\n"
-                        elif cogStr.count("`") == 2:
-                            helpStr += f"**{plugin}** | Cog: {cogStr[:-2]}\n"
-                except TypeError:
-                    # not a plugin
-                    pass
+                
+                    if cogStr.count("`") > 2:
+                        helpStr += f"**{plugin}** | Cogs: {cogStr[:-2]}\n"
+                    elif cogStr.count("`") == 2:
+                        helpStr += f"**{plugin}** | Cog: {cogStr[:-2]}\n"
+
             embed=discord.Embed(title="Help", 
                                 description=f"`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`\n\n**__Plugins__**\n{helpStr}", 
                                 color=0xc1c100)
@@ -305,7 +296,7 @@ class Help(commands.Cog):
 
     async def item_help(self, ctx, prefix):
         """
-        item help
+        Invalid help item type
         :param ctx:
         :param str prefix: command prefix for guild
         """
@@ -314,17 +305,6 @@ class Help(commands.Cog):
                             color=0xf84722)
         await ctx.send(embed=embed)
 
-    @commands.command(name="helpall", description="Help command that shows all plugins (hidden or not)", aliases=["ha"])
-    @commands.is_owner()
-    async def helpall(self, ctx):
-        """
-        Help command (displays all plugins)
-        :param ctx:
-        :param str helpItem: item that needs help
-        """
-        prefix = getPrefix(ctx.guild.id)
-        await self.all(ctx, prefix, show_all=True)
-
     @commands.command(name="help", description="Help command", usage="<command/cog/plugin>", aliases=["h"])
     async def help(self, ctx, *, helpItem: str=None):
         """
@@ -332,12 +312,14 @@ class Help(commands.Cog):
         :param ctx:
         :param str helpItem: item that needs help
         """
+        # Get prefix for guild
         prefix = getPrefix(ctx.guild.id)
 
         if helpItem is None:
-            # display main help information
+            # Display main help information is no helpItem is given
             await self.all(ctx, prefix)
         else:
+            # helpItem given
             # Splits the tag from the rest of the helpItem input
             itemSplit = helpItem.strip().split(" ")
             itemType = itemSplit[0].lower()
@@ -347,11 +329,10 @@ class Help(commands.Cog):
                 item = " ".join(itemSplit[1:])
 
                 # Checking what type of input it is that requires help
-                # Types: command, cog, plugin
-                # command needs to then check for: command, subcommand, group
+                # Types: command/subcommand/group, cog, plugin
                 if itemType in ["command", "commands", "com", "group", "groups", "subcommand"]:
+                    # Is a command, subcommand, or group
                     try:
-                        # Is some type of command
                         command = self.bot.get_command(item)
                         await command.can_run(ctx)
 
@@ -368,8 +349,10 @@ class Help(commands.Cog):
                                 # command
                                 await self.command(ctx, command, prefix)
                     except commands.CommandError:
+                        # User cannot run command
                         await self.command_invalid(ctx)
                     except Exception:
+                        # Command doesn't exist
                         await self.command_invalid(ctx)
 
                 elif itemType in ["p", "plugin", "plugins", "plug"]:
@@ -377,28 +360,33 @@ class Help(commands.Cog):
                     pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
                     pluginData = pluginCol.find_one({ "_id": item })
 
-                    # Checks if plugin exists
                     if pluginData is not None:
+                        # Plugin exists in db
                         if pluginData["guilds"][str(ctx.guild.id)]:
+                            # Plugin enabled
                             await self.plugin(ctx, pluginData, prefix)
                         else:
+                            # Plugin disabled
                             await self.plugin_invalid(ctx)
                     else:
+                        # Not a plugin
                         await self.plugin_invalid(ctx)
+
                 elif itemType in ["cog"]:
                     # Is a cog
                     cog = self.bot.get_cog(item)
 
-                    # Checks if cog exists
                     if cog is not None:
+                        # Cog exists
                         await self.cog(ctx, cog, prefix)
                     else:
+                        # Invalid cog
                         await self.cog_invalid(ctx)
                 else:
-                    # itemType didn't match
+                    # Invalid helpItem
                     await self.item_help(ctx, prefix)
             else:
-                # need at least 2 params
+                # Incorrect amount of params given
                 await self.item_help(ctx, prefix)
 
     @commands.command(name="setup", description="Bot setup instructions")
