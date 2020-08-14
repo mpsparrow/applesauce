@@ -2,9 +2,14 @@ import requests
 import defusedxml.cElementTree as cET
 from urllib.parse import quote_plus
 from utils.config import readINI
-from utils.logger import log
+from utils.logger import log, pluginLog
 
-URL_TEMPLATE=f'http://api.wolframalpha.com/v2/query?appid={readINI("config.ini")["WolframAlpha"]["appID"]}&input='
+try:
+    URL_TEMPLATE=f'http://api.wolframalpha.com/v2/query?appid={readINI("config.ini")["WolframAlpha"]["appID"]}&input='
+except KeyError as e:
+    pluginLog.error("Failed to load API key. Please check config.ini to see if you entered the correct AppID")
+    raise Exception(e)
+
 
 class WolframSubPod:
     def __init__(self, xmlElement):
