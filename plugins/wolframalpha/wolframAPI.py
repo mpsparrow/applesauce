@@ -6,6 +6,24 @@ from utils.logger import log
 
 URL_TEMPLATE=f'http://api.wolframalpha.com/v2/query?appid={readINI("config.ini")["WolframAlpha"]["appID"]}&input='
 
+class WolframSubPod:
+    def __init__(self, xmlElement):
+        self.img_src = xmlElement.find("img").get("src")
+        pt = xmlElement.find("plaintext")
+        if pt is None:
+            self.plaintext = ""
+        else:
+            self.plaintext = xmlElement.find("plaintext").text
+
+class WolframPod:
+    def __init__(self, xmlElement):
+        self.title = xmlElement.get("title")
+        self.num_subpods = int(xmlElement.get("numsubpods"))
+
+        self.subpods = []
+        for subpod in xmlElement.findall("subpod"):
+            self.subpods.append(WolframSubPod(subpod))
+
 class WolframResult:
     def __init__(self, query):
         self.query = query
@@ -32,8 +50,10 @@ class WolframResult:
             self.didyoumean = dym.find("didyoumean").text
             return
 
-        self.numpods = self.root.attrib["numpods"]
+        self.num_pods = int(self.root.attrib["numpods"])
         self.pods = []
+
+        self.get_pods()
 
     def request(self):
         r = requests.get(self.url)
@@ -42,4 +62,8 @@ class WolframResult:
             return
 
         self.root = cET.fromstring(r.text)
+
+    def get_pods(self):
+        for pod in self.root.findall("pod"):
+            self.pods.append(WolframPod(pod))
         
