@@ -2,18 +2,10 @@ import discord
 from discord.ext import commands
 from utils.checks import is_guild_enabled
 from .wolframAPI import WolframResult
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
+from utils.interactive import InteractiveEmbed
 
-class WolframObject(ABC):
-    @abstractmethod
-    async def on_react_callback(self, reaction, user):
-        pass
-
-    @abstractmethod
-    async def show_embed(self):
-        pass
-
-class WolframEmbed(WolframObject):
+class WolframEmbed(InteractiveEmbed):
     REACTIONS = {
         "next_pod": "➡️",
         "prev_pod": "⬅️",
@@ -22,6 +14,7 @@ class WolframEmbed(WolframObject):
     }
 
     def __init__(self, parent, ctx, response):
+        super(WolframEmbed, self).__init__(parent.bot, ctx, 60.0, on_timeout=lambda: self.parent.activeObjects.pop(ctx.guild.id))
         self.parent = parent
         self.ctx = ctx
         self.owner = self.ctx.author
@@ -50,53 +43,34 @@ class WolframEmbed(WolframObject):
         if self.current_subpod >= self.response.pods[self.current_pod].num_subpods:
             self.current_subpod = 0
 
-
     def prev_subpod(self):
         self.current_subpod -= 1
         if self.current_subpod < 0:
             self.current_subpod = self.response.pods[self.current_pod].num_subpods - 1
 
-    async def on_react_callback(self, reaction, user):
-        if self.message is None:
-            return
+    async def on_reaction(self, reaction, user):
+        if reaction.emoji == WolframEmbed.REACTIONS["prev_pod"]:
+            self.prev_pod()
+            await reaction.remove(user)
 
-        if user.id != self.owner.id:
-            return
+        if reaction.emoji == WolframEmbed.REACTIONS["next_pod"]:
+            self.next_pod()
+            await reaction.remove(user)
 
-        message = reaction.message
-        if message.id != self.message.id:
-            return
+        if reaction.emoji == WolframEmbed.REACTIONS["prev_sub"]:
+            self.prev_subpod()
+            await reaction.remove(user)
 
-        if reaction.me:
-            if reaction.emoji == WolframEmbed.REACTIONS["prev_pod"]:
-                self.prev_pod()
-                await reaction.remove(user)
+        if reaction.emoji == WolframEmbed.REACTIONS["next_sub"]:
+            self.next_subopd()
+            await reaction.remove(user)
 
-            if reaction.emoji == WolframEmbed.REACTIONS["next_pod"]:
-                self.next_pod()
-                await reaction.remove(user)
+    async def add_navigation(self, message):
+        await message.add_reaction(WolframEmbed.REACTIONS["prev_pod"])
+        await message.add_reaction(WolframEmbed.REACTIONS["next_pod"])
 
-            if reaction.emoji == WolframEmbed.REACTIONS["prev_sub"]:
-                self.prev_subpod()
-                await reaction.remove(user)
-
-            if reaction.emoji == WolframEmbed.REACTIONS["next_sub"]:
-                self.next_subopd()
-                await reaction.remove(user)
-
-            await self.update_embed()
-
-    async def show_embed(self):
-        self.message = await self.ctx.send(embed=self.make_embed())
-
-        await self.message.add_reaction(WolframEmbed.REACTIONS["prev_pod"])
-        await self.message.add_reaction(WolframEmbed.REACTIONS["next_pod"])
-
-        await self.message.add_reaction(WolframEmbed.REACTIONS["prev_sub"])
-        await self.message.add_reaction(WolframEmbed.REACTIONS["next_sub"])
-
-    async def update_embed(self):
-        await self.message.edit(embed=self.make_embed())
+        await message.add_reaction(WolframEmbed.REACTIONS["prev_sub"])
+        await message.add_reaction(WolframEmbed.REACTIONS["next_sub"])
 
     def make_embed(self):
         pod = self.response.pods[self.current_pod]
@@ -117,13 +91,14 @@ class WolframEmbed(WolframObject):
         
         return embed
 
-class WolframDidYouMeanEmbed(WolframObject):
+class WolframDidYouMeanEmbed(InteractiveEmbed):
     REACTIONS = {
         "yes": "✅",
         "no": "❌"
     }
 
     def __init__(self, parent, ctx, didyoumean):
+        super(WolframDidYouMeanEmbed, self).__init__(parent.bot, ctx, 60.0, on_timeout=lambda: self.parent.activeObjects.pop(ctx.guild.id))
         self.parent = parent
         self.ctx = ctx
         self.owner = self.ctx.author
@@ -131,37 +106,31 @@ class WolframDidYouMeanEmbed(WolframObject):
         
         self.message = None
 
-    async def on_react_callback(self, reaction, user):
-        if self.message is None:
+    async def on_reaction(self, reaction, user):
+        if reaction.emoji == WolframDidYouMeanEmbed.REACTIONS["yes"]:
+            await self.close_embed()
+            await self.parent.query(self.ctx, self.didyoumean)
             return
 
-        if user.id != self.owner.id:
+        if reaction.emoji == WolframDidYouMeanEmbed.REACTIONS["no"]:
+            await self.close_embed()
+            self.parent.activeObjects.pop(self.ctx.channel.id)
             return
-
-        message = reaction.message
-        if message.id != self.message.id:
-            return
-
-        if reaction.me:
-            if reaction.emoji == WolframDidYouMeanEmbed.REACTIONS["yes"]:
-                await self.message.delete()
-                await self.parent.query(self.ctx, self.didyoumean)
-                return
-
-            if reaction.emoji == WolframDidYouMeanEmbed.REACTIONS["no"]:
-                self.parent.activeObjects.pop(self.ctx.channel.id)
-                return
         
-    async def show_embed(self):
+    def make_embed(self):
         embed = discord.Embed(
             title = "Wolfram|Alpha Error",
             description = f"Did you mean `{self.didyoumean}`",
             colour = 0xf84722
         )
+        return embed
 
-        self.message = await self.ctx.send(embed=embed)
-        await self.message.add_reaction(WolframDidYouMeanEmbed.REACTIONS["yes"])
-        await self.message.add_reaction(WolframDidYouMeanEmbed.REACTIONS["no"])
+    async def add_navigation(self, message):
+        await message.add_reaction(WolframDidYouMeanEmbed.REACTIONS["yes"])
+        await message.add_reaction(WolframDidYouMeanEmbed.REACTIONS["no"])
+
+    async def on_close(self):
+        await self.message.delete()
         
 
 
@@ -170,17 +139,6 @@ class WolframAlpha(commands.Cog):
         self.bot = bot
 
         self.activeObjects = {}
-
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
-        if user == self.bot.user:
-            return
-
-        channelid = reaction.message.channel.id
-        if channelid not in self.activeObjects:
-            return
-
-        await self.activeObjects[channelid].on_react_callback(reaction, user)
 
     async def query(self, ctx, query):
         if query is None:

@@ -56,11 +56,7 @@ class PluginManager(InteractiveEmbed):
         Used for reaction based navigation etc
     """
     def __init__(self, parent, ctx, verbose, isBotOwner):
-        reactions = list(nav_emotes.values())
-        if not verbose:
-            reactions = reactions[:-2]
-         
-        super(PluginManager, self).__init__(parent.bot, ctx, 60.0)
+        super(PluginManager, self).__init__(parent.bot, ctx, 60.0, on_timeout=lambda: self.parent.activeObjects.pop(ctx.guild.id))
 
         self.parent = parent
         self.owner = ctx.author

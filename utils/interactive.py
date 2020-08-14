@@ -4,11 +4,13 @@ from abc import ABC, abstractmethod
 import asyncio
 
 class InteractiveEmbed(ABC):
-    def __init__(self, bot, ctx, timeout):
+    def __init__(self, bot, ctx, timeout, on_timeout = None):
         self.bot = bot
         self.ctx = ctx
         self.message = None
         self.timeout = timeout
+
+        self.on_timeout = on_timeout
 
     @abstractmethod
     async def on_reaction(self, reaction, user):
@@ -20,6 +22,9 @@ class InteractiveEmbed(ABC):
 
     @abstractmethod
     async def add_navigation(self, message):
+        pass
+
+    async def on_close(self):
         pass
 
     def additional_checks(self, reaction, user):
@@ -52,8 +57,11 @@ class InteractiveEmbed(ABC):
             reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=self.timeout)
             await self.on_reaction(reaction, user)
             await self.show_embed()
-        except TimeoutError:
+        except asyncio.TimeoutError:
             await self.close_embed()
+            if self.on_timeout is not None:
+                self.on_timeout()
 
     async def close_embed(self):
         await self.message.clear_reactions()
+        await self.on_close()
