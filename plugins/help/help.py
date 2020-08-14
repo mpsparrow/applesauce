@@ -137,7 +137,7 @@ class Help(commands.Cog):
 
                 for subcommand in group.commands:
                     if subcommand.usage is None:
-                        subcommandStr += f"`{sumcommand.name}`\n"
+                        subcommandStr += f"`{subcommand.name}`\n"
                     else:
                         subcommandStr += f"`{subcommand.name} {subcommand.usage}`\n"
                     
@@ -186,7 +186,7 @@ class Help(commands.Cog):
             embed.set_footer(text="Type: Cog")
             await ctx.send(embed=embed)
         except Exception:
-            await self.error(ctx)
+            await self.cog_invalid(ctx)
 
     async def plugin(self, ctx, pluginData, prefix):
         """
@@ -221,8 +221,11 @@ class Help(commands.Cog):
                     if len(comStr) > 0:
                         embed.add_field(name=f"Cog: {cogData.qualified_name}", value=comStr, inline=False)
 
-                embed.set_footer(text="Type: Plugin")
-                await ctx.send(embed=embed)
+                if len(embed.fields) > 0:
+                    embed.set_footer(text="Type: Plugin")
+                    await ctx.send(embed=embed)
+                else:
+                    await self.plugin_invalid(ctx)
             else:
                 await self.plugin_invalid(ctx)
         except Exception:
@@ -263,11 +266,32 @@ class Help(commands.Cog):
                     elif pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
                         for cog in pluginData["cog_names"]:
                             cogData = self.bot.get_cog(cog)
-                            cogStr += f"`{cogData.qualified_name}`, "
+                            count = 0
+
+                            for command in cogData.walk_commands():
+                                # checks if subcommand
+                                if " " in command.qualified_name:
+                                    continue
+
+                                # checks if command is hidden or disabled
+                                if command.hidden and not command.enabled:
+                                    continue
+                                
+                                # can user run the command
+                                try:
+                                    await command.can_run(ctx)
+                                except commands.CommandError:
+                                    # cannot run
+                                    continue
+                                
+                                count += 1
+
+                            if count > 0:
+                                cogStr += f"`{cogData.qualified_name}`, "
                     
                         if cogStr.count("`") > 2:
                             helpStr += f"**{plugin}** | Cogs: {cogStr[:-2]}\n"
-                        else:
+                        elif cogStr.count("`") == 2:
                             helpStr += f"**{plugin}** | Cog: {cogStr[:-2]}\n"
                 except TypeError:
                     # not a plugin
@@ -326,18 +350,11 @@ class Help(commands.Cog):
                 # Types: command, cog, plugin
                 # command needs to then check for: command, subcommand, group
                 if itemType in ["command", "commands", "com", "group", "groups", "subcommand"]:
-                    # Is some type of command
-                    command = self.bot.get_command(item)
-
-                    # can user run the command
                     try:
+                        # Is some type of command
+                        command = self.bot.get_command(item)
                         await command.can_run(ctx)
-                    except commands.CommandError:
-                        # cannot run
-                        await self.command_invalid(ctx)
-                        return
 
-                    try:
                         # What type of command is it? subcommand, command, group
                         if command.root_parent is not None:
                             # subcommand
@@ -350,7 +367,9 @@ class Help(commands.Cog):
                             except Exception:
                                 # command
                                 await self.command(ctx, command, prefix)
-                    except Exception as error:
+                    except commands.CommandError:
+                        await self.command_invalid(ctx)
+                    except Exception:
                         await self.command_invalid(ctx)
 
                 elif itemType in ["p", "plugin", "plugins", "plug"]:
@@ -390,6 +409,6 @@ class Help(commands.Cog):
         :param ctx:
         """
         embed=discord.Embed(title="Setup Instructions", 
-                            description=f"Still need to fill this in.... Prefix: {getPrefix(ctx.guild.id)}", 
+                            description=f"**Prefix**: {getPrefix(ctx.guild.id)}\n**Help**: {getPrefix(ctx.guild.id)}help", 
                             color=0xc1c100)
         await ctx.send(embed=embed)
