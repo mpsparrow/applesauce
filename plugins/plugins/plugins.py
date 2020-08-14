@@ -8,6 +8,7 @@ from discord.ext.commands import has_permissions
 from utils.database.actions import connect
 from utils.logger import pluginLog
 from utils.config import readINI
+from utils.interactive import InteractiveEmbed
 
 # Emotes used to display the status of operations
 emote_reactions = { 
@@ -25,8 +26,8 @@ emote_reactions = {
 
 # Emotes used for navigation
 nav_emotes = {
-    "right": "➡️",
     "left": "⬅️",
+    "right": "➡️",
     "up": "⬆️",
     "down": "⬇️",
     "enable": "🔘",
@@ -49,17 +50,23 @@ class Plugin():
         self.hidden = hidden
         self.description = description
 
-class PluginManager():
+class PluginManager(InteractiveEmbed):
     """
         An object representing the plugin manager in discord.
         Used for reaction based navigation etc
     """
-    def __init__(self, parent, owner, verbose, isBotOwner, guildID):
+    def __init__(self, parent, ctx, verbose, isBotOwner):
+        reactions = list(nav_emotes.values())
+        if not verbose:
+            reactions = reactions[:-2]
+         
+        super(PluginManager, self).__init__(parent.bot, ctx, 60.0)
+
         self.parent = parent
-        self.owner = owner
+        self.owner = ctx.author
         self.verbose = verbose
         self.isBotOwner = isBotOwner
-        self.guildID = guildID
+        self.guildID = ctx.guild.id
 
         self.pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"] # connect to DB
         self.folder = readINI("config.ini")["main"]["pluginFolder"]
@@ -73,6 +80,22 @@ class PluginManager():
 
         self.messageHandle = None
         self.current_status = [emote_reactions["blank"]]
+
+    def additional_checks(self, reaction, user):
+        return self.isBotOwner
+
+    async def add_navigation(self, message):
+        if self.total_pages > 1:
+            await message.add_reaction(nav_emotes["left"])
+            await message.add_reaction(nav_emotes["right"])
+
+        await message.add_reaction(nav_emotes["down"])
+        await message.add_reaction(nav_emotes["up"])
+        await message.add_reaction(nav_emotes["enable"])
+
+        if self.verbose:
+            await message.add_reaction(nav_emotes["reload"])
+            await message.add_reaction(nav_emotes["load"])
 
     # Returns a plugin matching the name
     def getPluginByName(self, name: str) -> Plugin:
@@ -308,17 +331,44 @@ class PluginManager():
         if self.current_page < 0:
             self.current_page = self.total_pages - 1
 
-    async def updateEmbed(self):
-        """
-        Updates the current active embed with new information
-        """
-        # Only update if this PluginManager has a message to be displayed to
-        if self.messageHandle is None:
-            return
+    async def on_reaction(self, reaction, user):
+        # Prev page
+            if reaction.emoji == nav_emotes["left"]:
+                self.prev()
+                await reaction.remove(user)
 
-        await self.messageHandle.edit(embed=self.makeEmbed())
+            # Next page
+            if reaction.emoji == nav_emotes["right"]:
+                self.next()
+                await reaction.remove(user)
 
-    def makeEmbed(self):
+            # Cursor up
+            if reaction.emoji == nav_emotes["up"]:
+                self.up()
+                await reaction.remove(user)
+
+            # Cursor down
+            if reaction.emoji == nav_emotes["down"]:
+                self.down()
+                await reaction.remove(user)
+
+            # Enable/Disable plugin
+            if reaction.emoji == nav_emotes["enable"]:
+                self.toggleEnable()
+                await reaction.remove(user)
+
+            if self.verbose:
+                # Reload plugin
+                if reaction.emoji == nav_emotes["reload"]:
+                    self.reload()
+                    await reaction.remove(user)
+
+                # Load/Unload plugin
+                if reaction.emoji == nav_emotes["load"]:
+                    self.toggleLoad()
+                    await reaction.remove(user)
+
+    def make_embed(self):
         """
         Creates a new embed from current information
         """
@@ -408,86 +458,20 @@ class Plugins(commands.Cog):
         self.bot = bot
         self.activeObjects = {}
 
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
-        """
-        Handles navigation through the manager
-        """
-        message = reaction.message
-        guildid = message.guild.id
-
-        # If there is no activeObject for the guild, do nothing
-        if guildid not in self.activeObjects:
-            return
-        
-        # If there is no message to go along with the manager, do nothing
-        if self.activeObjects[guildid].messageHandle is None:
-            return
-
-        # If the reaction is not on the embed, do nothing
-        if message.id != self.activeObjects[guildid].messageHandle.id:
-            return
-
-        # If the user is a bot, do nothing
-        if user == self.bot.user:
-            return
-
-        # If the reacting user is not the owner of the embed, do nothing
-        if user.id != self.activeObjects[guildid].owner.id:
-            return
-
-        # If the user sent this reaction, do this
-        if reaction.me:
-            # Prev page
-            if reaction.emoji == nav_emotes["left"]:
-                self.activeObjects[guildid].prev()
-                await reaction.remove(user)
-
-            # Next page
-            if reaction.emoji == nav_emotes["right"]:
-                self.activeObjects[guildid].next()
-                await reaction.remove(user)
-
-            # Cursor up
-            if reaction.emoji == nav_emotes["up"]:
-                self.activeObjects[guildid].up()
-                await reaction.remove(user)
-
-            # Cursor down
-            if reaction.emoji == nav_emotes["down"]:
-                self.activeObjects[guildid].down()
-                await reaction.remove(user)
-
-            # Enable/Disable plugin
-            if reaction.emoji == nav_emotes["enable"]:
-                self.activeObjects[guildid].toggleEnable()
-                await reaction.remove(user)
-
-            if self.activeObjects[guildid].verbose:
-                # Reload plugin
-                if reaction.emoji == nav_emotes["reload"]:
-                    self.activeObjects[guildid].reload()
-                    await reaction.remove(user)
-
-                # Load/Unload plugin
-                if reaction.emoji == nav_emotes["load"]:
-                    self.activeObjects[guildid].toggleLoad()
-                    await reaction.remove(user)
-
-        # Update embed
-        await self.activeObjects[guildid].updateEmbed()
-
     async def createActiveObject(self, ctx, show_unloaded: bool = False):
         """
         Creates a new PluginManager and makes it the active object
         """
+        if ctx.guild.id in self.activeObjects:
+            await self.activeObjects[ctx.guild.id].close_embed()
+
         self.activeObjects[ctx.guild.id] = PluginManager(
             self,
-            ctx.author, 
-            show_unloaded, 
-            await self.bot.is_owner(ctx.author),
-            ctx.guild.id
+            ctx, 
+            show_unloaded,
+            await self.bot.is_owner(ctx.author)
         )
+        await self.activeObjects[ctx.guild.id].show_embed()
 
     @commands.group(name="plugin", description="Group for plugin management commands", usage="<subcommand>", aliases=["p", "plug"], invoked_subcommand=True)
     @commands.has_permissions(manage_guild=True)
@@ -508,26 +492,6 @@ class Plugins(commands.Cog):
 
         # Make new active object
         await self.createActiveObject(ctx, show_unloaded)
-
-        # Create message for active object
-        msg = await ctx.send(embed=self.activeObjects[ctx.guild.id].makeEmbed())
-
-        # If there are more than one page, create page navigators
-        if self.activeObjects[ctx.guild.id].total_pages > 1:
-            await msg.add_reaction(nav_emotes["left"])
-            await msg.add_reaction(nav_emotes["right"])
-
-        # Add more controls
-        await msg.add_reaction(nav_emotes["up"])
-        await msg.add_reaction(nav_emotes["down"])
-        await msg.add_reaction(nav_emotes["enable"])
-
-        if show_unloaded:
-            await msg.add_reaction(nav_emotes["reload"])
-            await msg.add_reaction(nav_emotes["load"])
-
-        # Set this new message as the active object's message
-        self.activeObjects[ctx.guild.id].messageHandle = msg
 
     @plugin.command(name="info", description="List all loaded plugins", usage="<plugin name>", aliases=["i", "information"])
     @commands.has_permissions(manage_guild=True)
