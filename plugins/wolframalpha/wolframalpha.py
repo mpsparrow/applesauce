@@ -14,7 +14,7 @@ class WolframEmbed(InteractiveEmbed):
     }
 
     def __init__(self, parent, ctx, response):
-        super(WolframEmbed, self).__init__(parent.bot, ctx, 60.0, on_timeout=lambda: self.parent.activeObjects.pop(ctx.guild.id))
+        super(WolframEmbed, self).__init__(parent.bot, ctx, 60.0)
         self.parent = parent
         self.ctx = ctx
         self.owner = self.ctx.author
@@ -91,6 +91,9 @@ class WolframEmbed(InteractiveEmbed):
         
         return embed
 
+    async def on_close(self):
+        self.parent.activeObjects.pop(self.ctx.guild.id)
+
 class WolframDidYouMeanEmbed(InteractiveEmbed):
     REACTIONS = {
         "yes": "✅",
@@ -98,7 +101,7 @@ class WolframDidYouMeanEmbed(InteractiveEmbed):
     }
 
     def __init__(self, parent, ctx, didyoumean):
-        super(WolframDidYouMeanEmbed, self).__init__(parent.bot, ctx, 60.0, on_timeout=lambda: self.parent.activeObjects.pop(ctx.guild.id))
+        super(WolframDidYouMeanEmbed, self).__init__(parent.bot, ctx, 60.0)
         self.parent = parent
         self.ctx = ctx
         self.owner = self.ctx.author
@@ -130,9 +133,9 @@ class WolframDidYouMeanEmbed(InteractiveEmbed):
         await message.add_reaction(WolframDidYouMeanEmbed.REACTIONS["no"])
 
     async def on_close(self):
+        self.parent.activeObjects.pop(self.ctx.guild.id)
         await self.message.delete()
         
-
 
 class WolframAlpha(commands.Cog):
     def __init__(self, bot):

@@ -56,7 +56,7 @@ class PluginManager(InteractiveEmbed):
         Used for reaction based navigation etc
     """
     def __init__(self, parent, ctx, verbose, isBotOwner):
-        super(PluginManager, self).__init__(parent.bot, ctx, 60.0, on_timeout=lambda: self.parent.activeObjects.pop(ctx.guild.id))
+        super(PluginManager, self).__init__(parent.bot, ctx, 60.0)
 
         self.parent = parent
         self.owner = ctx.author
@@ -85,8 +85,8 @@ class PluginManager(InteractiveEmbed):
             await message.add_reaction(nav_emotes["left"])
             await message.add_reaction(nav_emotes["right"])
 
-        await message.add_reaction(nav_emotes["down"])
         await message.add_reaction(nav_emotes["up"])
+        await message.add_reaction(nav_emotes["down"])
         await message.add_reaction(nav_emotes["enable"])
 
         if self.verbose:
@@ -444,6 +444,9 @@ class PluginManager(InteractiveEmbed):
                     enabledGuild = emote_reactions["disabled"]
 
                 self.plugins.append(Plugin(x['_id'], x['plugin_name'], "", enabledGuild, emote_reactions["blank"], emote_reactions["blank"], x['description']))
+
+    async def on_close(self):
+        self.parent.activeObjects.pop(self.ctx.guild.id)
 
 
 class Plugins(commands.Cog):

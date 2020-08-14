@@ -4,33 +4,58 @@ from abc import ABC, abstractmethod
 import asyncio
 
 class InteractiveEmbed(ABC):
-    def __init__(self, bot, ctx, timeout, on_timeout = None):
+    """
+    This abstract base class can be used to create interactive embeds
+    """
+    def __init__(self, bot, ctx, timeout):
+        """
+        Sets up the embed with needed parameters
+        bot: The bot hosting this embed
+        ctx: The context that caused this embed
+        timeuout: The time until the embed times out (in seconds)
+        """
         self.bot = bot
         self.ctx = ctx
         self.message = None
         self.timeout = timeout
 
-        self.on_timeout = on_timeout
-
     @abstractmethod
     async def on_reaction(self, reaction, user):
+        """
+        Gets called when the user interacted with the embed
+        """
         pass
 
     @abstractmethod
     def make_embed(self):
+        """
+        Creates and returns a new embed
+        """
         pass
 
     @abstractmethod
     async def add_navigation(self, message):
+        """
+        Adds the navigational emotes to the embed
+        """
         pass
 
     async def on_close(self):
+        """
+        Can be overridden. Gets called when the embed is closed
+        """
         pass
 
     def additional_checks(self, reaction, user):
+        """
+        Can be overridden. Additional checks to do before calling on_reaction()
+        """
         return True
 
     async def show_embed(self):
+        """
+        Displays an embed / Creates an embed
+        """
         if self.message is None:
             self.message = await self.ctx.send(embed=self.make_embed())
             await self.add_navigation(self.message)
@@ -59,9 +84,10 @@ class InteractiveEmbed(ABC):
             await self.show_embed()
         except asyncio.TimeoutError:
             await self.close_embed()
-            if self.on_timeout is not None:
-                self.on_timeout()
 
     async def close_embed(self):
+        """
+        Close this embed
+        """
         await self.message.clear_reactions()
         await self.on_close()
