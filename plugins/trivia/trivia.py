@@ -60,15 +60,15 @@ class TriviaSession:
                 break
 
             wrong_users = []
-            def check(message):
+            def check(message, wu = wrong_users, q = question):
                 if message.channel != self.ctx.channel:
                     return False
-                if message.author in wrong_users:
+                if message.author in wu:
                     return False
-                if message.content.lower() == question.answer.lower() or message.content.lower() == choices[self.correct_choice]:
+                if message.content.lower() == q.answer.lower() or message.content.lower() == choices[self.correct_choice]:
                     return True
-                if (message.content.lower() in [x.lower() for x in question.wrong_answers]) or (message.content.lower() in choices and question.type != "boolean"):
-                    wrong_users.append(message.author)
+                if (message.content.lower() in [x.lower() for x in q.wrong_answers]) or (message.content.lower() in choices and q.type != "boolean"):
+                    wu.append(message.author)
                     return False
                 
             def idle(message):
