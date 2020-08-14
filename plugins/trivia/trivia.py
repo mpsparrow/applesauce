@@ -91,7 +91,7 @@ class TriviaSession:
                 self.points[message.author.name] += 1
 
             try:
-                msg = await self.bot.wait_for("message", check=idle, timeout=2.0)
+                await self.bot.wait_for("message", check=idle, timeout=2.0)
             except asyncio.TimeoutError:
                 continue
             else:
