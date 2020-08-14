@@ -6,6 +6,218 @@ from utils.database.actions import connect
 from utils.config import readINI
 from utils.prefix import prefix as getPrefix
 
+class Plugin():
+    """
+    Represents a plugins
+    """
+    def __init__(self, idname, name, description, pluginData):
+        self.id = idname
+        self.name = name
+        self.description = description
+        self.pluginData = pluginData
+        self.cogs = {}
+
+    def addCog(self, cog):
+        """
+        Store Cog object
+        """
+        self.cogs[cog.name] = cog
+
+class Cog():
+    """
+    Represents a cog
+    """
+    def __init__(self, name, description, cogData):
+        self.name = name
+        self.description = description
+        self.cogData = cogData
+        self.cmds = {}
+
+    def addCmd(self, cmd):
+        """
+        Store Cmd object
+        """
+        self.cmds[cmd.name] = cmd
+
+class Cmd():
+    """
+    Represents a command
+    """
+    pass
+
+class Regular(Cmd):
+    """
+    Represents a regular command
+    """
+    def __init__(self, name, usage, description, cmd):
+        self.name = name
+        self.usage = usage
+        self.description = description
+        self.cmd = cmd
+
+class Group(Cmd):
+    """
+    Represents a group command
+    """
+    def __init__(self, name, usage, description, cmd):
+        self.name = name
+        self.usage = usage
+        self.description = description
+        self.cmd = cmd
+        self.subcmds = {}
+
+    def addSub(self, sub):
+        """
+        Stores Sub object
+        """
+        self.subcmds[sub.name] = sub
+
+class Sub():
+    """
+    Represents a sub command in a group
+    """
+    def __init__(self, base, name, usage, description, sub):
+        self.base = base
+        self.name = name
+        self.usage = usage
+        self.description = description
+        self.sub = sub
+
+class HelpBuilder():
+    """
+    Builds help command structure
+    """
+    def __init__(self, ctx, bot):
+        self.ctx = ctx
+        self.bot = bot
+
+        self.pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
+        self.folder = readINI("config.ini")["main"]["pluginFolder"]
+
+        self.plugins = {}
+
+    def addPlugin(self, plugin):
+        """
+        Stores Plugin object
+        """
+        self.plugins[plugin.id] = plugin
+
+    async def buildRegular(self, regular, cog):
+        """
+        Builds Regular object
+        :param commands.Command regular: Regular command object
+        :param cog: Cog object
+        """
+        cog.addCmd(Regular(regular.name, regular.usage, regular.description, regular))
+
+    async def buildGroup(self, group, cog):
+        """
+        Builds Group object
+        :param commands.Command group: Group command object
+        :param cog: Cog object
+        """
+        cog.addCmd(Group(group.qualified_name, group.usage, group.description, group))
+
+    async def buildSub(self, sub, cog):
+        """
+        Builds Sub object
+        :param commands.Command sub: Sub command object
+        :param cog: Cog object
+        """
+        cog.cmds[sub.root_parent.name].addSub(Sub(sub.full_parent_name, sub.name, sub.usage, sub.description, sub))
+
+    async def buildCmd(self, cmd, cog):
+        """
+        Builds Cmd object
+        :param commands.Command cmd: Command object
+        :param cog: Cog object
+        """
+        if cmd.root_parent is not None:
+            # subcommand
+            await self.buildSub(cmd, cog)
+        else:
+            try:
+                listCmds = cmd.commands
+                # group
+                await self.buildGroup(cmd, cog)
+            except Exception:
+                # command
+                await self.buildRegular(cmd, cog)
+                
+    async def build(self):
+        """
+        Builds Plugin object
+        """
+        # Loops through all plugins in folder
+        for plugin in next(os.walk(readINI("config.ini")["main"]["pluginFolder"]))[1]:
+            # Skips '__pycache__' folder
+            if plugin == "__pycache__":
+                continue
+
+            # Get plugin from database
+            pluginData = self.pluginCol.find_one({ "_id": plugin })
+
+            if pluginData is None:
+                # Plugin doesn't exist in database
+                continue
+            else:
+                if not(pluginData["loaded"]) or not(pluginData["guilds"][str(self.ctx.guild.id)]):
+                    continue
+
+                # Plugin is in the database
+                self.addPlugin(Plugin(pluginData["_id"], pluginData["plugin_name"], pluginData["description"], pluginData))
+
+                # Loops through all cogs in plugin
+                for cog in pluginData["cog_names"]:
+                    cogData = self.bot.get_cog(cog)
+                    self.plugins[pluginData["_id"]].addCog(Cog(cog, cogData.description, cogData))
+
+                    # Loops through all commands in cog
+                    for cmd in cogData.walk_commands():
+                        # If ctx.author can run command
+                        try:
+                            await cmd.can_run(self.ctx)
+                        except commands.CommandError:
+                            continue
+
+                        # Build command object
+                        await self.buildCmd(cmd, self.plugins[pluginData["_id"]].cogs[cog])
+
+    def getCmd(self, plugin, cog, cmd):
+        """
+        Get command object
+        :param str plugin: Plugin name
+        :param str cog: Cog name
+        :param str cmd: Cmd name
+        """
+        if " " in cmd:
+            group = cmd.strip().split(" ")[0]
+            sub = cmd.strip().split(" ")[1]
+            return self.plugins[plugin][cog][group][sub]
+
+        return self.plugins[plugin][cog][cmd]
+        
+    def getCog(self, plugin, cog):
+        """
+        Get cog object
+        :param str plugin: Plugin name
+        :param str cog: Cog name
+        """
+        return self.plugins[plugin][cog]
+
+    def getPlugin(self, plugin):
+        """
+        Get plugin object
+        :param str plugin: Plugin name
+        """
+        return self.plugins[plugin]
+
+    def getAll(self):
+        """
+        Get all plugin objects
+        """
+        return self.plugins
+
 class Help(commands.Cog):
     """
     Help commands
@@ -13,381 +225,160 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.bot.remove_command("help")
+        self.prefix = None
+        self.ctx = None
 
-    async def error(self, ctx):
+    async def error(self):
         """
         generic error embed
-        :param ctx:
         """
         embed=discord.Embed(title="Not found.", color=0xf84722)
-        await ctx.send(embed=embed)
+        await self.ctx.send(embed=embed)
 
-    async def command_invalid(self, ctx):
+    async def command_invalid(self):
         """
         invalid command embed
-        :param ctx:
         """
         embed=discord.Embed(title="Command not found.", color=0xf84722)
-        await ctx.send(embed=embed)
+        await self.ctx.send(embed=embed)
 
-    async def cog_invalid(self, ctx):
+    async def cog_invalid(self):
         """
         invalid cog embed
-        :param ctx:
         """
         embed=discord.Embed(title="Cog not found.", color=0xf84722)
-        await ctx.send(embed=embed)
+        await self.ctx.send(embed=embed)
 
-    async def plugin_invalid(self, ctx):
+    async def plugin_invalid(self):
         """
         invalid plugin embed
-        :param ctx:
         """
         embed=discord.Embed(title="Plugin not found.", color=0xf84722)
-        await ctx.send(embed=embed)
+        await self.ctx.send(embed=embed)
 
-    async def command(self, ctx, command, prefix):
+    async def command(self, name, helpObject):
         """
         command embed
-        :param ctx:
-        :param command: command object
-        :param str prefix: command prefix for guild
+        :param str name: Name of command
+        :param HelpBuilder helpObject: Help building object
         """
         try:
-            if command.enabled and not command.hidden:
-                embed=discord.Embed(title=command.name, description=command.description, color=0xc1c100)
+            print("command")
+            await helpObject.build()
+            cmd = helpObject.getCmd(plugin, cog, name)
+            print(cmd)
+        except Exception as error:
+            print(error)
+            await self.command_invalid()
 
-                # Displays command usage
-                if command.usage is None:
-                    embed.add_field(name="Usage", value=f"`{prefix}{command.name}`", inline=False)
-                else:
-                    embed.add_field(name="Usage", value=f"`{prefix}{command.name} {command.usage}`", inline=False)
-
-                # Add in aliases if they exist
-                if len(command.aliases) != 0:
-                    aliasStr = ""
-                    for alias in command.aliases:
-                        aliasStr += f"`{alias}`, "
-
-                    embed.add_field(name="Aliases", value=aliasStr[:-2], inline=False)
-                embed.set_footer(text="Type: Command")
-                await ctx.send(embed=embed)
-            else:
-                await self.command_invalid(ctx)
-        except Exception:
-            await self.command_invalid(ctx)
-
-    async def subcommand(self, ctx, subcommand, prefix):
-        """
-        subcommand embed
-        :param ctx:
-        :param subcommand: subcommand object
-        :param str prefix: command prefix for guild
-        """
-        try:
-            if subcommand.enabled and not subcommand.hidden:
-                embed=discord.Embed(title=subcommand.qualified_name, description=subcommand.description, color=0xc1c100)
-
-                # Displays subcommand usage
-                if subcommand.usage is None:
-                    embed.add_field(name="Usage", value=f"`{prefix}{subcommand.qualified_name}`", inline=False)
-                else:
-                    embed.add_field(name="Usage", value=f"`{prefix}{subcommand.qualified_name} {subcommand.usage}`", inline=False)
-
-                # Add in aliases if they exist
-                if len(subcommand.aliases) != 0:
-                    aliasStr = ""
-                    for alias in subcommand.aliases:
-                        aliasStr += f"`{alias}`, "
-
-                    embed.add_field(name="Aliases", value=aliasStr[:-2], inline=False)
-                embed.set_footer(text="Type: Subcommand")
-                await ctx.send(embed=embed)
-            else:
-                await self.command_invalid(ctx)
-        except Exception:
-            await self.command_invalid(ctx)
-
-    async def group(self, ctx, group, prefix):
-        """
-        group embed
-        :param ctx:
-        :param group: group object
-        :param str prefix: command prefix for guild
-        """
-        try:
-            if group.enabled and not group.hidden:
-                embed=discord.Embed(title=group.qualified_name, description=group.description, color=0xc1c100)
-
-                # Displays command usage
-                if group.usage is None:
-                    embed.add_field(name="Usage", value=f"`{prefix}{group.qualified_name} <subcommand>`", inline=False)
-                else:
-                    embed.add_field(name="Usage", value=f"`{prefix}{group.qualified_name} {group.usage}`", inline=False)
-
-                # Add aliases if they exist
-                if len(group.aliases) != 0:
-                    aliasStr = ""
-                    for alias in group.aliases:
-                        aliasStr += f"`{alias}`, "
-
-                    embed.add_field(name="Aliases", value=aliasStr[:-2], inline=False)
-
-                subcommandStr = ""
-
-                for subcommand in group.commands:
-                    if subcommand.usage is None:
-                        subcommandStr += f"`{subcommand.name}`\n"
-                    else:
-                        subcommandStr += f"`{subcommand.name} {subcommand.usage}`\n"
-                    
-                embed.add_field(name="Subcommands", value=subcommandStr, inline=False)
-
-                embed.set_footer(text="Type: Group")
-                await ctx.send(embed=embed)
-            else:
-                await self.command_invalid(ctx)
-        except Exception:
-            await self.command_invalid(ctx)
-
-    async def cog(self, ctx, cog, prefix):
+    async def cog(self, name, helpObject):
         """
         cog embed
-        :param ctx:
-        :param cog: cog object
-        :param str prefix: command prefix for guild
+        :param str name: Name of cog
+        :param HelpBuilder helpObject: Help building object
         """
         try:
-            embed=discord.Embed(title=f"{cog.qualified_name}", description=cog.description, color=0xc1c100)
-            comStr = ""
-            
-            for command in cog.walk_commands():
-                # checks if subcommand
-                if " " in command.qualified_name:
-                    continue
+            await helpObject.build()
+            cog = helpObject.getCog(plugin, name)
+        except Exception as error:
+            print(error)
+            await self.cog_invalid()
 
-                # checks if command is hidden or disabled
-                if command.hidden and not command.enabled:
-                    continue
-                
-                # can user run the command
-                try:
-                    await command.can_run(ctx)
-                except commands.CommandError:
-                    # cannot run
-                    continue
-                
-                if command.usage is not None:
-                    comStr += f"`{prefix}{command.name} {command.usage}` - {command.description}\n"
-                else:
-                    comStr += f"`{prefix}{command.name}` - {command.description}\n"
-
-            embed.add_field(name=f"Commands", value=comStr, inline=False)
-            embed.set_footer(text="Type: Cog")
-            await ctx.send(embed=embed)
-        except Exception:
-            await self.cog_invalid(ctx)
-
-    async def plugin(self, ctx, pluginData, prefix):
+    async def plugin(self, name, helpObject):
         """
         plugin embed
-        :param ctx:
-        :param plugin: plugin data from db
-        :param str prefix: command prefix for guild
+        :param str name: Name of plugin
+        :param HelpBuilder helpObject: Help building object
         """
         try:
-            if pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
-                embed=discord.Embed(title=f"{pluginData['plugin_name']}", description=pluginData["description"], color=0xc1c100)
-                for cog in pluginData["cog_names"]:
-                    cogData = self.bot.get_cog(cog)
-                    comStr = ""
+            await helpObject.build()
+            plugin = helpObject.getPlugin(name)
+        except Exception as error:
+            print(error)
+            await self.plugin_invalid()
 
-                    for command in cogData.walk_commands():
-                        # checks if subcommand
-                        if " " in command.qualified_name:
-                            continue
-                        
-                        # can user run the command
-                        try:
-                            await command.can_run(ctx)
-                        except commands.CommandError:
-                            # cannot run
-                            continue
-                        
-                        if command.usage is not None:
-                            comStr += f"`{prefix}{command.name} {command.usage}` - {command.description}\n"
-                        else:
-                            comStr += f"`{prefix}{command.name}` - {command.description}\n"
-                    if len(comStr) > 0:
-                        embed.add_field(name=f"Cog: {cogData.qualified_name}", value=comStr, inline=False)
-
-                if len(embed.fields) > 0:
-                    embed.set_footer(text="Type: Plugin")
-                    await ctx.send(embed=embed)
-                else:
-                    await self.plugin_invalid(ctx)
-            else:
-                await self.plugin_invalid(ctx)
-        except Exception:
-            await self.plugin_invalid(ctx)
-
-    async def all(self, ctx, prefix):
+    async def all(self, helpObject):
         """
         Main help
-        :param ctx:
-        :param str prefix: command prefix for guild
-        :param bool show_all: Show all hidden cogs
+        :param HelpBuilder helpObject: Help building object
         """
-        try:
-            pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
-            helpStr = ""
+        await helpObject.build()
+        embed=discord.Embed(title="Help", 
+                            description=f"`{self.prefix}help command <command>`\n`{self.prefix}help plugin <plugin>`\n`{self.prefix}help cog <cog>`", 
+                            color=0xc1c100)
+        helpAll = helpObject.getAll()
+        for pluginKey, plugin in helpAll.items():
+            cogsStr = ""
+            for cogKey, cog in plugin.cogs.items():
+                cogStr = f"  {cog.name}: "
+                for cmdKey, cmd in cog.cmds.items():
+                    cogStr += f"`{cmd.name}`, "
+                cogsStr += f"{cogStr[:-2]}\n"
+            embed.add_field(name=plugin.name, value=cogsStr, inline=False)
+        await self.ctx.send(embed=embed)
 
-            # loops through all plugins
-            for plugin in next(os.walk(readINI("config.ini")["main"]["pluginFolder"]))[1]:
-                # skips '__pycache__' folder
-                if plugin == "__pycache__":
-                    continue
-
-                pluginData = pluginCol.find_one({ "_id": plugin })
-                cogStr = ""
-
-                if pluginData is not None:
-                    # Is in the database
-                    if pluginData["guilds"][str(ctx.guild.id)] and pluginData["loaded"]:
-                        # Is enabled and loaded
-
-                        # Loop through cogs
-                        for cog in pluginData["cog_names"]:
-                            cogData = self.bot.get_cog(cog)
-                            count = 0
-
-                            for command in cogData.walk_commands():
-                                # checks if subcommand
-                                if " " in command.qualified_name:
-                                    continue
-
-                                # checks if command is hidden or disabled
-                                if command.hidden and not command.enabled:
-                                    continue
-                                
-                                # can user run the command
-                                try:
-                                    await command.can_run(ctx)
-                                except commands.CommandError:
-                                    # cannot run
-                                    continue
-                                
-                                count += 1
-
-                            if count > 0:
-                                cogStr += f"`{cogData.qualified_name}`, "
-                
-                    if cogStr.count("`") > 2:
-                        helpStr += f"**{plugin}** | Cogs: {cogStr[:-2]}\n"
-                    elif cogStr.count("`") == 2:
-                        helpStr += f"**{plugin}** | Cog: {cogStr[:-2]}\n"
-
-            embed=discord.Embed(title="Help", 
-                                description=f"`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`\n\n**__Plugins__**\n{helpStr}", 
-                                color=0xc1c100)
-            await ctx.send(embed=embed)
-        except Exception:
-            await self.error(ctx)
-
-    async def item_help(self, ctx, prefix):
+    async def item_help(self):
         """
         Invalid help item type
-        :param ctx:
-        :param str prefix: command prefix for guild
         """
         embed=discord.Embed(title="Invalid Item", 
-                            description=f"**Please Use**\n`{prefix}help command <command>`\n`{prefix}help plugin <plugin>`\n`{prefix}help cog <cog>`", 
+                            description=f"**Please Use**\n`{self.prefix}help command <command>`\n`{self.prefix}help plugin <plugin>`\n`{self.prefix}help cog <cog>`", 
                             color=0xf84722)
-        await ctx.send(embed=embed)
+        await self.ctx.send(embed=embed)
 
     @commands.command(name="help", description="Help command", usage="<command/cog/plugin>", aliases=["h"])
-    async def help(self, ctx, *, helpItem: str=None):
+    async def help(self, ctx, *, helpItem: str = None):
         """
         Help command
         :param ctx:
         :param str helpItem: item that needs help
         """
         # Get prefix for guild
-        prefix = getPrefix(ctx.guild.id)
+        self.prefix = getPrefix(ctx.guild.id)
+        self.ctx = ctx
 
-        if helpItem is None:
-            # Display main help information is no helpItem is given
-            await self.all(ctx, prefix)
-        else:
-            # helpItem given
-            # Splits the tag from the rest of the helpItem input
-            itemSplit = helpItem.strip().split(" ")
-            itemType = itemSplit[0].lower()
+        helpObject = HelpBuilder(ctx, self.bot)
 
-            # If a tag and an item were given
-            if len(itemSplit) > 1:
-                item = " ".join(itemSplit[1:])
-
-                # Checking what type of input it is that requires help
-                # Types: command/subcommand/group, cog, plugin
-                if itemType in ["command", "commands", "com", "group", "groups", "subcommand"]:
-                    # Is a command, subcommand, or group
-                    try:
-                        command = self.bot.get_command(item)
-                        await command.can_run(ctx)
-
-                        # What type of command is it? subcommand, command, group
-                        if command.root_parent is not None:
-                            # subcommand
-                            await self.subcommand(ctx, command, prefix)
-                        else:
-                            try:
-                                x = command.commands
-                                # group
-                                await self.group(ctx, command, prefix)
-                            except Exception:
-                                # command
-                                await self.command(ctx, command, prefix)
-                    except commands.CommandError:
-                        # User cannot run command
-                        await self.command_invalid(ctx)
-                    except Exception:
-                        # Command doesn't exist
-                        await self.command_invalid(ctx)
-
-                elif itemType in ["p", "plugin", "plugins", "plug"]:
-                    # Is a plugin
-                    pluginCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["plugins"]
-                    pluginData = pluginCol.find_one({ "_id": item })
-
-                    if pluginData is not None:
-                        # Plugin exists in db
-                        if pluginData["guilds"][str(ctx.guild.id)]:
-                            # Plugin enabled
-                            await self.plugin(ctx, pluginData, prefix)
-                        else:
-                            # Plugin disabled
-                            await self.plugin_invalid(ctx)
-                    else:
-                        # Not a plugin
-                        await self.plugin_invalid(ctx)
-
-                elif itemType in ["cog"]:
-                    # Is a cog
-                    cog = self.bot.get_cog(item)
-
-                    if cog is not None:
-                        # Cog exists
-                        await self.cog(ctx, cog, prefix)
-                    else:
-                        # Invalid cog
-                        await self.cog_invalid(ctx)
-                else:
-                    # Invalid helpItem
-                    await self.item_help(ctx, prefix)
+        try:
+            if helpItem is None:
+                print("all 1")
+                # Display main help information is no helpItem is given
+                await self.all(helpObject)
             else:
-                # Incorrect amount of params given
-                await self.item_help(ctx, prefix)
+                # helpItem given
+                # Splits the tag from the rest of the helpItem input
+                itemSplit = helpItem.strip().split(" ")
+                itemType = itemSplit[0].lower()
+
+                # If a tag and an item were given
+                if len(itemSplit) > 1:
+                    item = " ".join(itemSplit[1:])
+
+                    # Checking what type of input it is that requires help
+                    # Types: command/subcommand/group, cog, plugin
+                    if itemType in ["command", "commands", "com", "group", "groups", "subcommand"]:
+                        print("command 1")
+                        # Is a command
+                        await self.command(command, helpObject)
+
+                    elif itemType in ["p", "plugin", "plugins", "plug"]:
+                        print("plugin 1")
+                        # Is a plugin
+                        await self.plugin(item, helpObject)
+
+                    elif itemType in ["cog"]:
+                        print("cog 1")
+                        # Is a cog
+                        await self.cog(cog, helpObject)
+                    else:
+                        # Invalid helpItem
+                        await self.item_help()
+                else:
+                    # Incorrect amount of params given
+                    await self.item_help()
+        except Exception as error:
+            print(error)
+            await self.error()
 
     @commands.command(name="setup", description="Bot setup instructions")
     @commands.has_permissions(manage_guild=True)
