@@ -483,7 +483,7 @@ class Help(commands.Cog):
         try:
             if helpItem is None:
                 # Display main help information is no helpItem is given
-                await self.all(helpObject)
+                await self.all()
             else:
                 # helpItem given
                 # Splits the tag from the rest of the helpItem input
@@ -498,7 +498,7 @@ class Help(commands.Cog):
                     # Types: command/subcommand/group, cog, plugin
                     if itemType in ["command", "commands", "com", "group", "groups", "subcommand"]:
                         # Is a command
-                        await self.command(command)
+                        await self.command(item)
 
                     elif itemType in ["p", "plugin", "plugins", "plug"]:
                         # Is a plugin
@@ -506,7 +506,7 @@ class Help(commands.Cog):
 
                     elif itemType in ["cog"]:
                         # Is a cog
-                        await self.cog(cog)
+                        await self.cog(item)
                     else:
                         # Invalid helpItem
                         await self.item_help()
