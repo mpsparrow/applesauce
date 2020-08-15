@@ -36,6 +36,7 @@ class Cog():
     def addCmd(self, cmd):
         """
         Store Cmd object
+        :param Cmd cmd: Cmd object
         """
         self.cmds[cmd.name] = cmd
 
@@ -69,12 +70,13 @@ class Group(Cmd):
     def addSub(self, sub):
         """
         Stores Sub object
+        :param Sub sub: Sub object
         """
         self.subcmds[sub.name] = sub
 
 class Sub():
     """
-    Represents a sub command in a group
+    Represents a sub command in a group command
     """
     def __init__(self, base, name, usage, description, sub):
         self.base = base
@@ -95,93 +97,144 @@ class HelpBuilder():
         self.folder = readINI("config.ini")["main"]["pluginFolder"]
 
         self.plugins = {}
+        self.cog = None
 
     def addPlugin(self, plugin):
         """
         Stores Plugin object
+        :param Plugin plugin: Plugin object
         """
         self.plugins[plugin.id] = plugin
 
-    async def buildRegular(self, regular, cog):
+    async def buildRegular(self, regular, cog, without_plugin=False):
         """
         Builds Regular object
         :param commands.Command regular: Regular command object
-        :param cog: Cog object
+        :param Cog cog: Cog object
+        :param bool without_plugin: Create without Plugin object
         """
-        cog.addCmd(Regular(regular.name, regular.usage, regular.description, regular))
+        if without_plugin:
+            self.cog.addCmd(Regular(regular.name, regular.usage, regular.description, regular))
+        else:
+            cog.addCmd(Regular(regular.name, regular.usage, regular.description, regular))
 
-    async def buildGroup(self, group, cog):
+    async def buildGroup(self, group, cog, without_plugin=False):
         """
         Builds Group object
         :param commands.Command group: Group command object
-        :param cog: Cog object
+        :param Cog cog: Cog object
+        :param bool without_plugin: Create without Plugin object
         """
-        cog.addCmd(Group(group.qualified_name, group.usage, group.description, group))
+        if without_plugin:
+            self.cog.addCmd(Group(group.qualified_name, group.usage, group.description, group))
+        else:
+            cog.addCmd(Group(group.qualified_name, group.usage, group.description, group))
 
-    async def buildSub(self, sub, cog):
+    async def buildSub(self, sub, cog, without_plugin=False):
         """
         Builds Sub object
         :param commands.Command sub: Sub command object
-        :param cog: Cog object
+        :param Cog cog: Cog object
+        :param bool without_plugin: Create without Plugin object
         """
-        cog.cmds[sub.root_parent.name].addSub(Sub(sub.full_parent_name, sub.name, sub.usage, sub.description, sub))
+        if without_plugin:
+            self.cog.cmds[sub.root_parent.name].addSub(Sub(sub.full_parent_name, sub.name, sub.usage, sub.description, sub))
+        else:
+            cog.cmds[sub.root_parent.name].addSub(Sub(sub.full_parent_name, sub.name, sub.usage, sub.description, sub))
 
-    async def buildCmd(self, cmd, cog):
+    async def buildCmd(self, cmd, cog, without_plugin=False):
         """
         Builds Cmd object
         :param commands.Command cmd: Command object
-        :param cog: Cog object
+        :param Cog cog: Cog object
+        :param bool without_plugin: Create without Plugin object
         """
         if cmd.root_parent is not None:
             # subcommand
-            await self.buildSub(cmd, cog)
+            await self.buildSub(cmd, cog, without_plugin)
         else:
             try:
                 listCmds = cmd.commands
                 # group
-                await self.buildGroup(cmd, cog)
+                await self.buildGroup(cmd, cog, without_plugin)
             except Exception:
                 # command
-                await self.buildRegular(cmd, cog)
+                await self.buildRegular(cmd, cog, without_plugin)
+
+    async def buildCogWithoutPlugin(self, cog):
+        """
+        Builds a full Cog without the Plugin object
+        :param str cog: Cog name
+        :return: Cog object
+        """
+        cogData = self.bot.get_cog(cog)
+        self.cog = Cog(cog, cogData.description, cogData)
+
+        # Loops through all commands in cog
+        for cmd in cogData.walk_commands():
+            # If ctx.author can run command
+            try:
+                await cmd.can_run(self.ctx)
+            except commands.CommandError:
+                continue
+
+            # Build command object
+            await self.buildCmd(cmd, cog, without_plugin=True)
+
+    async def buildCog(self, cog, pluginData):
+        """
+        Build Cog object
+        :param str cog: Cog name
+        """
+        cogData = self.bot.get_cog(cog)
+
+        # Add Cog
+        self.plugins[pluginData["_id"]].addCog(Cog(cog, cogData.description, cogData))
+
+        # Loops through all commands in cog
+        for cmd in cogData.walk_commands():
+            # If ctx.author can run command
+            try:
+                await cmd.can_run(self.ctx)
+            except commands.CommandError:
+                continue
+
+            # Build command object
+            await self.buildCmd(cmd, self.plugins[pluginData["_id"]].cogs[cog])
                 
-    async def build(self):
+    async def buildPlugin(self, plugin):
         """
-        Builds Plugin object
+        Build Plugin object
+        :param str plugin: Plugin id
         """
-        # Loops through all plugins in folder
-        for plugin in next(os.walk(readINI("config.ini")["main"]["pluginFolder"]))[1]:
-            # Skips '__pycache__' folder
-            if plugin == "__pycache__":
-                continue
+        # Get plugin from database
+        pluginData = self.pluginCol.find_one({ "_id": plugin })
 
-            # Get plugin from database
-            pluginData = self.pluginCol.find_one({ "_id": plugin })
-
-            if pluginData is None:
-                # Plugin doesn't exist in database
-                continue
-            else:
-                if not(pluginData["loaded"]) or not(pluginData["guilds"][str(self.ctx.guild.id)]):
-                    continue
-
-                # Plugin is in the database
+        if pluginData is not None:
+            # Plugin exist in database
+            if pluginData["loaded"] and pluginData["guilds"][str(self.ctx.guild.id)]:
+                # Plugin loaded and enabled
+                
+                # Add Plugin
                 self.addPlugin(Plugin(pluginData["_id"], pluginData["plugin_name"], pluginData["description"], pluginData))
 
                 # Loops through all cogs in plugin
                 for cog in pluginData["cog_names"]:
-                    cogData = self.bot.get_cog(cog)
-                    self.plugins[pluginData["_id"]].addCog(Cog(cog, cogData.description, cogData))
+                    # Build Cog object
+                    await self.buildCog(cog, pluginData)
 
-                    # Loops through all commands in cog
-                    for cmd in cogData.walk_commands():
-                        # If ctx.author can run command
-                        try:
-                            await cmd.can_run(self.ctx)
-                        except commands.CommandError:
-                            continue
+    async def buildAll(self):
+        """
+        Builds all Plugin objects
+        """
+        # Loops through all plugins in folder
+        for plugin in next(os.walk(self.folder))[1]:
+            # Skips '__pycache__' folder
+            if plugin == "__pycache__":
+                continue
 
-                        # Build command object
-                        await self.buildCmd(cmd, self.plugins[pluginData["_id"]].cogs[cog])
+            # Build Plugin object
+            await self.buildPlugin(plugin)
 
     def getCmd(self, plugin, cog, cmd):
         """
@@ -227,6 +280,7 @@ class Help(commands.Cog):
         self.bot.remove_command("help")
         self.prefix = None
         self.ctx = None
+        self.helpObject = None
 
     async def error(self):
         """
@@ -256,66 +310,154 @@ class Help(commands.Cog):
         embed=discord.Embed(title="Plugin not found.", color=0xf84722)
         await self.ctx.send(embed=embed)
 
-    async def command(self, name, helpObject):
+    async def group(self, group):
         """
-        command embed
-        :param str name: Name of command
-        :param HelpBuilder helpObject: Help building object
+        Group command embed
+        :param Group group: Group object
         """
         try:
-            print("command")
-            await helpObject.build()
-            cmd = helpObject.getCmd(plugin, cog, name)
-            print(cmd)
-        except Exception as error:
-            print(error)
+            embed=discord.Embed(title=group.name, description=group.description, color=0xc1c100)
+            embed.add_field(name="Usage", value=f"{self.prefix}{group.name} {group.usage}", inline=False)
+            if len(group.group.aliases) > 0:
+                aliases = ""
+                for alias in group.group.aliases:
+                    aliases += f"`{alias}`, "
+                embed.add_field(name="Aliases", value=aliases[:-2])
+
+            if len(group.subcmds) > 0:
+                subcmdStr = ""
+                for subKey, sub in group.group.items():
+                    subcmdStr += f"`{sub.name}` - {sub.description}\n"
+                embed.add_field(name="Sub Commands", value=subcmdStr)
+            embed.set_footer(text=f"Type: Group")
+            self.ctx.send(embed=embed)
+        except Exception:
             await self.command_invalid()
 
-    async def cog(self, name, helpObject):
+    async def sub(self, sub):
         """
-        cog embed
-        :param str name: Name of cog
-        :param HelpBuilder helpObject: Help building object
+        Sub command embed
+        :param Sub sub: Sub object
         """
         try:
-            await helpObject.build()
-            cog = helpObject.getCog(plugin, name)
-        except Exception as error:
-            print(error)
+            embed=discord.Embed(title=sub.name, description=sub.description, color=0xc1c100)
+            embed.add_field(name="Usage", value=f"{self.prefix}{sub.base} {sub.name} {sub.usage}", inline=False)
+            if len(sub.sub.aliases) > 0:
+                aliases = ""
+                for alias in sub.sub.aliases:
+                    aliases += f"`{alias}`, "
+                embed.add_field(name="Aliases", value=aliases[:-2])
+            embed.set_footer(text=f"Type: Sub Command | Group: {sub.base}")
+            self.ctx.send(embed=embed)
+        except Exception:
+            await self.command_invalid()
+
+    async def regular(self, command):
+        """
+        Regular command embed
+        :param Regular command: Regular object
+        """
+        try:
+            embed=discord.Embed(title=command.name, description=command.description, color=0xc1c100)
+            embed.add_field(name="Usage", value=f"{self.prefix}{command.name} {command.usage}", inline=False)
+            if len(command.cmd.aliases) > 0:
+                aliases = ""
+                for alias in command.cmd.aliases:
+                    aliases += f"`{alias}`, "
+                embed.add_field(name="Aliases", value=aliases[:-2])
+            embed.set_footer(text=f"Type: Command")
+            self.ctx.send(embed=embed)
+        except Exception:
+            await self.command_invalid()
+
+    async def command(self, name):
+        """
+        Command embeds
+        :param str name: Name of command
+        """
+        try:
+            await self.helpObject.buildCogWithoutPlugin(name)
+            cmd = self.helpObject.getCmd(plugin, cog, name)
+
+            classType = cmd.__class__.__name__
+
+            if classType == "Group":
+                await self.group(cmd)
+            elif classType == "Sub":
+                await self.sub(cmd)
+            elif classType == "Regular":
+                await self.regular(cmd)
+        except Exception:
+            await self.command_invalid()
+
+    async def cog(self, name):
+        """
+        Cog embed
+        :param str name: Name of cog
+        """
+        try:
+            await self.helpObject.buildCogWithoutPlugin(name)
+            cog = self.helpObject.cog
+
+            cmdStr = ""
+
+            for cmdKey, cmd in cog.cmds.items():
+                cmdStr += f"`{cmd.name}`, "
+                
+            if len(cmdStr) == 0:
+                cmdStr = "No Commands.."
+
+            embed=discord.Embed(title=cog.name, description=f"{cog.description}\n\n**Commands**\n{cmdStr[:-2]}", color=0xc1c100)
+            embed.set_footer(text=f"Type: Cog | ID: {cog.name}")
+            await self.ctx.send(embed=embed)
+        except Exception:
             await self.cog_invalid()
 
-    async def plugin(self, name, helpObject):
+    async def plugin(self, name):
         """
-        plugin embed
+        Plugin embed
         :param str name: Name of plugin
-        :param HelpBuilder helpObject: Help building object
         """
         try:
-            await helpObject.build()
-            plugin = helpObject.getPlugin(name)
-        except Exception as error:
-            print(error)
+            await self.helpObject.buildPlugin(name)
+            plugin = self.helpObject.getPlugin(name)
+
+            cmdStr = ""
+
+            for cogKey, cog in plugin.cogs.items():
+                for cmdKey, cmd in cog.cmds.items():
+                    cmdStr += f"`{cmd.name}`, "
+                
+            if len(cmdStr) == 0:
+                cmdStr = "No Commands.."
+
+            embed=discord.Embed(title=plugin.name, description=f"{plugin.description}\n\n**Commands**\n{cmdStr[:-2]}", color=0xc1c100)
+            embed.set_footer(text=f"Type: Plugin | ID: {plugin.id}")
+            await self.ctx.send(embed=embed)
+        except Exception:
             await self.plugin_invalid()
 
-    async def all(self, helpObject):
+    async def all(self):
         """
         Main help
-        :param HelpBuilder helpObject: Help building object
         """
-        await helpObject.build()
-        embed=discord.Embed(title="Help", 
-                            description=f"`{self.prefix}help command <command>`\n`{self.prefix}help plugin <plugin>`\n`{self.prefix}help cog <cog>`", 
-                            color=0xc1c100)
-        helpAll = helpObject.getAll()
-        for pluginKey, plugin in helpAll.items():
-            cogsStr = ""
-            for cogKey, cog in plugin.cogs.items():
-                cogStr = f"  {cog.name}: "
-                for cmdKey, cmd in cog.cmds.items():
-                    cogStr += f"`{cmd.name}`, "
-                cogsStr += f"{cogStr[:-2]}\n"
-            embed.add_field(name=plugin.name, value=cogsStr, inline=False)
-        await self.ctx.send(embed=embed)
+        try:
+            await self.helpObject.buildAll()
+            embed=discord.Embed(title="Help", 
+                                description=f"`{self.prefix}help command <command>`\n`{self.prefix}help plugin <plugin>`\n`{self.prefix}help cog <cog>`", 
+                                color=0xc1c100)
+            helpAll = self.helpObject.getAll()
+            for pluginKey, plugin in helpAll.items():
+                cogsStr = ""
+                for cogKey, cog in plugin.cogs.items():
+                    cogStr = f"  {cog.name}: "
+                    for cmdKey, cmd in cog.cmds.items():
+                        cogStr += f"`{cmd.name}`, "
+                    cogsStr += f"{cogStr[:-2]}\n"
+                embed.add_field(name=plugin.name, value=cogsStr, inline=False)
+            await self.ctx.send(embed=embed)
+        except Exception:
+            await self.error()
 
     async def item_help(self):
         """
@@ -336,12 +478,10 @@ class Help(commands.Cog):
         # Get prefix for guild
         self.prefix = getPrefix(ctx.guild.id)
         self.ctx = ctx
-
-        helpObject = HelpBuilder(ctx, self.bot)
+        self.helpObject = HelpBuilder(ctx, self.bot)
 
         try:
             if helpItem is None:
-                print("all 1")
                 # Display main help information is no helpItem is given
                 await self.all(helpObject)
             else:
@@ -357,27 +497,23 @@ class Help(commands.Cog):
                     # Checking what type of input it is that requires help
                     # Types: command/subcommand/group, cog, plugin
                     if itemType in ["command", "commands", "com", "group", "groups", "subcommand"]:
-                        print("command 1")
                         # Is a command
-                        await self.command(command, helpObject)
+                        await self.command(command)
 
                     elif itemType in ["p", "plugin", "plugins", "plug"]:
-                        print("plugin 1")
                         # Is a plugin
-                        await self.plugin(item, helpObject)
+                        await self.plugin(item)
 
                     elif itemType in ["cog"]:
-                        print("cog 1")
                         # Is a cog
-                        await self.cog(cog, helpObject)
+                        await self.cog(cog)
                     else:
                         # Invalid helpItem
                         await self.item_help()
                 else:
                     # Incorrect amount of params given
                     await self.item_help()
-        except Exception as error:
-            print(error)
+        except Exception:
             await self.error()
 
     @commands.command(name="setup", description="Bot setup instructions")
