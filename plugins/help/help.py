@@ -398,15 +398,16 @@ class Help(commands.Cog):
             await self.helpObject.buildCogWithoutPlugin(cog)
             cog = self.helpObject.cog
 
+            embed=discord.Embed(title=cog.name, description=cog.description, color=0xc1c100)
+
             cmdStr = ""
 
             for cmdKey, cmd in cog.cmds.items():
-                cmdStr += f"`{cmd.name}`, "
+                cmdStr += f"`{self.prefix}{cmd.name} {cmd.usage}` - {cmd.description}\n"
                 
-            if len(cmdStr) == 0:
-                cmdStr = "No Commands.."
+            if len(cmdStr) != 0:
+                embed.add_field(name="Commands", value=cmdStr, inline=False)
 
-            embed=discord.Embed(title=cog.name, description=f"{cog.description}\n\n**Commands**\n{cmdStr[:-2]}", color=0xc1c100)
             embed.set_footer(text=f"Type: Cog | ID: {cog.name}")
             await self.ctx.send(embed=embed)
         except Exception:
@@ -421,16 +422,22 @@ class Help(commands.Cog):
             await self.helpObject.buildPlugin(name)
             plugin = self.helpObject.getPlugin(name)
 
+            embed=discord.Embed(title=plugin.name, description=plugin.description, color=0xc1c100)
+
             cmdStr = ""
+            cogStr = ""
 
             for cogKey, cog in plugin.cogs.items():
+                cogStr += f"`{cog.name}`, "
                 for cmdKey, cmd in cog.cmds.items():
                     cmdStr += f"`{cmd.name}`, "
-                
-            if len(cmdStr) == 0:
-                cmdStr = "No Commands.."
 
-            embed=discord.Embed(title=plugin.name, description=f"{plugin.description}\n\n**Commands**\n{cmdStr[:-2]}", color=0xc1c100)
+            if len(cogStr) != 0:
+                embed.add_field(name="Cogs", value=cogStr[:-2], inline=False)
+
+            if len(cmdStr) != 0:
+                embed.add_field(name="Commands", value=cmdStr[:-2], inline=False)
+
             embed.set_footer(text=f"Type: Plugin | ID: {plugin.id}")
             await self.ctx.send(embed=embed)
         except Exception:
@@ -447,13 +454,20 @@ class Help(commands.Cog):
                                 color=0xc1c100)
             helpAll = self.helpObject.getAll()
             for pluginKey, plugin in helpAll.items():
+                count = 0
                 cogsStr = ""
                 for cogKey, cog in plugin.cogs.items():
-                    cogStr = f"  {cog.name}: "
-                    for cmdKey, cmd in cog.cmds.items():
-                        cogStr += f"`{cmd.name}`, "
-                    cogsStr += f"{cogStr[:-2]}\n"
-                embed.add_field(name=plugin.name, value=cogsStr, inline=False)
+                    cogsStr += f"`{cog.name}`, "
+                    count += 1
+
+                if count == 1:
+                    cogsStr = "Cog: " + cogsStr
+                elif count > 1:
+                    cogsStr = "Cogs: " + cogsStr
+                else:
+                    cogsStr = "No Cogs"
+
+                embed.add_field(name=f"{plugin.name} ({plugin.id})", value=cogsStr[:-2], inline=False)
             await self.ctx.send(embed=embed)
         except Exception:
             await self.error()
