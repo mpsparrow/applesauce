@@ -543,7 +543,8 @@ class Help(commands.Cog):
         Setup instructions 
         :param ctx:
         """
+        self.prefix = getPrefix(ctx.guild.id)
         embed=discord.Embed(title="Setup Instructions", 
-                            description=f"**Prefix**: {getPrefix(ctx.guild.id)}\n**Help**: {getPrefix(ctx.guild.id)}help", 
+                            description=f"**Prefix**: `{self.prefix}`\n**Help**: `{self.prefix}help`\n**Plugins**: Use `{self.prefix}p a` to manage plugins", 
                             color=0xc1c100)
         await ctx.send(embed=embed)
