@@ -67,6 +67,7 @@ class Group(Cmd):
         self.name = name
         self.usage = "" if usage is None else usage
         self.description = "" if description is None else description
+        self.aliases = cmd.aliases
         self.cmd = cmd
         self.subcmds = {}
 
@@ -320,11 +321,17 @@ class Help(commands.Cog):
             embed=discord.Embed(title=group.name, description=group.description, color=0xc1c100)
             embed.add_field(name="Usage", value=f"`{self.prefix}{group.name} {group.usage}`", inline=False)
 
+            if len(group.aliases) > 0:
+                aliases = ""
+                for alias in group.aliases:
+                    aliases += f"`{alias}`, "
+                embed.add_field(name="Aliases", value=aliases[:-2], inline=False)
+
             if len(group.subcmds) > 0:
                 subcmdStr = ""
                 for subKey, sub in group.subcmds.items():
                     subcmdStr += f"`{sub.name}` - {sub.description}\n"
-                embed.add_field(name="Sub Commands", value=subcmdStr)
+                embed.add_field(name="Sub Commands", value=subcmdStr, inline=False)
             embed.set_footer(text=f"Type: Group")
             await self.ctx.send(embed=embed)
         except Exception:
