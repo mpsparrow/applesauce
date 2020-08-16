@@ -29,7 +29,7 @@ class Cog():
     """
     def __init__(self, name, description, cogData):
         self.name = name
-        self.description = description
+        self.description = "" if description is None else description
         self.cogData = cogData
         self.cmds = {}
 
@@ -44,26 +44,29 @@ class Cmd():
     """
     Represents a command
     """
-    pass
+    def __init__(self, cmdtype: str):
+        self.cmdtype = cmdtype
 
 class Regular(Cmd):
     """
     Represents a regular command
     """
     def __init__(self, name, usage, description, cmd):
+        Cmd.__init__(self, "Regular")
         self.name = name
-        self.usage = usage
-        self.description = description
-        self.cmd = cmd
+        self.usage = "" if usage is None else usage
+        self.description = "" if description is None else description
+        self.cmd = cmd            
 
 class Group(Cmd):
     """
     Represents a group command
     """
     def __init__(self, name, usage, description, cmd):
+        Cmd.__init__(self, "Group")
         self.name = name
-        self.usage = usage
-        self.description = description
+        self.usage = "" if usage is None else usage
+        self.description = "" if description is None else description
         self.cmd = cmd
         self.subcmds = {}
 
@@ -81,8 +84,8 @@ class Sub():
     def __init__(self, base, name, usage, description, sub):
         self.base = base
         self.name = name
-        self.usage = usage
-        self.description = description
+        self.usage = "" if usage is None else usage
+        self.description = "" if description is None else description
         self.sub = sub
 
 class HelpBuilder():
@@ -164,14 +167,12 @@ class HelpBuilder():
     async def buildCogWithoutPlugin(self, cog):
         """
         Builds a full Cog without the Plugin object
-        :param str cog: Cog name
+        :param str cog: Cog object
         :return: Cog object
         """
-        cogData = self.bot.get_cog(cog)
-        self.cog = Cog(cog, cogData.description, cogData)
-
+        self.cog = Cog(cog.qualified_name, cog.description, cog)
         # Loops through all commands in cog
-        for cmd in cogData.walk_commands():
+        for cmd in cog.walk_commands():
             # If ctx.author can run command
             try:
                 await cmd.can_run(self.ctx)
@@ -317,20 +318,15 @@ class Help(commands.Cog):
         """
         try:
             embed=discord.Embed(title=group.name, description=group.description, color=0xc1c100)
-            embed.add_field(name="Usage", value=f"{self.prefix}{group.name} {group.usage}", inline=False)
-            if len(group.group.aliases) > 0:
-                aliases = ""
-                for alias in group.group.aliases:
-                    aliases += f"`{alias}`, "
-                embed.add_field(name="Aliases", value=aliases[:-2])
+            embed.add_field(name="Usage", value=f"`{self.prefix}{group.name} {group.usage}`", inline=False)
 
             if len(group.subcmds) > 0:
                 subcmdStr = ""
-                for subKey, sub in group.group.items():
+                for subKey, sub in group.subcmds.items():
                     subcmdStr += f"`{sub.name}` - {sub.description}\n"
                 embed.add_field(name="Sub Commands", value=subcmdStr)
             embed.set_footer(text=f"Type: Group")
-            self.ctx.send(embed=embed)
+            await self.ctx.send(embed=embed)
         except Exception:
             await self.command_invalid()
 
@@ -341,14 +337,14 @@ class Help(commands.Cog):
         """
         try:
             embed=discord.Embed(title=sub.name, description=sub.description, color=0xc1c100)
-            embed.add_field(name="Usage", value=f"{self.prefix}{sub.base} {sub.name} {sub.usage}", inline=False)
+            embed.add_field(name="Usage", value=f"`{self.prefix}{sub.base} {sub.name} {sub.usage}`", inline=False)
             if len(sub.sub.aliases) > 0:
                 aliases = ""
                 for alias in sub.sub.aliases:
                     aliases += f"`{alias}`, "
                 embed.add_field(name="Aliases", value=aliases[:-2])
             embed.set_footer(text=f"Type: Sub Command | Group: {sub.base}")
-            self.ctx.send(embed=embed)
+            await self.ctx.send(embed=embed)
         except Exception:
             await self.command_invalid()
 
@@ -359,14 +355,14 @@ class Help(commands.Cog):
         """
         try:
             embed=discord.Embed(title=command.name, description=command.description, color=0xc1c100)
-            embed.add_field(name="Usage", value=f"{self.prefix}{command.name} {command.usage}", inline=False)
+            embed.add_field(name="Usage", value=f"`{self.prefix}{command.name} {command.usage}`", inline=False)
             if len(command.cmd.aliases) > 0:
                 aliases = ""
                 for alias in command.cmd.aliases:
                     aliases += f"`{alias}`, "
                 embed.add_field(name="Aliases", value=aliases[:-2])
             embed.set_footer(text=f"Type: Command")
-            self.ctx.send(embed=embed)
+            await self.ctx.send(embed=embed)
         except Exception:
             await self.command_invalid()
 
@@ -376,17 +372,19 @@ class Help(commands.Cog):
         :param str name: Name of command
         """
         try:
-            await self.helpObject.buildCogWithoutPlugin(name)
-            cmd = self.helpObject.getCmd(plugin, cog, name)
-
-            classType = cmd.__class__.__name__
-
-            if classType == "Group":
-                await self.group(cmd)
-            elif classType == "Sub":
-                await self.sub(cmd)
-            elif classType == "Regular":
-                await self.regular(cmd)
+            cmd = self.bot.get_command(name)
+            await self.helpObject.buildCogWithoutPlugin(cmd.cog)
+            if " " in name:
+                baseCmd = name.strip().split(" ")[0]
+                cmdOb = self.helpObject.cog.cmds[cmd.root_parent.name].subcmds[cmd.name]
+                await self.sub(cmdOb)
+            else:
+                cmdOb = self.helpObject.cog.cmds[cmd.name]
+                classType = cmdOb.cmdtype
+                if classType == "Group":
+                    await self.group(cmdOb)
+                elif classType == "Regular":
+                    await self.regular(cmdOb)
         except Exception:
             await self.command_invalid()
 
@@ -396,7 +394,8 @@ class Help(commands.Cog):
         :param str name: Name of cog
         """
         try:
-            await self.helpObject.buildCogWithoutPlugin(name)
+            cog = self.bot.get_cog(name)
+            await self.helpObject.buildCogWithoutPlugin(cog)
             cog = self.helpObject.cog
 
             cmdStr = ""
