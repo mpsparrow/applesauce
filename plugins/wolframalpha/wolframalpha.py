@@ -92,7 +92,7 @@ class WolframEmbed(InteractiveEmbed):
         return embed
 
     async def on_close(self):
-        self.parent.activeObjects.pop(self.ctx.guild.id)
+        self.parent.activeObjects.pop(self.ctx.channel.id)
 
 class WolframDidYouMeanEmbed(InteractiveEmbed):
     REACTIONS = {
@@ -117,7 +117,6 @@ class WolframDidYouMeanEmbed(InteractiveEmbed):
 
         if reaction.emoji == WolframDidYouMeanEmbed.REACTIONS["no"]:
             await self.close_embed()
-            self.parent.activeObjects.pop(self.ctx.channel.id)
             return
         
     def make_embed(self):
@@ -133,7 +132,7 @@ class WolframDidYouMeanEmbed(InteractiveEmbed):
         await message.add_reaction(WolframDidYouMeanEmbed.REACTIONS["no"])
 
     async def on_close(self):
-        self.parent.activeObjects.pop(self.ctx.guild.id)
+        self.parent.activeObjects.pop(self.ctx.channel.id)
         await self.message.delete()
         
 
