@@ -120,12 +120,11 @@ if __name__ == "__main__":
                 continue
 
             # tries to load plugin
-            try:
+            try:                
                 if args.a:
                     if os.path.exists(f"{folder}/{plugin}/requirements.txt"):
                         startLog.info(f"{i.PLUGIN_NAME} ({folder}.{plugin}) | requirements.txt found... Installing packages")
                         subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", f"{folder}/{plugin}/requirements.txt"])
-
 
                 i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
                 loaded = False
@@ -188,9 +187,15 @@ if __name__ == "__main__":
                     startLog.error(f"{folder}.{plugin}: {error}")
                     pluginLog.error(f"{folder}.{plugin}: {error}")
                 finally:
-                    if i.REQUIRED:
-                        startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
-                        os._exit(1)
+                    try:
+                        i = importlib.import_module(f"{folder}.{plugin}.plugininfo")
+                        if i.REQUIRED:
+                            startLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
+                            pluginLog.error(f"Required plugin {folder}.{plugin} failed to load. Startup Aborting")
+                            os._exit(1)
+                    except Exception as error:
+                        startLog.error(error)
+                        pluginLog.error(error)
     else:
         startLog.info("Skipped Plugin Loading")
 
