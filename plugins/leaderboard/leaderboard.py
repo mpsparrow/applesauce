@@ -50,8 +50,8 @@ class Leaderboard(commands.Cog):
                                         "points": points,
                                         "messages": 1,
                                         "total_messages": 1,
-                                        currentDateTime.year: { 
-                                            currentDateTime.month: {
+                                        str(currentDateTime.year): { 
+                                            str(currentDateTime.month): {
                                                 "points": points,
                                                 "messages": 1,
                                                 "total_messages": 1
@@ -66,8 +66,8 @@ class Leaderboard(commands.Cog):
                 leaderboardData = { 
                                     str(message.author.id): { 
                                         "total_messages": 1,
-                                        currentDateTime.year: { 
-                                            currentDateTime.month: {
+                                        str(currentDateTime.year): { 
+                                            str(currentDateTime.month): {
                                                 "points": points,
                                                 "messages": 1,
                                                 "total_messages": 1
