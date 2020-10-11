@@ -35,8 +35,9 @@ class Leaderboard(commands.Cog):
             else:
                 print("found")
                 lastDateTime = leaderboardDb[str(message.author.id)]["dateTime"]
+                print(lastDateTime)
 
-            if currentDateTime < lastDateTime:
+            if currentDateTime > lastDateTime:
                 points = random.randint(15, 25)
                 # Update leaderboard score
 
