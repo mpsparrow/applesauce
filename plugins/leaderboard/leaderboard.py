@@ -33,7 +33,7 @@ class Leaderboard(commands.Cog):
             print(leaderboardDb)
             # Get current date/time
             if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
-                currentDateTime = datetime.datetime(2000, 4, 20, 0, 0)
+                currentDateTime = datetime.datetime.now() - datetime.timedelta(seconds=60)
             else:
                 currentDateTime = datetime.datetime.now()
 
