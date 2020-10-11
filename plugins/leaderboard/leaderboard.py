@@ -32,7 +32,7 @@ class Leaderboard(commands.Cog):
             print(leaderboardCol)
             print(leaderboardDb)
             # Get current date/time
-            if leaderboardDb is None or leaderboardDb[message.author.id] is None:
+            if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
                 currentDateTime = datetime.datetime(2000, 4, 20, 0, 0)
             else:
                 currentDateTime = datetime.datetime.now()
@@ -45,7 +45,7 @@ class Leaderboard(commands.Cog):
                 points = random.randint(15, 25)
                 # Update leaderboard score
                 leaderboardData = { 
-                                    message.author.id: { 
+                                    str(message.author.id): { 
                                         "dateTime": currentDateTime,
                                         "points": points,
                                         "messages": 1,
@@ -64,7 +64,7 @@ class Leaderboard(commands.Cog):
                 leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
             else:
                 leaderboardData = { 
-                                    message.author.id: { 
+                                    str(message.author.id): { 
                                         "total_messages": 1,
                                         currentDateTime.year: { 
                                             currentDateTime.month: {
