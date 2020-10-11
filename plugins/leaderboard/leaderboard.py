@@ -21,56 +21,66 @@ class Leaderboard(commands.Cog):
         try:
             # Ignore bot users
             if (message.author == self.bot.user) or message.author.bot:
-                print("bot")
                 return
 
             leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["leaderboard"] # connect to DB
             leaderboardDb = leaderboardCol.find_one({ "_id": message.guild.id })
 
-            print("1")
-            print(message.author.id)
-            print(leaderboardCol)
-            print(leaderboardDb)
+            currentDateTime = datetime.datetime.now() - datetime.timedelta(seconds=60)
+
             # Get current date/time
             if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
-                currentDateTime = datetime.datetime.now() - datetime.timedelta(seconds=60)
+                print("not found")
+                lastDateTime = currentDateTime - datetime.timedelta(seconds=1)
             else:
-                currentDateTime = datetime.datetime.now()
+                print("found")
+                lastDateTime = leaderboardDb[str(message.author.id)]["dateTime"]
 
-            lastDateTime = currentDateTime + datetime.timedelta(seconds=60)
-
-            print("2")
-
-            if currentDateTime < lastDateTime:
+            if currentDateTime >= lastDateTime:
                 points = random.randint(15, 25)
                 # Update leaderboard score
-                leaderboardData = { 
-                                    str(message.author.id): { 
-                                        "dateTime": currentDateTime,
-                                        "points": points,
-                                        "messages": 1,
-                                        "total_messages": 1,
-                                        str(currentDateTime.year): { 
-                                            str(currentDateTime.month): {
-                                                "points": points,
-                                                "messages": 1,
-                                                "total_messages": 1
+
+                if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
+                    leaderboardData = { 
+                                        str(message.author.id): { 
+                                            "dateTime": currentDateTime,
+                                            "points": points,
+                                            "messages": 1,
+                                            "total_messages": 1,
+                                            str(currentDateTime.year): { 
+                                                str(currentDateTime.month): {
+                                                    "points": points,
+                                                    "messages": 1,
+                                                    "total_messages": 1
+                                                }
                                             }
                                         }
                                     }
-                                  }
-                print(leaderboardData)
+                else:
+                    leaderboardData = { 
+                                        str(message.author.id): { 
+                                            "dateTime": currentDateTime,
+                                            "points": leaderboardDb[str(message.author.id)]["points"] + points,
+                                            "messages": leaderboardDb[str(message.author.id)]["messages"] + 1,
+                                            "total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1,
+                                            str(currentDateTime.year): { 
+                                                str(currentDateTime.month): {
+                                                    "points": leaderboardDb[str(message.author.id)][str(currentDateTime.year)][str(currentDateTime.month)]["points"] + points,
+                                                    "messages": leaderboardDb[str(message.author.id)][str(currentDateTime.year)][str(currentDateTime.month)]["messages"] + 1,
+                                                    "total_messages": leaderboardDb[str(message.author.id)][str(currentDateTime.year)][str(currentDateTime.month)]["total_messages"] + 1
+                                                }
+                                            }
+                                        }
+                                    }
 
                 leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
             else:
                 leaderboardData = { 
                                     str(message.author.id): { 
-                                        "total_messages": 1,
+                                        "total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1,
                                         str(currentDateTime.year): { 
                                             str(currentDateTime.month): {
-                                                "points": points,
-                                                "messages": 1,
-                                                "total_messages": 1
+                                                "total_messages": leaderboardDb[str(message.author.id)][str(currentDateTime.year)][str(currentDateTime.month)]["total_messages"] + 1
                                             }
                                         }
                                     }
