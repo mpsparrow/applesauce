@@ -30,13 +30,9 @@ class Leaderboard(commands.Cog):
 
             # Get current date/time
             if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
-                print("not found")
                 lastDateTime = currentDateTime - datetime.timedelta(seconds=1)
             else:
-                print("found")
                 lastDateTime = leaderboardDb[str(message.author.id)]["dateTime"]
-                print(lastDateTime)
-                print(currentDateTime)
 
             if currentDateTime > lastDateTime:
                 points = random.randint(15, 25)
@@ -45,12 +41,12 @@ class Leaderboard(commands.Cog):
                 if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
                     leaderboardData = { 
                                         str(message.author.id): { 
-                                            "dateTime": currentDateTime,
+                                            "dateTime": datetime.datetime.now(),
                                             "points": points,
                                             "messages": 1,
                                             "total_messages": 1,
-                                            str(currentDateTime.year): { 
-                                                str(currentDateTime.month): {
+                                            str(datetime.datetime.now().year): {
+                                                str(datetime.datetime.now().month): {
                                                     "points": points,
                                                     "messages": 1,
                                                     "total_messages": 1
@@ -61,15 +57,15 @@ class Leaderboard(commands.Cog):
                 else:
                     leaderboardData = { 
                                         str(message.author.id): { 
-                                            "dateTime": currentDateTime,
+                                            "dateTime": datetime.datetime.now(),
                                             "points": leaderboardDb[str(message.author.id)]["points"] + points,
                                             "messages": leaderboardDb[str(message.author.id)]["messages"] + 1,
                                             "total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1,
-                                            str(currentDateTime.year): { 
-                                                str(currentDateTime.month): {
-                                                    "points": leaderboardDb[str(message.author.id)][str(currentDateTime.year)][str(currentDateTime.month)]["points"] + points,
-                                                    "messages": leaderboardDb[str(message.author.id)][str(currentDateTime.year)][str(currentDateTime.month)]["messages"] + 1,
-                                                    "total_messages": leaderboardDb[str(message.author.id)][str(currentDateTime.year)][str(currentDateTime.month)]["total_messages"] + 1
+                                            str(datetime.datetime.now().year): { 
+                                                str(datetime.datetime.now().month): {
+                                                    "points": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["points"] + points,
+                                                    "messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["messages"] + 1,
+                                                    "total_messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1
                                                 }
                                             }
                                         }
@@ -80,9 +76,9 @@ class Leaderboard(commands.Cog):
                 leaderboardData = { 
                                     str(message.author.id): { 
                                         "total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1,
-                                        str(currentDateTime.year): { 
-                                            str(currentDateTime.month): {
-                                                "total_messages": leaderboardDb[str(message.author.id)][str(currentDateTime.year)][str(currentDateTime.month)]["total_messages"] + 1
+                                        str(datetime.datetime.now().year): { 
+                                            str(datetime.datetime.now().month): {
+                                                "total_messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1
                                             }
                                         }
                                     }
