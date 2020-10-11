@@ -1,6 +1,4 @@
 import discord
-from discord.ext import commands
-from utils.checks import is_guild_enabled
 import random
 import datetime
 import pymongo
@@ -27,6 +25,8 @@ class Leaderboard(commands.Cog):
             leaderboardDb = leaderboardCol.find_one({ "_id": message.guild.id })
 
             currentDateTime = datetime.datetime.now() - datetime.timedelta(seconds=60)
+            dateYear = str(datetime.datetime.now().year)
+            dateMonth = str(datetime.datetime.now().month)
 
             # Get current date/time
             if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
@@ -54,35 +54,29 @@ class Leaderboard(commands.Cog):
                                             }
                                         }
                                     }
+                    leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
                 else:
-                    leaderboardData = { 
-                                        str(message.author.id): { 
-                                            "dateTime": datetime.datetime.now(),
-                                            "points": leaderboardDb[str(message.author.id)]["points"] + points,
-                                            "messages": leaderboardDb[str(message.author.id)]["messages"] + 1,
-                                            "total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1,
-                                            str(datetime.datetime.now().year): { 
-                                                str(datetime.datetime.now().month): {
-                                                    "points": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["points"] + points,
-                                                    "messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["messages"] + 1,
-                                                    "total_messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1
+                    monthData = {
+                                    str(datetime.datetime.now().month): {
+                                        "points": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["points"] + points,
+                                        "messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["messages"] + 1,
+                                        "total_messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1
+                                    }
+                                }
+                    leaderboardCol.update_one(  
+                                                { "_id": message.guild.id }, 
+                                                { "$set": 
+                                                    { str(message.author.id).dateYear : monthData },
+                                                    { str(message.author.id)."dateTime" : datetime.datetime.now() },
+                                                    { str(message.author.id)."points" : leaderboardDb[str(message.author.id)]["points"] + points },
+                                                    { str(message.author.id)."messages": leaderboardDb[str(message.author.id)]["messages"] + 1 },
+                                                    { str(message.author.id)."total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1 }
                                                 }
-                                            }
-                                        }
-                                    }
-
-                leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
+                                                , upsert=True)
             else:
-                leaderboardData = { 
-                                    str(message.author.id): { 
-                                        "total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1,
-                                        str(datetime.datetime.now().year): { 
-                                            str(datetime.datetime.now().month): {
-                                                "total_messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1
-                                            }
-                                        }
-                                    }
-                                  }
-                leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData })
+                leaderboardCol.update_one({ "_id": message.guild.id }, 
+                                          { "$set": 
+                                            { str(message.author.id).dateYear.dateMonth."total_messages" : leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1 }, 
+                                            { str(message.author.id)."total_messages" : "total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1 } })
         except Exception as error:
             print(error)
