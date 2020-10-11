@@ -36,7 +36,7 @@ class Leaderboard(commands.Cog):
                 print("found")
                 lastDateTime = leaderboardDb[str(message.author.id)]["dateTime"]
 
-            if currentDateTime >= lastDateTime:
+            if currentDateTime > lastDateTime:
                 points = random.randint(15, 25)
                 # Update leaderboard score
 
@@ -85,8 +85,6 @@ class Leaderboard(commands.Cog):
                                         }
                                     }
                                   }
-                print(leaderboardData)
-
                 leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
         except Exception as error:
             print(error)
