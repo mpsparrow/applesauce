@@ -21,10 +21,13 @@ class Leaderboard(commands.Cog):
         try:
             # Ignore bot users
             if (message.author == self.bot.user) or message.author.bot:
+                print("bot")
                 return
 
             leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["leaderboard"] # connect to DB
             leaderboardDb = leaderboardCol.find_one({ "_id": message.guild.id })
+
+            print("1")
 
             # Get current date/time
             if leaderboardDb[message.author.id] is None:
@@ -33,6 +36,8 @@ class Leaderboard(commands.Cog):
                 currentDateTime = datetime.datetime.now()
 
             lastDateTime = currentDateTime + datetime.timedelta(seconds=60)
+
+            print("2")
 
             if currentDateTime < lastDateTime:
                 points = random.randint(15, 25)
@@ -52,6 +57,7 @@ class Leaderboard(commands.Cog):
                                         }
                                     }
                                   }
+                print(leaderboardData)
 
                 leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
             else:
@@ -67,6 +73,7 @@ class Leaderboard(commands.Cog):
                                         }
                                     }
                                   }
+                print(leaderboardData)
 
                 leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
         except Exception as error:
