@@ -37,7 +37,8 @@ class Leaderboard(commands.Cog):
             if currentDateTime < lastDateTime:
                 points = random.randint(15, 25)
                 # Update leaderboard score
-                leaderboardData = { message.author.id: { 
+                leaderboardData = { 
+                                    message.author.id: { 
                                         "dateTime": currentDateTime,
                                         "points": points,
                                         "messages": 1,
@@ -50,10 +51,12 @@ class Leaderboard(commands.Cog):
                                             }
                                         }
                                     }
+                                  }
 
                 leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
             else:
-                leaderboardData = { message.author.id: { 
+                leaderboardData = { 
+                                    message.author.id: { 
                                         "total_messages": 1,
                                         currentDateTime.year: { 
                                             currentDateTime.month: {
@@ -63,6 +66,7 @@ class Leaderboard(commands.Cog):
                                             }
                                         }
                                     }
+                                  }
 
                 leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
         except Exception as error:
