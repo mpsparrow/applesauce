@@ -56,6 +56,10 @@ class Leaderboard(commands.Cog):
                                     }
                     leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
                 else:
+                    dateTimeStr = "dateTime"
+                    pointsStr = "points"
+                    messagesStr = "messages"
+                    total_messages = "total_messages"
                     monthData = {
                                     str(datetime.datetime.now().month): {
                                         "points": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["points"] + points,
@@ -67,13 +71,14 @@ class Leaderboard(commands.Cog):
                                                 { "_id": message.guild.id }, 
                                                 { "$set": 
                                                     { str(message.author.id).dateYear : monthData },
-                                                    { str(message.author.id).dateTime : datetime.datetime.now() },
+                                                    { str(message.author.id).dateTimeStr : datetime.datetime.now() },
                                                     { str(message.author.id).points : leaderboardDb[str(message.author.id)]["points"] + points },
                                                     { str(message.author.id).messages : leaderboardDb[str(message.author.id)]["messages"] + 1 },
                                                     { str(message.author.id).total_messages : leaderboardDb[str(message.author.id)]["total_messages"] + 1 }
                                                 }
                                                 , upsert=True)
             else:
+                total_messages = "total_messages"
                 leaderboardCol.update_one({ "_id": message.guild.id }, 
                                           { "$set": 
                                             { str(message.author.id).dateYear.dateMonth.total_messages : leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1 }, 
