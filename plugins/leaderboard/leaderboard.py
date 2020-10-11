@@ -83,6 +83,6 @@ class Leaderboard(commands.Cog):
                                         }
                                     }
                                   }
-                leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
+                leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData })
         except Exception as error:
             print(error)
