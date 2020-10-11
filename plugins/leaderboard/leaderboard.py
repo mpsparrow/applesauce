@@ -28,7 +28,8 @@ class Leaderboard(commands.Cog):
             leaderboardDb = leaderboardCol.find_one({ "_id": message.guild.id })
 
             print("1")
-
+            print(message.author.id)
+            print(leaderboardDb)
             # Get current date/time
             if leaderboardDb[message.author.id] is None:
                 currentDateTime = datetime.datetime(2000, 4, 20, 0, 0)
