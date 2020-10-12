@@ -86,7 +86,7 @@ class Leaderboard(commands.Cog):
                 if leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)]["total_messages"] is None:
                     leaderboardCol.update_one({ "_id": message.guild.id }, 
                                             { "$set": {
-                                                f"{authorID}.{dateYear}.{dateMonth}.total_messages": leaderboardDb[str(authorID)][str(dateYear][str(dateMonth)]["total_messages"] + 1, 
+                                                f"{authorID}.{dateYear}.{dateMonth}.total_messages": leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)]["total_messages"] + 1, 
                                                 f"{authorID}.total_messages": leaderboardDb[str(authorID)]["total_messages"] + 1 
                                             }})
                 else:
