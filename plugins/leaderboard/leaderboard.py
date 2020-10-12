@@ -25,61 +25,85 @@ class Leaderboard(commands.Cog):
             leaderboardDb = leaderboardCol.find_one({ "_id": message.guild.id })
 
             currentDateTime = datetime.datetime.now() - datetime.timedelta(seconds=60)
-            dateYear = str(datetime.datetime.now().year)
-            dateMonth = str(datetime.datetime.now().month)
+            dateYear = datetime.datetime.now().year
+            dateMonth = datetime.datetime.now().month
+            authorID = message.author.id
 
             # Get current date/time
             if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
                 lastDateTime = currentDateTime - datetime.timedelta(seconds=1)
             else:
-                lastDateTime = leaderboardDb[str(message.author.id)]["dateTime"]
+                lastDateTime = leaderboardDb[str(authorID)]["dateTime"]
 
             if currentDateTime > lastDateTime:
                 points = random.randint(15, 25)
                 # Update leaderboard score
 
-                if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
+                if leaderboardDb is None or leaderboardDb[str(authorID)] is None:
                     leaderboardData = { 
-                                        str(message.author.id): { 
-                                            "dateTime": datetime.datetime.now(),
-                                            "points": points,
-                                            "messages": 1,
-                                            "total_messages": 1,
-                                            str(datetime.datetime.now().year): {
-                                                str(datetime.datetime.now().month): {
-                                                    "points": points,
-                                                    "messages": 1,
-                                                    "total_messages": 1
-                                                }
+                                        "dateTime": datetime.datetime.now(),
+                                        "points": points,
+                                        "messages": 1,
+                                        "total_messages": 1,
+                                        str(datetime.datetime.now().year): {
+                                            str(datetime.datetime.now().month): {
+                                                "points": points,
+                                                "messages": 1,
+                                                "total_messages": 1
                                             }
                                         }
-                                    }
-                    leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
+                                      }
+                    leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": { f"{authorID}": leaderboardData }}, upsert=True)
                 else:
-                    authorID = message.author.id
-                    monthData = {
-                                    str(datetime.datetime.now().month): {
-                                        "points": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["points"] + points,
-                                        "messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["messages"] + 1,
-                                        "total_messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1
+                    if leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)] is None:
+                        monthData = {
+                                        str(dateMonth): {
+                                            "points": points,
+                                            "messages": 1,
+                                            "total_messages": 1
+                                        }
                                     }
-                                }
+                    else:
+                        monthData = {
+                                        str(dateMonth): {
+                                            "points": leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)]["points"] + points,
+                                            "messages": leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)]["messages"] + 1,
+                                            "total_messages": leaderboardDb[str(authorID)][str(dateYear)][dateMonth]["total_messages"] + 1
+                                        }
+                                    }
+
                     leaderboardCol.update_one(  
                                                 { "_id": message.guild.id }, 
                                                 { "$set": {
                                                     f"{authorID}.{dateYear}": monthData,
                                                     f"{authorID}.dateTime": datetime.datetime.now(),
-                                                    f"{authorID}.points": leaderboardDb[str(message.author.id)]["points"] + points,
-                                                    f"{authorID}.messages": leaderboardDb[str(message.author.id)]["messages"] + 1,
-                                                    f"{authorID}.total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1
+                                                    f"{authorID}.points": leaderboardDb[str(authorID)]["points"] + points,
+                                                    f"{authorID}.messages": leaderboardDb[str(authorID)]["messages"] + 1,
+                                                    f"{authorID}.total_messages": leaderboardDb[str(authorID)]["total_messages"] + 1
                                                 }}
                                                 , upsert=True)
             else:
-                total_messages = "total_messages"
-                leaderboardCol.update_one({ "_id": message.guild.id }, 
-                                          { "$set": {
-                                            f"{message.author.id}.{dateYear}.{dateMonth}.total_messages": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1, 
-                                            f"{message.author.id}.total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1 
-                                          }})
+                if leaderboardDb[str(authorID)][str(dateYear][str(dateMonth)]["total_messages"] is None:
+                    leaderboardCol.update_one({ "_id": message.guild.id }, 
+                                            { "$set": {
+                                                f"{authorID}.{dateYear}.{dateMonth}.total_messages": leaderboardDb[str(authorID)][str(dateYear][str(dateMonth)]["total_messages"] + 1, 
+                                                f"{authorID}.total_messages": leaderboardDb[str(authorID)]["total_messages"] + 1 
+                                            }})
+                else:
+                    leaderboardCol.update_one({ "_id": message.guild.id }, 
+                                            { "$set": {
+                                                f"{authorID}.{dateYear}.{dateMonth}.total_messages": 1, 
+                                                f"{authorID}.total_messages": leaderboardDb[str(authorID)]["total_messages"] + 1 
+                                            }})    
         except Exception as error:
             print(error)
+
+    @commands.command(name="rank", description="Gives current rank on the server")
+    @is_guild_enabled()
+    async def rank(self, ctx):
+        await ctx.send(f"my rank")
+
+    @commands.command(name="leaderboard", description="Tells you your chances of success", aliases=["levels"])
+    @is_guild_enabled()
+    async def leaderboard(self, ctx):
+        await ctx.send(f"leaderboard")
