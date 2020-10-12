@@ -69,9 +69,9 @@ class Leaderboard(commands.Cog):
                                                 { "$set": {
                                                     authorID.dateYear: monthData,
                                                     authorID.dateTime: datetime.datetime.now(),
-                                                    authorID."points": leaderboardDb[str(message.author.id)]["points"] + points,
-                                                    authorID."messages": leaderboardDb[str(message.author.id)]["messages"] + 1,
-                                                    authorID."total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1
+                                                    authorID.points: leaderboardDb[str(message.author.id)]["points"] + points,
+                                                    authorID.messages: leaderboardDb[str(message.author.id)]["messages"] + 1,
+                                                    authorID.total_messages: leaderboardDb[str(message.author.id)]["total_messages"] + 1
                                                 }}
                                                 , upsert=True)
             else:
