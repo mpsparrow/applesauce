@@ -25,7 +25,7 @@ class Leaderboard(commands.Cog):
             leaderboardDb = leaderboardCol.find_one({ "_id": message.guild.id })
 
             currentDateTime = datetime.datetime.now() - datetime.timedelta(seconds=60)
-            dateYear = str(datetime.datetime.now().year)
+            dateYearX = str(datetime.datetime.now().year)
             dateMonth = str(datetime.datetime.now().month)
 
             # Get current date/time
@@ -78,7 +78,7 @@ class Leaderboard(commands.Cog):
                 total_messages = "total_messages"
                 leaderboardCol.update_one({ "_id": message.guild.id }, 
                                           { "$set": {
-                                            str(message.author.id).dateYear.dateMonth.total_messages: leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1, 
+                                            str(message.author.id).dateYearX.dateMonth.total_messages: leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1, 
                                             str(message.author.id).total_messages: leaderboardDb[str(message.author.id)]["total_messages"] + 1 
                                           }})
         except Exception as error:
