@@ -67,11 +67,11 @@ class Leaderboard(commands.Cog):
                     leaderboardCol.update_one(  
                                                 { "_id": message.guild.id }, 
                                                 { "$set": {
-                                                    authorID.dateYear: monthData,
-                                                    authorID.dateTime: datetime.datetime.now(),
-                                                    authorID.points: leaderboardDb[str(message.author.id)]["points"] + points,
-                                                    authorID.messages: leaderboardDb[str(message.author.id)]["messages"] + 1,
-                                                    authorID.total_messages: leaderboardDb[str(message.author.id)]["total_messages"] + 1
+                                                    f"{authorID}.dateYear": monthData,
+                                                    f"{authorID}.dateTime": datetime.datetime.now(),
+                                                    f"{authorID}.points": leaderboardDb[str(message.author.id)]["points"] + points,
+                                                    f"{authorID}.messages": leaderboardDb[str(message.author.id)]["messages"] + 1,
+                                                    f"{authorID}.total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1
                                                 }}
                                                 , upsert=True)
             else:
