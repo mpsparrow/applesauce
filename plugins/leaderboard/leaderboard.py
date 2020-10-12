@@ -68,7 +68,7 @@ class Leaderboard(commands.Cog):
                                                 { "_id": message.guild.id }, 
                                                 { "$set": {
                                                     authorID.dateYear: monthData,
-                                                    authorID."dateTime": datetime.datetime.now(),
+                                                    authorID.dateTime: datetime.datetime.now(),
                                                     authorID."points": leaderboardDb[str(message.author.id)]["points"] + points,
                                                     authorID."messages": leaderboardDb[str(message.author.id)]["messages"] + 1,
                                                     authorID."total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1
