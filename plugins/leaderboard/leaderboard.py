@@ -66,19 +66,20 @@ class Leaderboard(commands.Cog):
                                 }
                     leaderboardCol.update_one(  
                                                 { "_id": message.guild.id }, 
-                                                { "$set": 
-                                                    { authorID.dateYear : monthData },
-                                                    { authorID."dateTime" : datetime.datetime.now() },
-                                                    { authorID."points" : leaderboardDb[str(message.author.id)]["points"] + points },
-                                                    { authorID."messages" : leaderboardDb[str(message.author.id)]["messages"] + 1 },
-                                                    { authorID."total_messages" : leaderboardDb[str(message.author.id)]["total_messages"] + 1 }
-                                                }
+                                                { "$set": {
+                                                    authorID.dateYear: monthData,
+                                                    authorID."dateTime": datetime.datetime.now(),
+                                                    authorID."points": leaderboardDb[str(message.author.id)]["points"] + points,
+                                                    authorID."messages": leaderboardDb[str(message.author.id)]["messages"] + 1,
+                                                    authorID."total_messages": leaderboardDb[str(message.author.id)]["total_messages"] + 1
+                                                }}
                                                 , upsert=True)
             else:
                 total_messages = "total_messages"
                 leaderboardCol.update_one({ "_id": message.guild.id }, 
-                                          { "$set": 
-                                            { str(message.author.id).dateYear.dateMonth.total_messages : leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1 }, 
-                                            { str(message.author.id).total_messages : leaderboardDb[str(message.author.id)]["total_messages"] + 1 } })
+                                          { "$set": {
+                                            str(message.author.id).dateYear.dateMonth.total_messages: leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["total_messages"] + 1, 
+                                            str(message.author.id).total_messages: leaderboardDb[str(message.author.id)]["total_messages"] + 1 
+                                          }})
         except Exception as error:
             print(error)
