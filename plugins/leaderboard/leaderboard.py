@@ -56,7 +56,7 @@ class Leaderboard(commands.Cog):
                                     }
                     leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": leaderboardData }, upsert=True)
                 else:
-                    authorID = str(message.author.id)
+                    authorID = message.author.id
                     monthData = {
                                     str(datetime.datetime.now().month): {
                                         "points": leaderboardDb[str(message.author.id)][str(datetime.datetime.now().year)][str(datetime.datetime.now().month)]["points"] + points,
