@@ -21,80 +21,99 @@ class Leaderboard(commands.Cog):
             if (message.author == self.bot.user) or message.author.bot:
                 return
 
-            leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["leaderboard"] # connect to DB
-            leaderboardDb = leaderboardCol.find_one({ "_id": message.guild.id })
+            authorID = message.author.id
+            guildID = message.guild.id
 
+            leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["leaderboard"] # connect to DB
+            leaderboardObj = leaderboardCol.find_one({ "_id": authorID }) # gets users object
+
+            # date and time variables
             currentDateTime = datetime.datetime.now() - datetime.timedelta(seconds=60)
             dateYear = datetime.datetime.now().year
             dateMonth = datetime.datetime.now().month
-            authorID = message.author.id
 
-            # Get current date/time
-            if leaderboardDb is None or leaderboardDb[str(message.author.id)] is None:
-                lastDateTime = currentDateTime - datetime.timedelta(seconds=1)
-            else:
-                lastDateTime = leaderboardDb[str(authorID)]["dateTime"]
-
-            if currentDateTime > lastDateTime:
+            if leaderboardObj is None or leaderboardObj[str(guildID)] is None:
+                # create initial object
                 points = random.randint(15, 25)
-                # Update leaderboard score
 
-                if leaderboardDb is None or leaderboardDb[str(authorID)] is None:
-                    leaderboardData = { 
-                                        "dateTime": datetime.datetime.now(),
+                guildData = { 
+                                "dateTime": datetime.datetime.now(),
+                                "points": points,
+                                "messages": 1,
+                                "total_messages": 1,
+                                str(dateYear): {
+                                    str(dateMonth): {
                                         "points": points,
                                         "messages": 1,
-                                        "total_messages": 1,
-                                        str(datetime.datetime.now().year): {
-                                            str(datetime.datetime.now().month): {
-                                                "points": points,
-                                                "messages": 1,
-                                                "total_messages": 1
-                                            }
-                                        }
-                                      }
-                    leaderboardCol.update_one({ "_id": message.guild.id }, { "$set": { f"{authorID}": leaderboardData }}, upsert=True)
-                else:
-                    if leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)] is None:
-                        monthData = {
-                                        str(dateMonth): {
-                                            "points": points,
-                                            "messages": 1,
-                                            "total_messages": 1
-                                        }
+                                        "total_messages": 1
                                     }
-                    else:
-                        monthData = {
-                                        str(dateMonth): {
-                                            "points": leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)]["points"] + points,
-                                            "messages": leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)]["messages"] + 1,
-                                            "total_messages": leaderboardDb[str(authorID)][str(dateYear)][dateMonth]["total_messages"] + 1
-                                        }
-                                    }
+                                }
+                            }
+                leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}": guildData }}, upsert=True)
+            elif leaderboardObj[str(guildID)]["dateTime"] < currentDateTime:
+                # one minute has past since points were awarded
+                points = random.randint(15, 25)
 
-                    leaderboardCol.update_one(  
-                                                { "_id": message.guild.id }, 
-                                                { "$set": {
-                                                    f"{authorID}.{dateYear}": monthData,
-                                                    f"{authorID}.dateTime": datetime.datetime.now(),
-                                                    f"{authorID}.points": leaderboardDb[str(authorID)]["points"] + points,
-                                                    f"{authorID}.messages": leaderboardDb[str(authorID)]["messages"] + 1,
-                                                    f"{authorID}.total_messages": leaderboardDb[str(authorID)]["total_messages"] + 1
-                                                }}
-                                                , upsert=True)
-            else:
-                if leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)]["total_messages"] is None:
-                    leaderboardCol.update_one({ "_id": message.guild.id }, 
-                                            { "$set": {
-                                                f"{authorID}.{dateYear}.{dateMonth}.total_messages": leaderboardDb[str(authorID)][str(dateYear)][str(dateMonth)]["total_messages"] + 1, 
-                                                f"{authorID}.total_messages": leaderboardDb[str(authorID)]["total_messages"] + 1 
-                                            }})
+                leaderboardCol.update_one({ "_id": authorID }, 
+                                            { "$set": { 
+                                                f"{guildID}.dateTime": datetime.datetime.now(),
+                                                f"{guildID}.points": leaderboardObj[str(guildID)]["points"] + points,
+                                                f"{guildID}.messages": leaderboardObj[str(guildID)]["messages"] + 1,
+                                                f"{guildID}.total_messages": leaderboardObj[str(guildID)]["total_messages"] + 1
+                                            }}, upsert=True)
+
+                if leaderboardObj[str(guildID)][str(dateYear)] is None:
+                    # year object
+                    yearData = {
+                                    str(dateMonth): {
+                                        "points": points,
+                                        "messages": 1,
+                                        "total_messages": 1
+                                    }
+                            }
+
+                    leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}": yearData }}, upsert=True)
+                elif leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)] is None:
+                    # month object
+                    monthData = {
+                                    "points": points,
+                                    "messages": 1,
+                                    "total_messages": 1
+                                }
+
+                    leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}": monthData }}, upsert=True)
                 else:
-                    leaderboardCol.update_one({ "_id": message.guild.id }, 
-                                            { "$set": {
-                                                f"{authorID}.{dateYear}.{dateMonth}.total_messages": 1, 
-                                                f"{authorID}.total_messages": leaderboardDb[str(authorID)]["total_messages"] + 1 
-                                            }})    
+                    # update month object
+                    leaderboardCol.update_one({ "_id": authorID }, 
+                                                { "$set": { 
+                                                    f"{guildID}.{dateYear}.{dateMonth}.points": leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)]["points"] + points,
+                                                    f"{guildID}.{dateYear}.{dateMonth}.messages": leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)]["messages"] + 1,
+                                                    f"{guildID}.{dateYear}.{dateMonth}.total_messages": leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)]["total_messages"] + 1
+                                                }}, upsert=True)
+            else:
+                # one minute hasn't past since points were awarded
+                leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.total_messages": leaderboardObj[str(guildID)]["total_messages"] + 1 }}, upsert=True)
+
+                if leaderboardObj[str(guildID)][str(dateYear)] is None:
+                    # year object
+                    yearData = {
+                                    str(dateMonth): {
+                                        "total_messages": 1
+                                    }
+                            }
+
+                    leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}": yearData }}, upsert=True)
+                elif leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)] is None:
+                    # month object
+                    monthData = {
+                                    "total_messages": 1
+                                }
+
+                    leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}": monthData }}, upsert=True)
+                else:
+                    # update month object
+                    leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}.total_messages": leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)]["total_messages"] + 1 }}, upsert=True)
+
         except Exception as error:
             print(error)
 
