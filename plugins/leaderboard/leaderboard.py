@@ -26,7 +26,7 @@ class Leaderboard(commands.Cog):
             authorID = message.author.id
             guildID = message.guild.id
 
-            leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["leaderboard"] # connect to DB
+            leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["userLeaderboard"] # connect to DB
             leaderboardObj = leaderboardCol.find_one({ "_id": authorID }) # gets users object
 
             # date and time variables
@@ -140,16 +140,16 @@ class Leaderboard(commands.Cog):
             userColor = user.color
 
         try:
-            leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["leaderboard"] # connect to DB
+            leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["userLeaderboard"] # connect to DB
             leaderboardObj = leaderboardCol.find_one({ "_id": userID })[str(ctx.guild.id)] # gets users object
 
             emb = discord.Embed(description=f"Rank Info", color=userColor)
-            emb.set_author(name=userDisplay, icon_url=f'https://cdn.discordapp.com/avatars/{userID}/{userAvatar}.png')
-            emb.add_field(name='Level', value=leaderboardObj["level"], inline=False)
-            emb.add_field(name='XP', value=leaderboardObj["points"], inline=False)
+            emb.set_author(name=userDisplay, icon_url=f"https://cdn.discordapp.com/avatars/{userID}/{userAvatar}.png")
+            emb.add_field(name="Level", value=leaderboardObj["level"], inline=False)
+            emb.add_field(name="XP", value=leaderboardObj["points"], inline=False)
             await ctx.send(embed=emb)
         except Exception as error:
-            await ctx.send(embed=embed.make_error_embed("User unavailable."))
+            await ctx.send(embed=discord.Embed(title="User unavailable.", color=0xf84722))
 
     @commands.command(name="leaderboard", description="Tells you your chances of success", aliases=["levels"])
     @is_guild_enabled()
