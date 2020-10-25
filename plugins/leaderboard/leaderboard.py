@@ -65,6 +65,7 @@ class Leaderboard(commands.Cog):
                                             }}, upsert=True)
 
                 if leaderboardObj[str(guildID)][str(dateYear)] is None:
+                    print("no year")
                     # year object
                     yearData = {
                                     str(dateMonth): {
@@ -76,7 +77,7 @@ class Leaderboard(commands.Cog):
 
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}": yearData }}, upsert=True)
                 elif leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)] is None:
-                    print("time but no month obj")
+                    print("no month")
                     # month object
                     monthData = {
                                     "points": points,
@@ -86,6 +87,7 @@ class Leaderboard(commands.Cog):
 
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}": monthData }}, upsert=True)
                 else:
+                    print("other")
                     # update month object
                     leaderboardCol.update_one({ "_id": authorID }, 
                                                 { "$set": { 
@@ -99,6 +101,7 @@ class Leaderboard(commands.Cog):
                 leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.total_messages": leaderboardObj[str(guildID)]["total_messages"] + 1 }}, upsert=True)
 
                 if leaderboardObj[str(guildID)][str(dateYear)] is None:
+                    print("no year")
                     # year object
                     yearData = {
                                     str(dateMonth): {
@@ -108,7 +111,7 @@ class Leaderboard(commands.Cog):
 
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}": yearData }}, upsert=True)
                 elif leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)] is None:
-                    print("not time and no month obj")
+                    print("no month")
                     # month object
                     monthData = {
                                     "total_messages": 1
@@ -116,6 +119,7 @@ class Leaderboard(commands.Cog):
 
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}": monthData }}, upsert=True)
                 else:
+                    print("other")
                     # update month object
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}.total_messages": leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)]["total_messages"] + 1 }}, upsert=True)
 
