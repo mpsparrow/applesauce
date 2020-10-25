@@ -142,11 +142,16 @@ class Leaderboard(commands.Cog):
         try:
             leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["leaderboard"] # connect to DB
             leaderboardObj = leaderboardCol.find_one({ "_id": userID })[str(ctx.guild.id)] # gets users object
-            await ctx.send(leaderboardObj["level"])
+
+            emb = discord.Embed(description=f"Rank Info", color=userColor)
+            emb.set_author(name=userDisplay, icon_url=f'https://cdn.discordapp.com/avatars/{userID}/{userAvatar}.png')
+            emb.add_field(name='Level', value=leaderboardObj["level"], inline=False)
+            emb.add_field(name='XP', value=leaderboardObj["points"], inline=False)
+            await ctx.send(embed=emb)
         except Exception as error:
-            await ctx.send("not available")
+            await ctx.send(embed=embed.make_error_embed("User unavailable."))
 
     @commands.command(name="leaderboard", description="Tells you your chances of success", aliases=["levels"])
     @is_guild_enabled()
     async def leaderboard(self, ctx):
-        await ctx.send(f"leaderboard")
+        await ctx.send(f"_insert leaderboard link here_")
