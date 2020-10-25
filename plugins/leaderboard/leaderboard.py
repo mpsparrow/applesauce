@@ -100,7 +100,7 @@ class Leaderboard(commands.Cog):
                 # one minute hasn't past since points were awarded
                 leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.total_messages": leaderboardObj[str(guildID)]["total_messages"] + 1 }}, upsert=True)
 
-                if leaderboardObj[str(guildID)][str(dateYear)] is None:
+                if leaderboardCol.collection.find({ "_id": authorID }, { f"{guildID}": { f"{dateYear}": None } }).limit(1) is None:
                     print("no year")
                     # year object
                     yearData = {
