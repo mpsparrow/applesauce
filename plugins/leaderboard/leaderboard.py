@@ -33,6 +33,7 @@ class Leaderboard(commands.Cog):
             dateMonth = datetime.datetime.now().month
 
             if leaderboardObj is None or leaderboardObj[str(guildID)] is None:
+                print("object doesn't exist")
                 # create initial object
                 points = random.randint(15, 25)
 
@@ -51,6 +52,7 @@ class Leaderboard(commands.Cog):
                             }
                 leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}": guildData }}, upsert=True)
             elif leaderboardObj[str(guildID)]["dateTime"] < currentDateTime:
+                print("over a minute")
                 # one minute has past since points were awarded
                 points = random.randint(15, 25)
 
@@ -92,6 +94,7 @@ class Leaderboard(commands.Cog):
                                                     f"{guildID}.{dateYear}.{dateMonth}.total_messages": leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)]["total_messages"] + 1
                                                 }}, upsert=True)
             else:
+                print("under a minute")
                 # one minute hasn't past since points were awarded
                 leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.total_messages": leaderboardObj[str(guildID)]["total_messages"] + 1 }}, upsert=True)
 
@@ -116,8 +119,8 @@ class Leaderboard(commands.Cog):
                     # update month object
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}.total_messages": leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)]["total_messages"] + 1 }}, upsert=True)
 
-        except Exception as error:
-            print(error)
+        except Exception as e:
+            print(f"Error: {e}")
 
     @commands.command(name="rank", description="Gives current rank on the server")
     @is_guild_enabled()
