@@ -101,7 +101,7 @@ class Leaderboard(commands.Cog):
                 leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.total_messages": leaderboardObj[str(guildID)]["total_messages"] + 1 }}, upsert=True)
                 print("uam 1")
                 print(leaderboardObj[str(guildID)])
-                if leaderboardObj[str(guildID)][dateYear] is None:
+                if str(dateYear) in leaderboardObj[str(guildID)]:
                     print("no year")
                     # year object
                     yearData = {
