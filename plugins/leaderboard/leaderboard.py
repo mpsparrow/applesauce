@@ -15,7 +15,8 @@ class Leaderboard(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def leaderboardChecker(self, message):
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
         try:
             # Ignore bot users
             if (message.author == self.bot.user) or message.author.bot:
@@ -38,6 +39,7 @@ class Leaderboard(commands.Cog):
 
                 guildData = { 
                                 "dateTime": datetime.datetime.now(),
+                                "level": 1,
                                 "points": points,
                                 "messages": 1,
                                 "total_messages": 1,
@@ -57,6 +59,7 @@ class Leaderboard(commands.Cog):
                 leaderboardCol.update_one({ "_id": authorID }, 
                                             { "$set": { 
                                                 f"{guildID}.dateTime": datetime.datetime.now(),
+                                                f"{guildID}.level": math.floor(0.08 * math.sqrt(leaderboardObj[str(guildID)]["points"] + points)) + 1,
                                                 f"{guildID}.points": leaderboardObj[str(guildID)]["points"] + points,
                                                 f"{guildID}.messages": leaderboardObj[str(guildID)]["messages"] + 1,
                                                 f"{guildID}.total_messages": leaderboardObj[str(guildID)]["total_messages"] + 1
@@ -121,10 +124,6 @@ class Leaderboard(commands.Cog):
         except Exception as e:
             pluginLog.error(f"Leaderboard Error - USER: {message.author.id} GUILD: {message.guild.id} ERROR: {e}")
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        await leaderboardChecker(message)
-
     @commands.command(name="rank", description="Gives current rank on the server")
     @is_guild_enabled()
     async def rank(self, ctx, *, user: discord.Member = None):
@@ -138,8 +137,13 @@ class Leaderboard(commands.Cog):
             userDisplay = str(user)
             userAvatar = user.avatar
             userColor = user.color
-    
-        await ctx.send(f"my rank")
+
+        try:
+            leaderboardCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["leaderboard"] # connect to DB
+            leaderboardObj = leaderboardCol.find_one({ "_id": userID })[str(ctx.guild.id)] # gets users object
+            await ctx.send(leaderboardObj["level"])
+        except Exception as error:
+            await ctx.send("not available")
 
     @commands.command(name="leaderboard", description="Tells you your chances of success", aliases=["levels"])
     @is_guild_enabled()
