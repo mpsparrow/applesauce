@@ -6,6 +6,7 @@ from discord.ext import commands
 from utils.checks import is_guild_enabled
 from utils.config import readINI
 from utils.database.actions import connect
+from utils.logger import pluginLog
 
 class Leaderboard(commands.Cog):
     """
@@ -14,8 +15,7 @@ class Leaderboard(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def leaderboardChecker(self, message):
         try:
             # Ignore bot users
             if (message.author == self.bot.user) or message.author.bot:
@@ -33,7 +33,6 @@ class Leaderboard(commands.Cog):
             dateMonth = datetime.datetime.now().month
 
             if leaderboardObj is None or leaderboardObj[str(guildID)] is None:
-                print("object doesn't exist")
                 # create initial object
                 points = random.randint(15, 25)
 
@@ -52,7 +51,6 @@ class Leaderboard(commands.Cog):
                             }
                 leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}": guildData }}, upsert=True)
             elif leaderboardObj[str(guildID)]["dateTime"] < currentDateTime:
-                print("over a minute")
                 # one minute has past since points were awarded
                 points = random.randint(15, 25)
 
@@ -65,7 +63,6 @@ class Leaderboard(commands.Cog):
                                             }}, upsert=True)
 
                 if str(dateYear) not in leaderboardObj[str(guildID)]:
-                    print("no year")
                     # year object
                     yearData = {
                                     str(dateMonth): {
@@ -77,7 +74,6 @@ class Leaderboard(commands.Cog):
 
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}": yearData }}, upsert=True)
                 elif str(dateMonth) not in leaderboardObj[str(guildID)][str(dateYear)]:
-                    print("no month")
                     # month object
                     monthData = {
                                     "points": points,
@@ -87,7 +83,6 @@ class Leaderboard(commands.Cog):
 
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}": monthData }}, upsert=True)
                 else:
-                    print("other")
                     # update month object
                     leaderboardCol.update_one({ "_id": authorID }, 
                                                 { "$set": { 
@@ -96,12 +91,10 @@ class Leaderboard(commands.Cog):
                                                     f"{guildID}.{dateYear}.{dateMonth}.total_messages": leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)]["total_messages"] + 1
                                                 }}, upsert=True)
             else:
-                print("under a minute")
                 # one minute hasn't past since points were awarded
                 leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.total_messages": leaderboardObj[str(guildID)]["total_messages"] + 1 }}, upsert=True)
 
                 if str(dateYear) not in leaderboardObj[str(guildID)]:
-                    print("no year")
                     # year object
                     yearData = {
                                     str(dateMonth): {
@@ -113,7 +106,6 @@ class Leaderboard(commands.Cog):
 
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}": yearData }}, upsert=True)
                 elif str(dateMonth) not in leaderboardObj[str(guildID)][str(dateYear)]:
-                    print("no month")
                     # month object
                     monthData = {
                                     "points": 0,
@@ -123,16 +115,30 @@ class Leaderboard(commands.Cog):
 
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}": monthData }}, upsert=True)
                 else:
-                    print("other")
                     # update month object
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}.{dateMonth}.total_messages": leaderboardObj[str(guildID)][str(dateYear)][str(dateMonth)]["total_messages"] + 1 }}, upsert=True)
 
         except Exception as e:
-            print(f"Error: {e}")
+            pluginLog.error(f"Leaderboard Error - USER: {message.author.id} GUILD: {message.guild.id} ERROR: {e}")
+
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        await leaderboardChecker(message)
 
     @commands.command(name="rank", description="Gives current rank on the server")
     @is_guild_enabled()
-    async def rank(self, ctx):
+    async def rank(self, ctx, *, user: discord.Member = None):
+        if not user:
+            userID = int(ctx.author.id)
+            userDisplay = str(ctx.author)
+            userAvatar = ctx.author.avatar
+            userColor = ctx.author.color
+        else:
+            userID = int(user.id)
+            userDisplay = str(user)
+            userAvatar = user.avatar
+            userColor = user.color
+    
         await ctx.send(f"my rank")
 
     @commands.command(name="leaderboard", description="Tells you your chances of success", aliases=["levels"])
