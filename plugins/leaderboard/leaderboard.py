@@ -105,15 +105,19 @@ class Leaderboard(commands.Cog):
                     # year object
                     yearData = {
                                     str(dateMonth): {
+                                        "points": 0,
+                                        "messages": 0,
                                         "total_messages": 1
                                     }
-                            }
+                               }
 
                     leaderboardCol.update_one({ "_id": authorID }, { "$set": { f"{guildID}.{dateYear}": yearData }}, upsert=True)
                 elif str(dateMonth) not in leaderboardObj[str(guildID)][str(dateYear)]:
                     print("no month")
                     # month object
                     monthData = {
+                                    "points": 0,
+                                    "messages": 0,
                                     "total_messages": 1
                                 }
 
