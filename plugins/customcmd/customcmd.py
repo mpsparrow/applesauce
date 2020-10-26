@@ -37,7 +37,7 @@ class CustomCMD(commands.Cog):
                 @commands.command(name=name, help=f"Custom command: Outputs your custom provided output")
                 # @guild_check(commandsCol)
                 async def cmd(self, ctx):
-                    await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id }[str(ctx.invoked_with)]))
+                    await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id })[str(ctx.command.qualified_name)])
                 cmd.cog = self
                 # And add it to the cog and the bot
                 self.__cog_commands__ = self.__cog_commands__ + (cmd,)
