@@ -28,11 +28,11 @@ class CustomCMD(commands.Cog):
             commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
 
             # Check if there's a built in command, we don't want to override that
-            if str(name) in commandsObj and ctx.bot.get_command(name)  :
+            if commandsObj is None or str(name) in commandsObj and ctx.bot.get_command(name)  :
                 return await ctx.send(f"A built in command with the name {name} is already registered")
 
             # Now, if the command already exists then we just need to add/override the message for this guild
-            if str(name) not in commandsObj:
+            if commandsObj is None or str(name) not in commandsObj:
                 commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
 
             # Otherwise, we need to create the command object
@@ -68,4 +68,4 @@ class CustomCMD(commands.Cog):
             commandsCol.update({ "_id": ctx.guild.id }, { "$unset": { name: "" } })
             await ctx.send(f"Removed a command called {name}")
         except Exception as err:
-            print(err)
+            print(f"ERROR: {err}")
