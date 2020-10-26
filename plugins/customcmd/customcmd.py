@@ -29,7 +29,7 @@ class CustomCMD(commands.Cog):
 
             # Otherwise, we need to create the command object
             else:
-                @commands.command(name=name, description=f"Custom command")
+                @commands.command(name=name, help=f"Custom command", description=f"Custom command")
                 async def cmd(self, ctx):
                     await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id })[str(name)])
                 cmd.cog = self
