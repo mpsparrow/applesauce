@@ -5,24 +5,12 @@ from utils.database.actions import connect
 from utils.config import readINI
 
 # The check to ensure this is the guild used where the command was made
-def guild_check(_custom_commands):
+def guild_check(commandsCol):
     async def predicate(ctx):
-        return _custom_commands.get(ctx.command.qualified_name) and ctx.guild.id in _custom_commands.get(ctx.command.qualified_name)
+        return commandsCol.find({ f"{ctx.guild.id}.{ctx.command.qualified_name}": { "$exists": True } })
     return commands.check(predicate)
 
 class CustomCMD(commands.Cog):
-
-    """ Each entry in _custom_commands will look like this:
-    {
-        "command_name": {
-            guild_id: "This guild's output",
-            guild_id2: "This other guild's output",
-        }
-    }
-    """
-
-    _custom_commands = {}
-
     @commands.command()
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
@@ -43,7 +31,7 @@ class CustomCMD(commands.Cog):
             # Otherwise, we need to create the command object
             else:
                 @commands.command(name=name, help=f"Custom command: Outputs your custom provided output")
-                @guild_check(self._custom_commands)
+                @guild_check(commandsCol)
                 async def cmd(self, ctx):
                     await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id }[ctx.invoked_with]))
                 cmd.cog = self
@@ -61,8 +49,9 @@ class CustomCMD(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def remove_command(self, ctx, name):
         # Make sure it's actually a custom command, to avoid removing a real command
-        if name not in self._custom_commands or ctx.guild.id not in self._custom_commands[name]:
+        commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
+        if not(commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True } })):
             return await ctx.send(f"There is no custom command called {name}")
         # All that technically has to be removed, is our guild from the dict for the command
-        del self._custom_commands[name][ctx.guild.id]
+        commandsCol[ctx.guild.id].remove( { "$pull": name } )
         await ctx.send(f"Removed a command called {name}")
