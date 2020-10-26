@@ -39,7 +39,7 @@ def custom_command_decoder(obj):
 
 async def custom_command_callback(entry, ctx, *args : str):
     # in the entry content you can have ${user} and ${mention}
-    author = ctx.message.author
+    author = ctx.author
     fixed = entry.content.replace('${user}', author.name).replace('${mention}', author.mention)
 
     # find all ${N} and replace it with args[N]
@@ -58,7 +58,7 @@ class CustomCommand(commands.Command):
         super().__init__(**kwargs)
 
     async def invoke(self, ctx):
-        server = ctx.message.server
+        server = ctx.guild
         if server is not None:
             entry = self._entries.get(server.id)
             if entry is None:
@@ -132,7 +132,7 @@ class CustomCMD(commands.Cog):
 
         Custom commands are forced to be lower case.
         """
-        entry = CustomCommandEntry(name=name.lower(), content=content, guild_id=ctx.message.server.id)
+        entry = CustomCommandEntry(name=name.lower(), content=content, guild_id=ctx.guild.id)
         try:
             await self.register_custom_command(entry)
         except RuntimeError as e:
