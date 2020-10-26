@@ -11,6 +11,10 @@ def guild_check(commandsCol):
     return commands.check(predicate)
 
 class CustomCMD(commands.Cog):
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print("test")
+
     @commands.command()
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
@@ -31,7 +35,7 @@ class CustomCMD(commands.Cog):
             # Otherwise, we need to create the command object
             else:
                 @commands.command(name=name, help=f"Custom command: Outputs your custom provided output")
-                @guild_check(commandsCol)
+                # @guild_check(commandsCol)
                 async def cmd(self, ctx):
                     await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id }[str(ctx.invoked_with)]))
                 cmd.cog = self
