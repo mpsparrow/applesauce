@@ -25,10 +25,9 @@ class CustomCMD(commands.Cog):
             
             # First check if there's a custom command with that name already
             commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
-            print(commandsObj)
 
             # Check if there's a built in command, we don't want to override that
-            if commandsObj[name] is None and ctx.bot.get_command(name).name == name:
+            if commandsObj[name] is None and ctx.bot.get_command(name):
                 return await ctx.send(f"A built in command with the name {name} is already registered")
 
             # Now, if the command already exists then we just need to add/override the message for this guild
@@ -59,7 +58,7 @@ class CustomCMD(commands.Cog):
             # Make sure it's actually a custom command, to avoid removing a real command
             commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
             commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
-            if commandsObj[name] is not None:
+            if commandsObj[name] is None:
                 return await ctx.send(f"There is no custom command called {name}")
             # All that technically has to be removed, is our guild from the dict for the command
             commandsCol.update({ "_id": ctx.guild.id }, { "$unset": { name: "" } })
