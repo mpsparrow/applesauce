@@ -24,6 +24,7 @@ class CustomCMD(commands.Cog):
             
             # First check if there's a custom command with that name already
             existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True, "$ne": False } })
+            print(existing_command)
             # Check if there's a built in command, we don't want to override that
             if not(existing_command) and ctx.bot.get_command(name).name == name:
                 return await ctx.send(f"A built in command with the name {name} is already registered")
