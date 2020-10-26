@@ -15,7 +15,7 @@ class CustomCommandEntry:
         self.guild_id = kwargs.pop('guild_id', None)
 
     def __repr__(self):
-        return '<CustomCommandEntry name={0.name} content={0.content} guild_id={0.guild_id}>'.format(self)
+        return f"<CustomCommandEntry name={self.name} content={self.content} guild_id={self.guild_id}>"
 
 class CustomCommandEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -132,7 +132,9 @@ class CustomCMD(commands.Cog):
 
         Custom commands are forced to be lower case.
         """
+        print("1")
         entry = CustomCommandEntry(name=name.lower(), content=content, guild_id=ctx.guild.id)
+        print("2")
         try:
             await self.register_custom_command(entry)
         except RuntimeError as e:
