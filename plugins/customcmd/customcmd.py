@@ -116,7 +116,7 @@ class CustomCMD(commands.Cog):
             json.dump(entries, f, ensure_ascii=True, cls=CustomCommandEncoder)
 
     @commands.Cog.listener()
-    async def on_ready():
+    async def on_ready(self):
         await load_custom_commands()
         print('loaded custom commands')
 
