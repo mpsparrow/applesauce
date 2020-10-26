@@ -25,7 +25,7 @@ class CustomCMD(commands.Cog):
             # First check if there's a custom command with that name already
             existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True } })
             # Check if there's a built in command, we don't want to override that
-            if existing_command is False and ctx.bot.get_command(name):
+            if not(existing_command) and ctx.bot.get_command(name).name == name:
                 return await ctx.send(f"A built in command with the name {name} is already registered")
 
             # Now, if the command already exists then we just need to add/override the message for this guild
@@ -34,8 +34,8 @@ class CustomCMD(commands.Cog):
 
             # Otherwise, we need to create the command object
             else:
-                @commands.command(name=name, help=f"Custom command: Outputs your custom provided output")
-                # @guild_check(commandsCol)
+                @commands.command(name=name, description=f"Custom command: Outputs your custom provided output")
+                @guild_check(commandsCol)
                 async def cmd(self, ctx):
                     await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id })[str(ctx.command.qualified_name)])
                 cmd.cog = self
