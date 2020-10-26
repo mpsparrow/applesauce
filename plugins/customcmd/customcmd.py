@@ -7,8 +7,7 @@ from utils.config import readINI
 # The check to ensure this is the guild used where the command was made
 def guild_check(commandsCol):
     async def predicate(ctx):
-        return commandsCol.find({ f"{ctx.guild.id}.{ctx.command.qualified_name}": { "$exists": True, "$ne": null } })
-    return True
+        return commandsCol.find({ f"{ctx.guild.id}.{ctx.command.qualified_name}": { "$exists": True, "$ne": False } })
     return commands.check(predicate)
 
 class CustomCMD(commands.Cog):
@@ -24,7 +23,7 @@ class CustomCMD(commands.Cog):
             commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
             
             # First check if there's a custom command with that name already
-            existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True, "$ne": null } })
+            existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True, "$ne": False } })
             # Check if there's a built in command, we don't want to override that
             if not(existing_command) and ctx.bot.get_command(name).name == name:
                 return await ctx.send(f"A built in command with the name {name} is already registered")
@@ -56,7 +55,7 @@ class CustomCMD(commands.Cog):
         try:
             # Make sure it's actually a custom command, to avoid removing a real command
             commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
-            if not(commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True, "$ne": null } })):
+            if not(commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True, "$ne": False } })):
                 return await ctx.send(f"There is no custom command called {name}")
             # All that technically has to be removed, is our guild from the dict for the command
             commandsCol.update({ "_id": ctx.guild.id }, { "$unset": { name: "" } })
