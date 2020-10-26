@@ -5,6 +5,9 @@ from utils.database.actions import connect
 from utils.config import readINI
 
 class CustomCMD(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
     @commands.Cog.listener()
     async def on_ready(self):
         commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
@@ -23,7 +26,7 @@ class CustomCMD(commands.Cog):
 
                 cmd.cog = self
                 self.__cog_commands__ = self.__cog_commands__ + (cmd,)
-                ctx.bot.add_command(cmd)
+                self.bot.add_command(cmd)
                 loadedCounter += 1
             except Exception:
                 pass
