@@ -81,21 +81,31 @@ class CustomCMD(commands.Cog):
 
     async def register_custom_command(self, entry):
         """Registers a custom command to the bot."""
+        print("4")
         command = self.bot.get_command(entry.name)
+        print("4.1")
         if command is None:
             # the command is not registered so we can add it
             # for the first time using this entry as its first entry.
             command = self.bot.command(name=entry.name, cls=CustomCommand,
                                 pass_context=True, hidden=True)(custom_command_callback)
 
+        print("4.2")
+
         if not isinstance(command, CustomCommand):
             raise RuntimeError('This is an already registered non-custom command.')
+
+        print("4.3")
 
         if entry.guild_id in command._entries:
             # you can do some permission checking here, but this is outside the example's scope.
             raise RuntimeError('This is already registered as a custom command.')
 
+        print("4.4")
+
         command._entries[entry.guild_id] = entry
+
+        print("4.5")
 
     async def load_custom_commands(self):
         try:
@@ -136,7 +146,9 @@ class CustomCMD(commands.Cog):
         entry = CustomCommandEntry(name=name.lower(), content=content, guild_id=ctx.guild.id)
         print("2")
         try:
+            print("3")
             await self.register_custom_command(entry)
+            print("5")
         except RuntimeError as e:
             await ctx.send('Error: ' + str(e))
         else:
