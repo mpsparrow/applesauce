@@ -24,7 +24,9 @@ class CustomCMD(commands.Cog):
             try:
                 @commands.command(name=com, help=f"Custom command", description=f"Custom command")
                 async def cmd(self, ctx):
-                    await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id })[str(com)])
+                    comText = commandsCol.find_one({ "_id": ctx.guild.id })[str(name)]
+                    comText = comText.replace("$(user)", f"{ctx.author}").replace("$(arg)", f"{arg}")
+                    await ctx.send(comText)
 
                 cmd.cog = self
                 self.__cog_commands__ = self.__cog_commands__ + (cmd,)
@@ -58,7 +60,7 @@ class CustomCMD(commands.Cog):
             async def cmd(self, ctx, *, arg):
                 comText = commandsCol.find_one({ "_id": ctx.guild.id })[str(name)]
                 comText = comText.replace("$(user)", f"{ctx.author}").replace("$(arg)", f"{arg}")
-                await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id })[str(name)])
+                await ctx.send(comText)
 
             cmd.cog = self
             # And add it to the cog and the bot
