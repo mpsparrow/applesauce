@@ -102,7 +102,7 @@ class CustomCMD(commands.Cog):
             with open('custom_commands.json') as f:
                 entries = json.load(f, object_hook=custom_command_decoder)
                 for entry in entries:
-                    await register_custom_command(entry)
+                    await self.register_custom_command(entry)
         except FileNotFoundError:
             pass
 
@@ -117,7 +117,7 @@ class CustomCMD(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        await load_custom_commands()
+        await self.load_custom_commands()
         print('loaded custom commands')
 
     @commands.command(name="create", description="Custom command")
@@ -134,9 +134,9 @@ class CustomCMD(commands.Cog):
         """
         entry = CustomCommandEntry(name=name.lower(), content=content, guild_id=ctx.message.server.id)
         try:
-            await register_custom_command(entry)
+            await self.register_custom_command(entry)
         except RuntimeError as e:
             await ctx.send('Error: ' + str(e))
         else:
-            await save_custom_commands()
+            await self.save_custom_commands()
             await ctx.send(f'Successfully registered command')
