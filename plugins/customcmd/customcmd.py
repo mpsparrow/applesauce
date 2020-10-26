@@ -31,7 +31,7 @@ class CustomCMD(commands.Cog):
             commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
             
             # First check if there's a custom command with that name already
-            existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": true } })
+            existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True } })
             # Check if there's a built in command, we don't want to override that
             if existing_command is False and ctx.bot.get_command(name):
                 return await ctx.send(f"A built in command with the name {name} is already registered")
