@@ -8,7 +8,7 @@ class CustomCMD(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
-        commandSet = {}
+        commandSet = set()
         loadedCounter = 0
 
         for document in commandsCol.find():
