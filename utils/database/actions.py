@@ -7,7 +7,7 @@ from utils.config import readINI
 
 def connect():
     """
-    Connects to main MongoDB database
+    Connects to main MongoDB database defined in config.ini
     :return: client
     """
     conf = readINI("config.ini")["MongoDB"]
