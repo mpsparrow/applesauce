@@ -7,6 +7,11 @@ from utils.config import readINI
 class CustomCMD(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
+        commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
+        for document in commandsCol.find():
+            print(document)
+            for item in document:
+                print(item) # iterate the cursor
         print("test")
 
     @commands.command()
