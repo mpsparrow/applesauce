@@ -72,15 +72,6 @@ class CustomCommand(commands.Command):
 
 # that ends the 'functionality'
 
-def save_custom_commands():
-    entries = []
-    for name, command in bot.commands.items():
-        if isinstance(command, CustomCommand):
-            entries.extend(command._entries.values())
-
-    with open('custom_commands.json', 'w') as f:
-        json.dump(entries, f, ensure_ascii=True, cls=CustomCommandEncoder)
-
 class CustomCMD(commands.Cog):
     """
     Custom commands
@@ -115,6 +106,15 @@ class CustomCMD(commands.Cog):
         except FileNotFoundError:
             pass
 
+    async def save_custom_commands(self):
+        entries = []
+        for name, command in bot.commands.items():
+            if isinstance(command, CustomCommand):
+                entries.extend(command._entries.values())
+
+        with open('custom_commands.json', 'w') as f:
+            json.dump(entries, f, ensure_ascii=True, cls=CustomCommandEncoder)
+
     @bot.event
     async def on_ready():
         await load_custom_commands()
@@ -138,5 +138,5 @@ class CustomCMD(commands.Cog):
         except RuntimeError as e:
             await ctx.send('Error: ' + str(e))
         else:
-            save_custom_commands()
+            await save_custom_commands()
             await ctx.send(f'Successfully registered command')
