@@ -32,7 +32,7 @@ class CustomCMD(commands.Cog):
                 return await ctx.send(f"A built in command with the name {name} is already registered")
 
             # Now, if the command already exists then we just need to add/override the message for this guild
-            if commandsObj is None or str(name) not in commandsObj:
+            if commandsObj is not None and str(name) not in commandsObj:
                 commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
 
             # Otherwise, we need to create the command object
