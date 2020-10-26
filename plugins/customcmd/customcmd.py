@@ -27,31 +27,34 @@ class CustomCMD(commands.Cog):
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
     async def add_command(self, ctx, name, *, output):
-        commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
-        
-        # First check if there's a custom command with that name already
-        existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": true } })
-        # Check if there's a built in command, we don't want to override that
-        if existing_command is False and ctx.bot.get_command(name):
-            return await ctx.send(f"A built in command with the name {name} is already registered")
+        try:
+            commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
+            
+            # First check if there's a custom command with that name already
+            existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": true } })
+            # Check if there's a built in command, we don't want to override that
+            if existing_command is False and ctx.bot.get_command(name):
+                return await ctx.send(f"A built in command with the name {name} is already registered")
 
-        # Now, if the command already exists then we just need to add/override the message for this guild
-        if existing_command:
-            commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
+            # Now, if the command already exists then we just need to add/override the message for this guild
+            if existing_command:
+                commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
 
-        # Otherwise, we need to create the command object
-        else:
-            @commands.command(name=name, help=f"Custom command: Outputs your custom provided output")
-            @guild_check(self._custom_commands)
-            async def cmd(self, ctx):
-                await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id }[ctx.invoked_with]))
-            cmd.cog = self
-            # And add it to the cog and the bot
-            self.__cog_commands__ = self.__cog_commands__ + (cmd,)
-            ctx.bot.add_command(cmd)
-            # Now add it to our list of custom commands
-            commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
-        await ctx.send(f"Added a command called {name}")
+            # Otherwise, we need to create the command object
+            else:
+                @commands.command(name=name, help=f"Custom command: Outputs your custom provided output")
+                @guild_check(self._custom_commands)
+                async def cmd(self, ctx):
+                    await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id }[ctx.invoked_with]))
+                cmd.cog = self
+                # And add it to the cog and the bot
+                self.__cog_commands__ = self.__cog_commands__ + (cmd,)
+                ctx.bot.add_command(cmd)
+                # Now add it to our list of custom commands
+                commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
+            await ctx.send(f"Added a command called {name}")
+        except Exception as err:
+            print(err)
 
     @commands.command()
     @is_guild_enabled()
