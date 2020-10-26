@@ -6,6 +6,9 @@ from utils.config import readINI
 from utils.logger import startLog
 
 class CustomCMD(commands.Cog):
+    """
+    Custom Commands
+    """
     def __init__(self, bot):
         self.bot = bot
 
@@ -25,7 +28,7 @@ class CustomCMD(commands.Cog):
                 @commands.command(name=com, help=f"Custom command", description=f"Custom command")
                 async def cmd(self, ctx):
                     comText = commandsCol.find_one({ "_id": ctx.guild.id })[str(com)]
-                    comText = comText.replace("$(user)", f"{ctx.author}")
+                    comText = comText.replace("$(user)", f"{ctx.author.name}")
                     await ctx.send(comText)
 
                 cmd.cog = self
@@ -40,7 +43,7 @@ class CustomCMD(commands.Cog):
     @commands.command()
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
-    async def add_command(self, ctx, name, *, output):
+    async def addcommand(self, ctx, name, *, output):
         commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
         
         # First check if there's a custom command with that name already
@@ -59,7 +62,7 @@ class CustomCMD(commands.Cog):
             @commands.command(name=name, help=f"Custom command", description=f"Custom command")
             async def cmd(self, ctx):
                 comText = commandsCol.find_one({ "_id": ctx.guild.id })[str(name)]
-                comText = comText.replace("$(user)", f"{ctx.author}")
+                comText = comText.replace("$(user)", f"{ctx.author.name}")
                 await ctx.send(comText)
 
             cmd.cog = self
@@ -73,7 +76,7 @@ class CustomCMD(commands.Cog):
     @commands.command()
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
-    async def remove_command(self, ctx, name):
+    async def removecommand(self, ctx, name):
         # Make sure it's actually a custom command, to avoid removing a real command
         commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
         commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
