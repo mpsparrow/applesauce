@@ -33,7 +33,7 @@ class CustomCMD(commands.Cog):
                 @commands.command(name=name, help=f"Custom command: Outputs your custom provided output")
                 @guild_check(commandsCol)
                 async def cmd(self, ctx):
-                    await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id }[ctx.invoked_with]))
+                    await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id }[str(ctx.invoked_with)]))
                 cmd.cog = self
                 # And add it to the cog and the bot
                 self.__cog_commands__ = self.__cog_commands__ + (cmd,)
@@ -48,10 +48,13 @@ class CustomCMD(commands.Cog):
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
     async def remove_command(self, ctx, name):
-        # Make sure it's actually a custom command, to avoid removing a real command
-        commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
-        if not(commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True } })):
-            return await ctx.send(f"There is no custom command called {name}")
-        # All that technically has to be removed, is our guild from the dict for the command
-        commandsCol[ctx.guild.id].remove( { "$pull": name } )
-        await ctx.send(f"Removed a command called {name}")
+        try:
+            # Make sure it's actually a custom command, to avoid removing a real command
+            commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
+            if not(commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True } })):
+                return await ctx.send(f"There is no custom command called {name}")
+            # All that technically has to be removed, is our guild from the dict for the command
+            commandsCol[ctx.guild.id].remove( { "$pull": name } )
+            await ctx.send(f"Removed a command called {name}")
+        except Exception as err:
+            print(err)
