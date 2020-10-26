@@ -25,7 +25,7 @@ class CustomCMD(commands.Cog):
             
             # First check if there's a custom command with that name already
             commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
-            existing_command = name in commandsObj[ctx.guild.id]
+            existing_command = True if name in commandsObj[ctx.guild.id] else False
             print(existing_command)
             # Check if there's a built in command, we don't want to override that
             if not(existing_command) and ctx.bot.get_command(name).name == name:
