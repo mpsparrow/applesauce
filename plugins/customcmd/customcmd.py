@@ -16,9 +16,8 @@ class CustomCMD(commands.Cog):
 
         for document in commandsCol.find():
             for item in document:
-                commandSet.add(item)
-
-        print(commandSet)
+                if not(item == "_id"):
+                    commandSet.add(item)
 
         for com in commandSet:
             try:
