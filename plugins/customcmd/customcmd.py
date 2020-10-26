@@ -59,9 +59,7 @@ class CustomCMD(commands.Cog):
             if not(commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": True } })):
                 return await ctx.send(f"There is no custom command called {name}")
             # All that technically has to be removed, is our guild from the dict for the command
-            guildCommands = commandsCol[ctx.guild.id]
-            del guildCommands[name]
-            commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": guildCommands }, upsert=True)
+            commandsCol.update_one({ "_id": ctx.guild.id }, { "$pull": name }, upsert=True)
             await ctx.send(f"Removed a command called {name}")
         except Exception as err:
             print(err)
