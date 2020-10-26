@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
 from utils.checks import is_guild_enabled
-import json, inspect
+import json
+import inspect
 import functools
 import re
 
@@ -45,11 +46,11 @@ async def custom_command_callback(entry, ctx, *args : str):
     def getter(obj):
         try:
             return args[int(obj.group(1))]
-        except:
+        except Exception:
             return ''
 
     fixed = re.sub(r'\${(\d+)}', getter, fixed)
-    await ctx.bot.send_message(ctx.message.channel, fixed)
+    await ctx.send(fixed)
 
 class CustomCommand(commands.Command):
     def __init__(self, **kwargs):
@@ -71,33 +72,6 @@ class CustomCommand(commands.Command):
 
 # that ends the 'functionality'
 
-def register_custom_command(entry):
-    """Registers a custom command to the bot."""
-    command = bot.get_command(entry.name)
-    if command is None:
-        # the command is not registered so we can add it
-        # for the first time using this entry as its first entry.
-        command = bot.command(name=entry.name, cls=CustomCommand,
-                              pass_context=True, hidden=True)(custom_command_callback)
-
-    if not isinstance(command, CustomCommand):
-        raise RuntimeError('This is an already registered non-custom command.')
-
-    if entry.guild_id in command._entries:
-        # you can do some permission checking here, but this is outside the example's scope.
-        raise RuntimeError('This is already registered as a custom command.')
-
-    command._entries[entry.guild_id] = entry
-
-def load_custom_commands():
-    try:
-        with open('custom_commands.json') as f:
-            entries = json.load(f, object_hook=custom_command_decoder)
-            for entry in entries:
-                register_custom_command(entry)
-    except FileNotFoundError:
-        pass
-
 def save_custom_commands():
     entries = []
     for name, command in bot.commands.items():
@@ -114,9 +88,36 @@ class CustomCMD(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    async def register_custom_command(self, entry):
+        """Registers a custom command to the bot."""
+        command = self.bot.get_command(entry.name)
+        if command is None:
+            # the command is not registered so we can add it
+            # for the first time using this entry as its first entry.
+            command = self.bot.command(name=entry.name, cls=CustomCommand,
+                                pass_context=True, hidden=True)(custom_command_callback)
+
+        if not isinstance(command, CustomCommand):
+            raise RuntimeError('This is an already registered non-custom command.')
+
+        if entry.guild_id in command._entries:
+            # you can do some permission checking here, but this is outside the example's scope.
+            raise RuntimeError('This is already registered as a custom command.')
+
+        command._entries[entry.guild_id] = entry
+
+    async def load_custom_commands(self):
+        try:
+            with open('custom_commands.json') as f:
+                entries = json.load(f, object_hook=custom_command_decoder)
+                for entry in entries:
+                    await register_custom_command(entry)
+        except FileNotFoundError:
+            pass
+
     @bot.event
     async def on_ready():
-        load_custom_commands()
+        await load_custom_commands()
         print('loaded custom commands')
 
     @commands.command(name="create", description="Custom command")
@@ -133,9 +134,9 @@ class CustomCMD(commands.Cog):
         """
         entry = CustomCommandEntry(name=name.lower(), content=content, guild_id=ctx.message.server.id)
         try:
-            register_custom_command(entry)
+            await register_custom_command(entry)
         except RuntimeError as e:
-            await ctx.say('Error: ' + str(e))
+            await ctx.send('Error: ' + str(e))
         else:
             save_custom_commands()
-            await ctx.say(f'Successfully registered command')
+            await ctx.send(f'Successfully registered command')
