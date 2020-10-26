@@ -108,14 +108,14 @@ class CustomCMD(commands.Cog):
 
     async def save_custom_commands(self):
         entries = []
-        for name, command in bot.commands.items():
+        for name, command in self.bot.commands.items():
             if isinstance(command, CustomCommand):
                 entries.extend(command._entries.values())
 
         with open('custom_commands.json', 'w') as f:
             json.dump(entries, f, ensure_ascii=True, cls=CustomCommandEncoder)
 
-    @bot.event
+    @commands.Cog.listener()
     async def on_ready():
         await load_custom_commands()
         print('loaded custom commands')
