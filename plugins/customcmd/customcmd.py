@@ -2,6 +2,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from utils.checks import is_guild_enabled
 from utils.database.actions import connect
+from utils.config import readINI
 
 # The check to ensure this is the guild used where the command was made
 def guild_check(_custom_commands):
@@ -26,7 +27,7 @@ class CustomCMD(commands.Cog):
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
     async def add_command(self, ctx, name, *, output):
-        commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"][] # connect to DB
+        commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
         
         # First check if there's a custom command with that name already
         existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": true } })
