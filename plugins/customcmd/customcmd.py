@@ -18,6 +18,8 @@ class CustomCMD(commands.Cog):
             for item in document:
                 commandSet.add(item)
 
+        print(commandSet)
+
         for com in commandSet:
             try:
                 @commands.command(name=com, help=f"Custom command", description=f"Custom command")
