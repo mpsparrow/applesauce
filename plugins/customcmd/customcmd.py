@@ -8,11 +8,27 @@ class CustomCMD(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
+        commandSet = {}
+        loadedCounter = 0
+
         for document in commandsCol.find():
-            print(document)
             for item in document:
-                print(item) # iterate the cursor
-        print("test")
+                commandSet.add(item)
+
+        for com in commandSet:
+            try:
+                @commands.command(name=item, help=f"Custom command", description=f"Custom command")
+                async def cmd(self, ctx):
+                    await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id })[str(item)])
+
+                cmd.cog = self
+                self.__cog_commands__ = self.__cog_commands__ + (cmd,)
+                ctx.bot.add_command(cmd)
+                loadedCounter += 1
+            except Exception:
+                pass
+        
+        print(f"{loadedCounter}/{len(commandSet)} custom commands loaded")
 
     @commands.command()
     @is_guild_enabled()
