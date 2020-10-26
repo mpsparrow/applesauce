@@ -52,7 +52,7 @@ class CustomCMD(commands.Cog):
                 commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
             await ctx.send(f"Added a command called {name}")
         except Exception as err:
-            print(err)
+            print(f"ERROR: {err}")
 
     @commands.command()
     @is_guild_enabled()
