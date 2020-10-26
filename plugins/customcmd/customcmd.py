@@ -1,4 +1,7 @@
 from discord.ext import commands
+from discord.ext.commands import has_permissions
+from utils.checks import is_guild_enabled
+from utils.database.actions import connect
 
 # The check to ensure this is the guild used where the command was made
 def guild_check(_custom_commands):
@@ -16,35 +19,42 @@ class CustomCMD(commands.Cog):
         }
     }
     """
+
     _custom_commands = {}
 
     @commands.command()
+    @is_guild_enabled()
+    @commands.has_permissions(manage_guild=True)
     async def add_command(self, ctx, name, *, output):
+        commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"][] # connect to DB
+        
         # First check if there's a custom command with that name already
-        existing_command = self._custom_commands.get(name)
+        existing_command = commandsCol.find({ f"{ctx.guild.id}.{name}": { "$exists": true } })
         # Check if there's a built in command, we don't want to override that
-        if existing_command is None and ctx.bot.get_command(name):
+        if existing_command is False and ctx.bot.get_command(name):
             return await ctx.send(f"A built in command with the name {name} is already registered")
 
         # Now, if the command already exists then we just need to add/override the message for this guild
         if existing_command:
-            self._custom_commands[name][ctx.guild.id] = output
+            commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
+
         # Otherwise, we need to create the command object
         else:
             @commands.command(name=name, help=f"Custom command: Outputs your custom provided output")
             @guild_check(self._custom_commands)
             async def cmd(self, ctx):
-                await ctx.send(self._custom_commands[ctx.invoked_with][ctx.guild.id])
-
+                await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id }[ctx.invoked_with]))
             cmd.cog = self
             # And add it to the cog and the bot
             self.__cog_commands__ = self.__cog_commands__ + (cmd,)
             ctx.bot.add_command(cmd)
             # Now add it to our list of custom commands
-            self._custom_commands[name] = {ctx.guild.id: output}
+            commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
         await ctx.send(f"Added a command called {name}")
 
     @commands.command()
+    @is_guild_enabled()
+    @commands.has_permissions(manage_guild=True)
     async def remove_command(self, ctx, name):
         # Make sure it's actually a custom command, to avoid removing a real command
         if name not in self._custom_commands or ctx.guild.id not in self._custom_commands[name]:
@@ -52,6 +62,3 @@ class CustomCMD(commands.Cog):
         # All that technically has to be removed, is our guild from the dict for the command
         del self._custom_commands[name][ctx.guild.id]
         await ctx.send(f"Removed a command called {name}")
-
-def setup(bot):
-    bot.add_cog(CustomCommands(bot))
