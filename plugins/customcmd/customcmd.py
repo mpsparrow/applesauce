@@ -4,13 +4,6 @@ from utils.checks import is_guild_enabled
 from utils.database.actions import connect
 from utils.config import readINI
 
-# The check to ensure this is the guild used where the command was made
-def guild_check(commandsCol):
-    async def predicate(ctx):
-        commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
-        return str(ctx.command.qualified_name) in commandsObj
-    return commands.check(predicate)
-
 class CustomCMD(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
@@ -36,17 +29,13 @@ class CustomCMD(commands.Cog):
 
             # Otherwise, we need to create the command object
             else:
-                print("0")
-                @commands.command(name=name, help=f"Custom command: Outputs your custom provided output")
-                @guild_check(commandsCol)
+                @commands.command(name=name, description=f"Custom command")
                 async def cmd(self, ctx):
                     await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id })[str(name)])
                 cmd.cog = self
                 # And add it to the cog and the bot
                 self.__cog_commands__ = self.__cog_commands__ + (cmd,)
-                print("1")
                 ctx.bot.add_command(cmd)
-                print("2")
                 # Now add it to our list of custom commands
                 commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
             await ctx.send(f"Added a command called {name}")
