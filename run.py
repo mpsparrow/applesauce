@@ -4,7 +4,7 @@ Applesauce
 Created By: Matthew (mattthetechguy)
 Contributor(s): Lauchmelder
 Version: v2.0
-Last Updated: August 12, 2020
+Last Updated: October 26, 2020
 Created On: October 12, 2019
 
 Licensed under GPL-3.0
@@ -201,19 +201,8 @@ if __name__ == "__main__":
 
 @bot.event
 async def on_ready():
-    # checking for if this is the first connect or a reconnect to the Discord API
-    try:
-        firstRun
-    except NameError:
-        firstRun = True
-
-    if firstRun:
-        # first time
-        startLog.info(f"Connected! {bot.user.name} | {bot.user.id}")
-        firstRun = False
-    else:
-        # reconnecting
-        log.info(f"Reconnected! {bot.user.name} | {bot.user.id}")
+    startLog.info(f"Connected! {bot.user.name} | {bot.user.id}")
+    log.info(f"Connected! {bot.user.name} | {bot.user.id}")
 
 @bot.event
 async def on_command_error(ctx, error):
