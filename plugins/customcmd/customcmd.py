@@ -8,7 +8,7 @@ from utils.config import readINI
 def guild_check(commandsCol):
     async def predicate(ctx):
         commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
-        return commandsObj[ctx.command.qualified_name] is not None
+        return str(ctx.command.qualified_name) not in commandsObj
     return commands.check(predicate)
 
 class CustomCMD(commands.Cog):
@@ -27,11 +27,11 @@ class CustomCMD(commands.Cog):
             commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
 
             # Check if there's a built in command, we don't want to override that
-            if commandsObj[name] is None and ctx.bot.get_command(name)  :
+            if str(name) in commandsObj and ctx.bot.get_command(name)  :
                 return await ctx.send(f"A built in command with the name {name} is already registered")
 
             # Now, if the command already exists then we just need to add/override the message for this guild
-            if commandsObj[name] is not None:
+            if str(name) not in commandsObj:
                 commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
 
             # Otherwise, we need to create the command object
