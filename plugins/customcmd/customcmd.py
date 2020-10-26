@@ -8,8 +8,7 @@ from utils.config import readINI
 def guild_check(commandsCol):
     async def predicate(ctx):
         commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
-        print(ctx.command.qualified_name)
-        return str(ctx.command.qualified_name) not in commandsObj
+        return str(ctx.command.qualified_name) in commandsObj
     return commands.check(predicate)
 
 class CustomCMD(commands.Cog):
