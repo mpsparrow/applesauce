@@ -23,9 +23,9 @@ class CustomCMD(commands.Cog):
         for com in commandSet:
             try:
                 @commands.command(name=com, help=f"Custom command", description=f"Custom command")
-                async def cmd(self, ctx, * args):
+                async def cmd(self, ctx):
                     comText = commandsCol.find_one({ "_id": ctx.guild.id })[str(com)]
-                    comText = comText.replace("$(user)", f"{ctx.author}").replace("$(arg)", f"{args}")
+                    comText = comText.replace("$(user)", f"{ctx.author}")
                     await ctx.send(comText)
 
                 cmd.cog = self
@@ -57,9 +57,9 @@ class CustomCMD(commands.Cog):
         # Otherwise, we need to create the command object
         else:
             @commands.command(name=name, help=f"Custom command", description=f"Custom command")
-            async def cmd(self, ctx, *, args):
+            async def cmd(self, ctx):
                 comText = commandsCol.find_one({ "_id": ctx.guild.id })[str(name)]
-                comText = comText.replace("$(user)", f"{ctx.author}").replace("$(arg)", f"{args}")
+                comText = comText.replace("$(user)", f"{ctx.author}")
                 await ctx.send(comText)
 
             cmd.cog = self
