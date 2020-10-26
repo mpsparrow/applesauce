@@ -20,9 +20,9 @@ class CustomCMD(commands.Cog):
 
         for com in commandSet:
             try:
-                @commands.command(name=item, help=f"Custom command", description=f"Custom command")
+                @commands.command(name=com, help=f"Custom command", description=f"Custom command")
                 async def cmd(self, ctx):
-                    await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id })[str(item)])
+                    await ctx.send(commandsCol.find_one({ "_id": ctx.guild.id })[str(com)])
 
                 cmd.cog = self
                 self.__cog_commands__ = self.__cog_commands__ + (cmd,)
