@@ -3,7 +3,7 @@ from discord.ext.commands import has_permissions
 from utils.checks import is_guild_enabled
 from utils.database.actions import connect
 from utils.config import readINI
-from utils.logger import startLog
+from utils.logger import startLog, pluginLog
 
 class CustomCMD(commands.Cog):
     """
@@ -14,6 +14,8 @@ class CustomCMD(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        startlog.info("Loading Custom Commands")
+
         commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
         commandSet = set()
         loadedCounter = 0
@@ -36,7 +38,7 @@ class CustomCMD(commands.Cog):
                 self.bot.add_command(cmd)
                 loadedCounter += 1
             except Exception as err:
-                startLog.debug(f"Error loading custom command {com} ERROR: {err}")
+                pluginLog.error(f"Error loading custom command {com} ERROR: {err}")
         
         startLog.info(f"{loadedCounter}/{len(commandSet)} custom commands loaded")
 
@@ -45,8 +47,6 @@ class CustomCMD(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def addcommand(self, ctx, name, *, output):
         commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
-        
-        # First check if there's a custom command with that name already
         commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
 
         # Check if there's a built in command, we don't want to override that
@@ -66,10 +66,10 @@ class CustomCMD(commands.Cog):
                 await ctx.send(comText)
 
             cmd.cog = self
-            # And add it to the cog and the bot
+
             self.__cog_commands__ = self.__cog_commands__ + (cmd,)
             ctx.bot.add_command(cmd)
-            # Now add it to our list of custom commands
+
             commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
         await ctx.send(f"Added a command called {name}")
 
@@ -77,11 +77,11 @@ class CustomCMD(commands.Cog):
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
     async def removecommand(self, ctx, name):
-        # Make sure it's actually a custom command, to avoid removing a real command
         commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
         commandsObj = commandsCol.find_one({ "_id": ctx.guild.id })
+
         if str(name) not in commandsObj:
             return await ctx.send(f"There is no custom command called {name}")
-        # All that technically has to be removed, is our guild from the dict for the command
+
         commandsCol.update({ "_id": ctx.guild.id }, { "$unset": { name: "" } })
         await ctx.send(f"Removed a command called {name}")
