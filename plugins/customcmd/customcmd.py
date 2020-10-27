@@ -14,7 +14,7 @@ class CustomCMD(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        startlog.info("Loading Custom Commands")
+        startLog.info("Loading Custom Commands")
 
         commandsCol = connect()[readINI("config.ini")["MongoDB"]["database"]]["customCommands"] # connect to DB
         commandSet = set()
