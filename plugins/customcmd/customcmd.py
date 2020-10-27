@@ -43,7 +43,7 @@ class CustomCMD(commands.Cog):
         
         startLog.info(f"{loadedCounter}/{len(commandSet)} custom commands loaded")
 
-    @commands.command()
+    @commands.command(name="addcommand", description="Adds a custom command", usage="<command>", aliases=["addcom", "addcmd"])
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
     async def addcommand(self, ctx, name, *, output):
@@ -75,7 +75,7 @@ class CustomCMD(commands.Cog):
             commandsCol.update_one({ "_id": ctx.guild.id }, { "$set": { f"{name}": output }}, upsert=True)
         await ctx.send(f"Added a command called {name}")
 
-    @commands.command()
+    @commands.command(name="removecommand", description="Removes a custom command", usage="<command>", aliases=["removecom", "removecmd"])
     @is_guild_enabled()
     @commands.has_permissions(manage_guild=True)
     async def removecommand(self, ctx, name):
