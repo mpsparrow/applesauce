@@ -12,6 +12,7 @@ class Coinflip(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(name="coinflip", description="Flips a coin", aliases=["coin", "flip"])
     @is_guild_enabled()
     async def coinflip(self, ctx):

@@ -178,6 +178,7 @@ class WolframAlpha(commands.Cog):
         self.activeObjects[ctx.channel.id] = WolframEmbed(self, ctx, result)
         await self.activeObjects[ctx.channel.id].show_embed()
 
+    @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command(name="wolf", description="Searches Wolfram|Alpha", usage="<query>", aliases=["w"])
     @is_guild_enabled()
     async def wolf(self, ctx, *, query: str = None):

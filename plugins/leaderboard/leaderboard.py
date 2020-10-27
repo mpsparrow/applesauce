@@ -125,6 +125,7 @@ class Leaderboard(commands.Cog):
         except Exception as e:
             pluginLog.error(f"Leaderboard Error - USER: {message.author.id} GUILD: {message.guild.id} ERROR: {e}")
 
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(name="rank", description="Gives current rank on the server")
     @is_guild_enabled()
     async def rank(self, ctx, *, user: discord.Member = None):
@@ -151,6 +152,7 @@ class Leaderboard(commands.Cog):
         except Exception as error:
             await ctx.send(embed=discord.Embed(title="User unavailable.", color=0xf84722))
 
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(name="leaderboard", description="Tells you your chances of success", aliases=["levels"])
     @is_guild_enabled()
     async def leaderboard(self, ctx):

@@ -27,6 +27,7 @@ class CustomCMD(commands.Cog):
 
         for com in commandSet:
             try:
+                @commands.cooldown(1, 5, commands.BucketType.guild)
                 @commands.command(name=com, help=f"Custom command", description=f"Custom command")
                 async def cmd(self, ctx):
                     comText = commandsCol.find_one({ "_id": ctx.guild.id })[str(com)]
@@ -59,6 +60,7 @@ class CustomCMD(commands.Cog):
 
         # Otherwise, we need to create the command object
         else:
+            @commands.cooldown(1, 5, commands.BucketType.guild)
             @commands.command(name=name, help=f"Custom command", description=f"Custom command")
             async def cmd(self, ctx):
                 comText = commandsCol.find_one({ "_id": ctx.guild.id })[str(name)]

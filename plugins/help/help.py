@@ -488,6 +488,7 @@ class Help(commands.Cog):
                             color=0xf84722)
         await self.ctx.send(embed=embed)
 
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(name="help", description="Help command", usage="<command/cog/plugin>", aliases=["h"])
     async def help(self, ctx, *, helpItem: str = None):
         """

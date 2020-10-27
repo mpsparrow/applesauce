@@ -7,6 +7,7 @@ class Rate(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(name="rate", description="Rates between 1 and 10")
     @is_guild_enabled()
     async def rate(self, ctx):

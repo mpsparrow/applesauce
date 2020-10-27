@@ -12,6 +12,7 @@ class Wikipedia(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(name="wiki", description="Quotes Wikipedia", usage="<query>")
     @is_guild_enabled()
     async def wiki(self, ctx, *, query: str = None):
