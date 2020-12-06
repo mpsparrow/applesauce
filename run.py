@@ -57,6 +57,9 @@ def get_prefix(bot, message):
     """
     return prefix(message.guild.id)
 
+if not os.path.exists("config.ini"):
+    import configure
+
 if __name__ == "__main__":
     # outputs startLog (startup.log) to console
     if args.o:
